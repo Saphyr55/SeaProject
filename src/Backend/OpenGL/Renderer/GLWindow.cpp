@@ -1,22 +1,19 @@
-#include <Sea/Backend/OpenGL/GLWindow.hpp>
-#include <Sea/Backend/OpenGL/GL.hpp>
+#include "Sea/Backend/OpenGL/Renderer/GLWindow.hpp"
+#include "Sea/Backend/OpenGL/GL.hpp"
 
-namespace Sea::Backend
+namespace Sea::Backend::OpenGL
 {
-    OpenGL::GLWindow::GLWindow(std::string title, int width, int height)
-        : GameWindow(title, width, height)
-    {
-        SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-        SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
-        SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-        gladLoadGLLoader(SDL_GL_GetProcAddress);
-        m_handle = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL);
-        SDL_HideWindow(m_handle);
-        SDL_GL_CreateContext(m_handle);
-        
-    }
+	GLWindow::GLWindow(std::string title, std::uint32_t width, std::uint32_t height) : Window(title, width, height)
+	{
+		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
+		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		gladLoadGLLoader(SDL_GL_GetProcAddress);
+		m_handle = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL);
+		if (m_handle == nullptr) throw std::exception("Impossible to create sdl window");
+		SDL_GL_CreateContext(m_handle);
+	}
 }
-
 

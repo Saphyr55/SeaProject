@@ -2,17 +2,17 @@
 
 #include <string>
 #include <iostream>
+#include <stdint.h>
 #include <SDL2/SDL.h>
-#include "Sea/Core/GameWindow.hpp"
-#include "Sea/Core/IWindow.hpp"
+#include <Sea/Renderer/Renderer.hpp>
 
 namespace Sea
-{
-	class Window : public IWindow
-	{	
-	public:
-		virtual void OnUpdate(float dt)=0;
+{	
+	using RendererPtr = std::shared_ptr<Renderer>;
 
+	class Window
+	{
+	public:
 		void Hide();
 		void Show();
 		void Close();
@@ -20,12 +20,14 @@ namespace Sea
 		bool IsClosed();
 
 	public:
-		Window(std::string title, int width, int height);
+		Window(std::string title, std::uint32_t width, std::uint32_t height);
 		~Window();
 
 	protected:
-		GameWindow m_handle;
+		RendererPtr m_rendererPtr;
 		bool m_isOpen = true;
+		SDL_Window* m_handle;
+		std::string m_title;
+		std::uint32_t m_width, m_height;
 	};
 }
-

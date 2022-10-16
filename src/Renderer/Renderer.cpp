@@ -4,7 +4,7 @@ namespace Sea
 {
 	Renderer::Renderer()
 	{
-
+			
 	}
 	
 	Renderer::~Renderer()

@@ -12,10 +12,17 @@ namespace Sea::Backend::OpenGL
 	{
 
 	public:
-		std::unique_ptr<Window> CreateWindow(std::string title, std::uint32_t w, std::uint32_t h);
-
-		GLContext() = default;
-		~GLContext() = default;
+		inline GLContext(const SDL_GLContext& gl_context) : m_handle(gl_context) 
+		{
+			if (m_handle == nullptr) throw("Failed to create OpenGL context");
+		}
+		inline ~GLContext()
+		{
+			SDL_GL_DeleteContext(m_handle);
+		}
+	private:
+		SDL_GLContext m_handle;
+		
 	};
 
 }

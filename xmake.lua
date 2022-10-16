@@ -26,11 +26,12 @@ target_end()
 
 target("SeaExample")
     set_kind("binary")
-    
-    add_files("examples/**.cpp")
-    add_headerfiles("exemples/**.hpp")
-    add_packages("libsdl", "glm", "imgui")
 
     add_deps("SeaFramework")
+    
+    add_files("examples/**.cpp")
+    add_headerfiles("examples/**.hpp")
+    
+    add_packages("libsdl", "glm", "imgui")
 target_end()
 

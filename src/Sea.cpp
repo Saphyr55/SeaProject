@@ -6,42 +6,50 @@
 namespace Sea
 {
 
-	Sea::Sea(ContextType context, Game game)
-		: m_context(Context::Of(context)), m_game(game)
+	Sea::Sea()
+	{
+		Init();
+	}
+
+	Sea::~Sea() 
+	{ 
+		SDL_Quit(); 
+	}
+
+	void Sea::CreateWindow(WindowProperties& properties)
+	{
+		m_window = Window::Of(properties);
+	}
+
+	void Sea::CreateGame(GamePtr game)
+	{	
+		m_game = game;
+	}
+
+	void Sea::Close()
+	{
+		m_window->Close();
+		m_game->Stop();
+	}
+
+	void Sea::Init()
 	{
 		if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 			throw std::runtime_error("Init SDL fail");
 	}
 
-	Sea::Sea(Game game) : Sea::Sea(ContextType::OpenGL, game) { }
-
-	Sea::~Sea()
-	{
-		SDL_Quit();
-	}
-
-	void Sea::CreateWindow(std::string title, std::uint32_t w, std::uint32_t h)
-	{
-		m_window = m_context.get()->CreateWindow(title, w, h);
-	}
-
-	void Sea::Close()
-	{
-		m_window.get()->Close();
-		m_game.Stop()
-	}
-
 	void Sea::Run()
 	{	
-		m_game.Run();
-		while (m_game.IsRunning())
+		if (m_window != nullptr) m_window->Run();
+		if (m_game != nullptr) m_game->Run();
+		while (m_game->IsRunning())
 		{	
-			while (m_window.get()->IsOpen())
-			{
-				SDL_Event event;
+			SDL_Event event;
 
-				m_game.OnUpdate(60);
-				m_game.OnRender();
+			while (m_window->IsOpen())
+			{
+				m_game->OnUpdate(60);
+				m_game->OnRender();
 				
 				while (SDL_PollEvent(&event))
 				{
@@ -51,7 +59,7 @@ namespace Sea
 						Close();
 						break;
 					default:
-						break;
+						break; 
 					}
 				}
 			}

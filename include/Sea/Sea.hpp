@@ -6,25 +6,27 @@
 #include "Sea/Core/Game.hpp"
 
 namespace Sea
-{
+{	
+	using WindowPtr = std::shared_ptr<Window>;
+	using GamePtr = std::shared_ptr<Game>;
 
 	class Sea final
 	{
 	public:
 		void Run();
-		void CreateWindow(std::string title, std::uint32_t w, std::uint32_t h);
+		void CreateWindow(WindowProperties& properties);
+		void CreateGame(GamePtr game);
 
 	private:
+		void Init();
 		void Close();
 
 	public:
-		Sea(ContextType context, Game game);
-		Sea(Game game);
+		Sea();
 		~Sea();
 
 	private:
-		std::unique_ptr<Context> m_context;
-		std::unique_ptr<Window> m_window;
-		Game m_game;
+		WindowPtr m_window;
+		GamePtr m_game;
 	};
 }

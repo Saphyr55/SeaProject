@@ -5,16 +5,14 @@ namespace Sea
 	class Game
 	{
 	public:
-		void OnUpdate(float dt) { }
-		void OnRender() { }
+		virtual void OnUpdate(float dt) abstract;
+		virtual void OnRender() abstract;
 		inline void Run() { m_isRunning = true; }
 		inline void Stop() { m_isRunning = false; }
 		inline bool IsRunning() { return m_isRunning; }
 
 	public:
 		Game()=default;
-		Game(Game&&) = default;
-		Game(const Game&) = default;
 		~Game()=default;
 
 	private:

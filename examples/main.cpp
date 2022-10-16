@@ -4,21 +4,28 @@
 #include <Sea/Context.hpp>
 #include "MyGame.hpp"
 
-int main(int argc, char const **argv)    
-{   
+int main(int argc, char const **argv)
+{
 	try
-	{	
-		Sea::Sea sea = Sea::Sea(Sea::ContextType::OpenGL, MyGame());
-		sea.CreateWindow("Game", 900, 720);
+	{
+
+		Sea::WindowProperties propeties;
+		propeties.title = "Game";
+		propeties.width = 900;
+		propeties.height = 720;
+		propeties.context = Sea::ContextType::OpenGL;
+
+		MyGame mg;
+		Sea::Sea sea;
+		sea.CreateGame(std::make_shared<MyGame>(mg));
+		sea.CreateWindow(propeties);
 		sea.Run();
 	}
-	catch (const std::exception& e)
+	catch (const std::exception &e)
 	{
 		std::cout << e.what() << std::endl;
 		return EXIT_FAILURE;
 	}
-	
-    return EXIT_SUCCESS;
+
+	return EXIT_SUCCESS;
 }
-
-

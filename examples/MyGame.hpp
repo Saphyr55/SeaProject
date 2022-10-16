@@ -3,18 +3,22 @@
 #include <iostream>
 #include <Sea/Core/Game.hpp>
 
-class MyGame : public Sea::Game
+class MyGame final : public Sea::Game
 {
 public:
-	void OnRender()
-	{
-		std::cout << "Salut\n";
-	}
-
-	void OnUpdate(float dt)
-	{
-
-	}
+	void OnRender() override;
+	void OnUpdate(float dt) override;
 
 private:
 };
+
+void MyGame::OnRender()
+{
+	std::cout << "DS\n";
+}
+
+
+void MyGame::OnUpdate(float dt)
+{
+
+}

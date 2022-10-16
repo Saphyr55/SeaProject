@@ -1,10 +1,21 @@
 #include "Sea/Renderer/Window.hpp"
+#include "Sea/Backend/OpenGL/Renderer/GLWindow.hpp"
 #include "Sea/Backend/OpenGL/GL.hpp"
 
 namespace Sea
 {
-	Window::Window(std::string title, u32 width, u32 height)
-		: m_title(title), m_width(width), m_height(height), m_handle(nullptr)
+	std::shared_ptr<Window> Window::Of(WindowProperties& properties)
+	{	
+		switch (properties.context)
+		{
+		case ContextType::OpenGL:
+			return std::make_shared<Backend::OpenGL::GLWindow>(properties);
+		} 
+		return std::make_shared<Backend::OpenGL::GLWindow>(properties);
+	}
+
+	Window::Window(WindowProperties& proterties)
+		: m_title(proterties.title), m_width(proterties.width), m_height(proterties.height), m_handle(nullptr)
 	{ }
 
 	Window::~Window()

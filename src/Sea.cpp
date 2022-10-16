@@ -28,12 +28,12 @@ namespace Sea
 	void Sea::Close()
 	{
 		m_window.get()->Close();
-		m_game.m_isRunning = false;
+		m_game.Stop()
 	}
 
 	void Sea::Run()
 	{	
-		m_game.m_isRunning = true;
+		m_game.Run();
 		while (m_game.IsRunning())
 		{	
 			while (m_window.get()->IsOpen())

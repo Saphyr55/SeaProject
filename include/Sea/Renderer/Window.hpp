@@ -2,9 +2,9 @@
 
 #include <string>
 #include <iostream>
-#include <stdint.h>
 #include <SDL2/SDL.h>
 #include <Sea/Renderer/Renderer.hpp>
+#include <Sea/Common/CommonType.hpp>
 
 namespace Sea
 {	
@@ -20,7 +20,7 @@ namespace Sea
 		bool IsClosed();
 
 	public:
-		Window(std::string title, std::uint32_t width, std::uint32_t height);
+		Window(std::string title, u32 width, u32 height);
 		~Window();
 
 	protected:

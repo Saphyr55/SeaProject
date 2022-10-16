@@ -3,11 +3,9 @@
 
 namespace Sea
 {
-	Window::Window(std::string title, std::uint32_t width, std::uint32_t height)
+	Window::Window(std::string title, u32 width, u32 height)
 		: m_title(title), m_width(width), m_height(height), m_handle(nullptr)
-	{
-
-	}
+	{ }
 
 	Window::~Window()
 	{
@@ -21,10 +19,12 @@ namespace Sea
 
 	void Window::Hide()
 	{
+		SDL_HideWindow(m_handle);
 	}
 
 	void Window::Show()
 	{
+		SDL_ShowWindow(m_handle);
 	}
 
 	void Window::Close()

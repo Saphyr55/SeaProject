@@ -6,6 +6,7 @@ namespace Sea
 	{
 
 	}
+	
 	Renderer::~Renderer()
 	{
 	}

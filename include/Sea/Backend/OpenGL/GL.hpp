@@ -15,6 +15,7 @@ namespace Sea::Backend::OpenGL
 				context_flags |= SDL_GL_CONTEXT_DEBUG_FLAG;
 			#endif
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, context_flags);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 			// Request an OpenGL 4.5 context (should be core)
 			SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);

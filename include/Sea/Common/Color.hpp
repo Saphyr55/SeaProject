@@ -26,12 +26,4 @@ namespace Sea
         f32 r, g, b, a;
     };
 
-
-    const Color Colors::Red(1.f, 0.f, 0.f, 1.f);
-    const Color Colors::Green(0.f, 1.f, 0.f, 1.f);
-    const Color Colors::Blue(0.f, 0.f, 1.f, 1.f);
-    const Color Colors::Black(0.f, 0.f, 0.f, 1.f);
-    const Color Colors::White(1.f, 1.f, 1.f, 1.f);
-
-
 }

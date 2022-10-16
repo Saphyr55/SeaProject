@@ -8,12 +8,17 @@ namespace Sea::Backend::OpenGL
 	{
 	public:
 		void Run();
+		void Swap();
+
+	private:
+		void CreateContext();
 
 	public:
 		GLWindow(WindowProperties& properties);
 
-	private:
 
+	private:
+		SDL_GLContext gl_context;
 	};
 
 }

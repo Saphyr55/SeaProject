@@ -2,19 +2,21 @@
 
 #include <iostream>
 #include <Sea/Core/Game.hpp>
+#include <Sea/Common/Color.hpp>
 
 class MyGame final : public Sea::Game
 {
 public:
-	void OnRender() override;
+	void OnRender(Sea::Renderer& renderer) override;
 	void OnUpdate(float dt) override;
 
 private:
 };
 
-void MyGame::OnRender()
+void MyGame::OnRender(Sea::Renderer& renderer)
 {
-	std::cout << "DS\n";
+	renderer.ClearColor(Sea::Colors::Black);
+	renderer.Clear();
 }
 
 

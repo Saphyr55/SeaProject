@@ -5,7 +5,7 @@
 #include <SDL2/SDL.h>
 #include <Sea/Renderer/Renderer.hpp>
 #include <Sea/Common/CommonType.hpp>
-#include <Sea/Context.hpp>
+#include <Sea/Core/Context.hpp>
 
 namespace Sea
 {	
@@ -30,6 +30,8 @@ namespace Sea
 		static std::shared_ptr<Window> Of(WindowProperties& properties);
 
 		virtual void Run() abstract;
+		virtual void Swap() abstract;
+		inline RendererPtr GetRenderer() { return m_renderer; }
 
 		void Hide();
 		void Show();
@@ -45,10 +47,11 @@ namespace Sea
 		~Window();
 
 	protected:
-		Context m_context;
 		bool m_isOpen = true;
-		SDL_Window* m_handle;
-		std::string m_title;
 		u32 m_width, m_height;
+		std::string m_title;
+		SDL_Window* m_handle;
+		RendererPtr m_renderer;
+		Context m_context;
 	};
 }

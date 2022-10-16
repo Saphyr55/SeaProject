@@ -2,4 +2,6 @@
 /.xmake
 /bin
 /build
+/vsxmake2019
 /vsxmake2022
+/makefile

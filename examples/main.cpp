@@ -2,14 +2,14 @@
 #include <Sea/Sea.hpp>
 #include <Sea/Renderer/Window.hpp>
 #include <Sea/Context.hpp>
-#include "MyWindow.hpp"
+#include "MyGame.hpp"
 
 int main(int argc, char const **argv)    
 {   
 	try
-	{
-		Sea::Sea sea = Sea::Sea(Sea::ContextType::OpenGL);
-		sea.CreateWindow(MyWindow("Game",900,720));
+	{	
+		Sea::Sea sea = Sea::Sea(Sea::ContextType::OpenGL, MyGame());
+		sea.CreateWindow("Game", 900, 720);
 		sea.Run();
 	}
 	catch (const std::exception& e)

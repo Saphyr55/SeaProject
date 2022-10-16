@@ -8,7 +8,7 @@ namespace Sea::Backend
 
 	}
 
-	OpenGL::GLRenderer::GLRenderer() : Renderer()
+	OpenGL::GLRenderer::GLRenderer()
 	{
 
 	}

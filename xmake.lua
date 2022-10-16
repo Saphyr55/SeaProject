@@ -1,6 +1,6 @@
 local targetdir = "bin/$(plat)_$(arch)_$(mode)"
 local version = "cxx20"
-local project_name = "SeaFramework"
+local project_name = "SeaProject"
 
 add_requires("libsdl", "glm", "imgui")
 add_rules("mode.release", "mode.debug")

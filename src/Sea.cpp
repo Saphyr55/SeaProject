@@ -2,42 +2,56 @@
 #include <stdexcept>
 
 #include "Sea/Sea.hpp"
-#include "Sea/Backend/OpenGL/GLWindow.hpp"
 
 namespace Sea
 {
-	void Sea::CreateWindow()
-	{
-		
-	}
 
-	void Sea::OnUpdate(float dt)
+	Sea::Sea(ContextType context, Game game)
+		: m_isRunning(true), m_context(Context::Of(context)), m_game(game)
 	{
-		m_window.OnUpdate(dt);
-	}
-
-	void Sea::Run()
-	{
-		while (m_isRunning)
-		{
-			while (m_window.IsOpen())
-			{
-				
-			}
-		}
-	}
-
-	Sea::Sea(ContextType context, Window& window)
-		: m_context(context), m_isRunning(true), m_window(window)
-	{
-		
-		if (SDL_Init(SDL_INIT_EVERYTHING) != 0) 
+		if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 			throw std::runtime_error("Init SDL fail");
 	}
+
+	Sea::Sea(Game game) : Sea::Sea(ContextType::OpenGL, game) { }
 
 	Sea::~Sea()
 	{
 		SDL_Quit();
 	}
+
+	void Sea::CreateWindow(std::string title, std::uint32_t w, std::uint32_t h)
+	{
+		m_window = m_context.get()->CreateWindow(title, w, h);
+	}
+
+	void Sea::Run()
+	{	
+		while (m_isRunning)
+		{	
+			while (m_window.get()->IsOpen())
+			{
+				SDL_Event event;
+
+				m_game.OnUpdate(60);
+				m_game.OnRender();
+				
+				while (SDL_PollEvent(&event))
+				{
+					switch (event.type)
+					{
+					case SDL_QUIT:
+						m_window.get()->Close();
+						Close();
+						break;
+					default:
+						break;
+					}
+				}
+			}
+		}
+	}
+
+
 
 }

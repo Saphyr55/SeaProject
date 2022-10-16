@@ -1,28 +1,31 @@
 #pragma once
 
+#include <memory>
 #include "Sea/Renderer/Window.hpp"
 #include "Sea/Context.hpp"
+#include "Sea/Core/Game.hpp"
 
 namespace Sea
 {
 
-	class Window;
-	class Renderer;
-
 	class Sea
 	{
 	public:
-		void CreateWindow();
-		void OnUpdate(float dt);
 		void Run();
+		void CreateWindow(std::string title, std::uint32_t w, std::uint32_t h);
+
+	private:
+		inline void Close() { m_isRunning = false; }
 
 	public:
-		Sea(ContextType context, Window& window);
+		Sea(ContextType context, Game game);
+		Sea(Game game);
 		~Sea();
 
 	private:
 		bool m_isRunning;
-		ContextType m_context;
-		Window m_window;
+		std::unique_ptr<Context> m_context;
+		std::unique_ptr<Window> m_window;
+		Game m_game;
 	};
 }

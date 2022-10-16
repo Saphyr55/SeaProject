@@ -7,6 +7,9 @@ namespace Sea
 	public:
 		void OnUpdate(float dt) { }
 		void OnRender() { }
+		inline void Run() { m_isRunning = true; }
+		inline void Stop() { m_isRunning = false; }
+		inline bool IsRunning() { return m_isRunning; }
 
 	public:
 		Game()=default;
@@ -15,7 +18,7 @@ namespace Sea
 		~Game()=default;
 
 	private:
-
+		bool m_isRunning = false;
 	};
 
 }

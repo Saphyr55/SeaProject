@@ -8,14 +8,14 @@
 namespace Sea
 {
 
-	class Sea
+	class Sea final
 	{
 	public:
 		void Run();
 		void CreateWindow(std::string title, std::uint32_t w, std::uint32_t h);
 
 	private:
-		inline void Close() { m_isRunning = false; }
+		void Close();
 
 	public:
 		Sea(ContextType context, Game game);
@@ -23,7 +23,6 @@ namespace Sea
 		~Sea();
 
 	private:
-		bool m_isRunning;
 		std::unique_ptr<Context> m_context;
 		std::unique_ptr<Window> m_window;
 		Game m_game;

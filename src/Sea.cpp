@@ -7,7 +7,7 @@ namespace Sea
 {
 
 	Sea::Sea(ContextType context, Game game)
-		: m_isRunning(true), m_context(Context::Of(context)), m_game(game)
+		: m_context(Context::Of(context)), m_game(game)
 	{
 		if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 			throw std::runtime_error("Init SDL fail");
@@ -25,9 +25,16 @@ namespace Sea
 		m_window = m_context.get()->CreateWindow(title, w, h);
 	}
 
+	void Sea::Close()
+	{
+		m_window.get()->Close();
+		m_game.m_isRunning = false;
+	}
+
 	void Sea::Run()
 	{	
-		while (m_isRunning)
+		m_game.m_isRunning = true;
+		while (m_game.IsRunning())
 		{	
 			while (m_window.get()->IsOpen())
 			{
@@ -41,7 +48,6 @@ namespace Sea
 					switch (event.type)
 					{
 					case SDL_QUIT:
-						m_window.get()->Close();
 						Close();
 						break;
 					default:

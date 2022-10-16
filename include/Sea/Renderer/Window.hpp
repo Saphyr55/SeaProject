@@ -4,9 +4,12 @@
 #include <iostream>
 #include <stdint.h>
 #include <SDL2/SDL.h>
+#include <Sea/Renderer/Renderer.hpp>
 
 namespace Sea
-{
+{	
+	using RendererPtr = std::shared_ptr<Renderer>;
+
 	class Window
 	{
 	public:
@@ -21,8 +24,9 @@ namespace Sea
 		~Window();
 
 	protected:
-		SDL_Window* m_handle;
+		RendererPtr m_rendererPtr;
 		bool m_isOpen = true;
+		SDL_Window* m_handle;
 		std::string m_title;
 		std::uint32_t m_width, m_height;
 	};

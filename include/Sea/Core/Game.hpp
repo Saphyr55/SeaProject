@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Sea/Renderer/Renderer.hpp>
-
 namespace Sea
 {
+	class Renderer;
+	
 	class Game
 	{
 	public:
@@ -13,7 +13,6 @@ namespace Sea
 		inline void Stop() { m_isRunning = false; }
 		inline bool IsRunning() { return m_isRunning; }
 		void UseVsync(bool use);
-
 
 	public:
 		Game()=default;

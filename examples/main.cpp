@@ -13,8 +13,8 @@ int main(int argc, char const **argv)
 		Sea::WindowProperties propeties;
 		{
 			propeties.title = "Game";
-			propeties.width = 900;
-			propeties.height = 720;
+			propeties.width = 880;
+			propeties.height = 620;
 			propeties.context = Sea::ContextType::OpenGL;
 		}
 

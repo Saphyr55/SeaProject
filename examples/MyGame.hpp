@@ -2,25 +2,57 @@
 
 #include <iostream>
 #include <Sea/Core/Game.hpp>
+#include <Sea/Core/Input/Input.hpp>
 #include <Sea/Common/Color.hpp>
+#include <mcl/Logger.hpp>
 
-class MyGame final : public Sea::Game
+using namespace Sea;
+using Log = mcl::Log;
+
+class MyGame final : public Game
 {
+
 public:
-	void OnRender(Sea::Renderer& renderer) override;
-	void OnUpdate(float dt) override;
+	void Render() override;
+	void Update(float dt) override;
+	void Before() override;
+	void After() override;
 
 private:
+
 };
 
-void MyGame::OnRender(Sea::Renderer& renderer)
+void MyGame::Before()
 {
-	renderer.ClearColor(Sea::Colors::Black);
-	renderer.Clear();
+
+}
+
+void MyGame::After()
+{
+
+}
+
+void MyGame::Render()
+{
+	GetWindow().GetRenderer().ClearColor(Colors::Red);
+	GetWindow().GetRenderer().Clear();
 }
 
 
-void MyGame::OnUpdate(float dt)
+void MyGame::Update(float dt)
 {
+	if (Input::IsKeyDown(Key::Keys::Q))
+	{
+		Log::Debug() << "Q";
+	}
 
+	if (Input::IsKeyPressed(Key::Keys::S))
+	{
+		Log::Debug() << "S";
+	}
+
+	if (Input::IsKeyPressed(Key::Keys::A))
+	{
+		Log::Debug() << "A";
+	}
 }

@@ -8,8 +8,8 @@ namespace Sea::Backend::OpenGL
     class GLRenderer : public Renderer
     {
     public:
-        void ClearColor(Color color);
-        void Clear();
+        void ClearColor(Color color) const;
+        void Clear() const;
 
     public:
         GLRenderer();

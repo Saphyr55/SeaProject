@@ -9,16 +9,11 @@ namespace Sea::Backend::OpenGL
 	public:
 		void Run();
 		void Swap();
-
-	private:
-		void CreateContext();
+		void UseVSync(bool use);
 
 	public:
-		GLWindow(WindowProperties& properties);
+		GLWindow(Window::Properties& properties);
 
-
-	private:
-		SDL_GLContext gl_context;
 	};
 
 }

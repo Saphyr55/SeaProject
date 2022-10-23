@@ -11,15 +11,15 @@ namespace Sea::Backend::OpenGL
 		OpenGL::Init();
 
 		m_handle = SDL_CreateWindow(
-			m_title.c_str(),
+			m_properties.title.c_str(),
 			SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-			m_width, m_height,
+			m_properties.width, m_properties.height,
 			SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN
 		);
 
 		if (m_handle == nullptr) throw(std::string("Failed to create window: ") + SDL_GetError());
-		 
-		gl_context = SDL_GL_CreateContext(m_handle);
+		
+		m_contextPtr= std::make_shared<GLContext>(*this);
 
 		gladLoadGLLoader(SDL_GL_GetProcAddress); // Check OpenGL properties
 
@@ -35,13 +35,12 @@ namespace Sea::Backend::OpenGL
 		SDL_GL_SwapWindow(m_handle);
 	}
 
-	void GLWindow::CreateContext()
-	{	
-		gl_context = SDL_GL_CreateContext(m_handle);
-
+	void GLWindow::UseVSync(bool use)
+	{
+		SDL_GL_SetSwapInterval(use);
 	}
 
-	GLWindow::GLWindow(WindowProperties& properties) : 
+	GLWindow::GLWindow(Window::Properties& properties) :
 		Window(properties)
 	{
 		m_renderer = std::make_shared<GLRenderer>(GLRenderer());

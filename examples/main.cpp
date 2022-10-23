@@ -9,16 +9,17 @@ int main(int argc, char const **argv)
 	try
 	{
 		Engine sea;
+
 		Window::Properties propeties;
 		{
+			propeties.context = ContextType::OpenGL;
 			propeties.title = "Game";
 			propeties.width = 880;
 			propeties.height = 620;
-			propeties.context = ContextType::OpenGL;
+			propeties.resizable = true;
 		}
-
-		MyGame mg;
-		sea.CreateGameWindow(std::make_unique<MyGame>(mg), propeties);
+		
+		sea.CreateGameWindow(std::make_unique<MyGame>(), propeties);
 		sea.Run();
 	}
 	catch (const std::exception &e)

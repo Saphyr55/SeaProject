@@ -14,7 +14,7 @@ namespace Sea
 
 	class Input final
 	{
-		friend class Event;
+	friend class Event;
 
 	public:
 		static bool IsKeyDown(Key::Scancode code);

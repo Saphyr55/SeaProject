@@ -28,17 +28,15 @@ namespace Sea
 
 		static bool IsButtonDown(Button);
 		static bool IsButtonPressed(Button);
-		static u32 GetMousePosX();
-		static u32 GetMousePosY();
-		static glm::vec2 GetMousePos();
-		static glm::vec2 GetMouseRelativePos();
+		static glm::vec2 GetMousePosition();
+		static glm::vec2 GetDesktopMousePosition();
+		static glm::vec2 GetRelativeMousePosition();
 		static s32 GetCurrentButton();
 
 	private:
 		static void Reset(Button);
 
 	private:
-		static s32 currentButton;
 		static List<Button> buttonsDown;
 		static List<Button> buttonsPressed;
 	};

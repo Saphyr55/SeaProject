@@ -10,6 +10,9 @@ namespace Sea::Backend::OpenGL
 		void Run();
 		void Swap();
 		void UseVSync(bool use);
+		void Viewport();
+		void Viewport(u32 h, u32 w);
+		void Viewport(u32 x, u32 y, u32 h, u32 w);
 
 	public:
 		GLWindow(Window::Properties& properties);

@@ -48,6 +48,7 @@ namespace Sea
 			while (m_game->GetWindow().IsOpen())
 			{
 				m_game->GetWindow().Swap();
+				m_game->GetWindow().Update();
 				m_game->Update(60);
 				m_game->Render();
 				m_game->GetWindow().m_event->HandleEvent(*m_game);

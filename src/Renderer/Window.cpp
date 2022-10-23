@@ -8,10 +8,8 @@ namespace Sea
 	{
 		switch (properties.context)
 		{
-		case ContextType::OpenGL:
-			return std::make_shared<Backend::OpenGL::GLWindow>(properties);
-		default:
-			return std::make_shared<Backend::OpenGL::GLWindow>(properties);
+		case ContextType::OpenGL: return std::make_shared<Backend::OpenGL::GLWindow>(properties);
+		default: return std::make_shared<Backend::OpenGL::GLWindow>(properties);
 		}
 	}
 
@@ -50,9 +48,32 @@ namespace Sea
 		return !m_isOpen;
 	}
 
+	void Window::SetSize(f32 w, f32 h)
+	{
+		m_properties.width = w;
+		m_properties.height = h;
+		SDL_SetWindowSize(m_handle, m_properties.width, m_properties.height);
+	}
+
+	void Window::SetResizable(bool resizable)
+	{
+		m_properties.resizable = resizable;
+		SDL_SetWindowResizable(m_handle, (SDL_bool) m_properties.resizable);
+	}
+
+	void Window::WrapMouse(f32 x, f32 y)
+	{
+		SDL_WarpMouseInWindow(m_handle, x, y);
+	}
+
 	void Window::CreateEvent()
 	{	
 		m_event = std::make_shared<Event>();
+	}
+
+	void Window::Update()
+	{	
+		SDL_GetWindowSize(m_handle, (s32*)&m_properties.width, (s32*)&m_properties.height);
 	}
 
 }

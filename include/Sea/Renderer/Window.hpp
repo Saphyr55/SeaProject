@@ -1,57 +1,70 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <Sea/Renderer/Renderer.hpp>
 #include <Sea/Common/CommonType.hpp>
 #include <Sea/Core/Context.hpp>
+#include <Sea/Core/Input/Event.hpp>
 
 namespace Sea
 {	
-	using RendererPtr = std::shared_ptr<Renderer>;
-
-	struct WindowProperties
-	{
-		std::string title = "No Title";
-		u32 width = 1080;
-		u32	height = 720;
-		ContextType context = ContextType::OpenGL;
-
-		WindowProperties() = default;
-		~WindowProperties() = default;
-		WindowProperties(const WindowProperties&) = default;
-		WindowProperties(WindowProperties&&) = default;
-	};
 
 	class Window
-	{
-	public:
-		static std::shared_ptr<Window> Of(WindowProperties& properties);
+	{	
+		friend class Engine;
+		friend class Context;
+		struct Properties;
 
-		virtual void Run() abstract;
-		virtual void Swap() abstract;
-		inline RendererPtr GetRenderer() { return m_renderer; }
+	public:
+		static std::shared_ptr<Window> Of(Window::Properties& properties);
+
+		virtual void Run()=0;
+		virtual void Swap()=0;
+		virtual void UseVSync(bool use)=0;
 
 		void Hide();
 		void Show();
 		void Close();
 		bool IsOpen();
 		bool IsClosed();
+		inline SDL_Window* GetHandle() { return m_handle; }
+		inline Properties GetProperties() { return m_properties; }
+		inline const Renderer& GetRenderer() { return *m_renderer; }
 
-		inline u32 GetWidth() { return m_width; }
-		inline u32 GetHeight() { return m_height; }
-		
+	private:
+		void CreateEvent();
+
 	public:
-		Window(WindowProperties& proterties);
+		struct Properties
+		{
+			std::string title = "No Title";
+			std::string fileIcon = "";
+			u32 width = 1080;
+			u32 height = 720;
+			ContextType context = ContextType::OpenGL;
+
+			Properties() = default;
+			Properties(const Properties&) = default;
+			Properties(Properties&&) = default;
+			~Properties() = default;
+		};
+
+	public:
+		Window(Window::Properties& proterties);
+		Window(const Window &) = default;
+		Window(Window &&) = default;
 		~Window();
 
 	protected:
 		bool m_isOpen = true;
-		u32 m_width, m_height;
-		std::string m_title;
 		SDL_Window* m_handle;
-		RendererPtr m_renderer;
-		Context m_context;
+		Properties m_properties;
+		std::shared_ptr<const Renderer> m_renderer;
+		std::shared_ptr<Context> m_contextPtr;
+		std::shared_ptr<Event> m_event;
+	
 	};
 }

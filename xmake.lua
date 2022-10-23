@@ -18,10 +18,11 @@ target("SeaFramework")
     add_files("src/**.cpp")
     add_files("externals/**.c")
     add_files("externals/**.cpp")
+    add_headerfiles("externals/mcl/Logger.hpp", { public = true } )
     add_headerfiles("include/**.hpp")
     add_headerfiles("externals/**.hpp")
 
-    add_packages("libsdl", "glm", "imgui")
+    add_packages("libsdl", "glm", "imgui", { public = true } )
 target_end()
 
 target("SeaExample")
@@ -31,7 +32,5 @@ target("SeaExample")
     
     add_files("examples/**.cpp")
     add_headerfiles("examples/**.hpp")
-    
-    add_packages("libsdl", "glm", "imgui")
 target_end()
 

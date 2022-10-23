@@ -8,8 +8,6 @@
 
 namespace Sea
 {
-	class Window;
-	struct WindowProperties;
 
 	enum struct ContextType
 	{
@@ -18,6 +16,7 @@ namespace Sea
 
 	class Context
 	{
+
 	public:
 		Context() { }
 		~Context() = default;

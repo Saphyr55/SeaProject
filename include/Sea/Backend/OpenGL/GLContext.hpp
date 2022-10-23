@@ -5,6 +5,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <Sea/Core/Context.hpp>
+#include <Sea/Renderer/Window.hpp>
 
 namespace Sea::Backend::OpenGL
 {	
@@ -13,16 +14,8 @@ namespace Sea::Backend::OpenGL
 	{
 
 	public:
-
-		inline GLContext(SDL_GLContext* gl_context) : m_handle(gl_context) 
-		{
-			if (m_handle == nullptr) throw("Failed to create OpenGL context");
-		}
-		
-		inline ~GLContext()
-		{
-			SDL_GL_DeleteContext(m_handle);
-		}
+		GLContext(Window& window);
+		~GLContext();
 
 	private:
 		SDL_GLContext m_handle;

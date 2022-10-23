@@ -4,19 +4,21 @@
 
 namespace Sea
 {
-	std::shared_ptr<Window> Window::Of(WindowProperties& properties)
-	{	
+	std::shared_ptr<Window> Window::Of(Window::Properties &properties)
+	{
 		switch (properties.context)
 		{
 		case ContextType::OpenGL:
 			return std::make_shared<Backend::OpenGL::GLWindow>(properties);
-		} 
-		return std::make_shared<Backend::OpenGL::GLWindow>(properties);
+		default:
+			return std::make_shared<Backend::OpenGL::GLWindow>(properties);
+		}
 	}
 
-	Window::Window(WindowProperties& proterties)
-		: m_title(proterties.title), m_width(proterties.width), m_height(proterties.height), m_handle(nullptr)
-	{ }
+	Window::Window(Window::Properties &proterties) 
+		: m_properties(proterties), m_handle(nullptr)
+	{
+	}
 
 	Window::~Window()
 	{
@@ -28,12 +30,12 @@ namespace Sea
 		return m_isOpen;
 	}
 
-	void Window::Hide()
+	void Window::Hide() 
 	{
 		SDL_HideWindow(m_handle);
 	}
 
-	void Window::Show()
+	void Window::Show() 
 	{
 		SDL_ShowWindow(m_handle);
 	}
@@ -47,4 +49,10 @@ namespace Sea
 	{
 		return !m_isOpen;
 	}
+
+	void Window::CreateEvent()
+	{	
+		m_event = std::make_shared<Event>();
+	}
+
 }

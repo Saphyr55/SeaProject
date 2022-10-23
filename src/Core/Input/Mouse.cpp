@@ -6,7 +6,6 @@ namespace Sea
 {
 	List<Mouse::Button> Mouse::buttonsDown;
 	List<Mouse::Button> Mouse::buttonsPressed;
-	s32 Mouse::currentButton = -1;
 
 	bool Mouse::IsButtonDown(Button button)
 	{
@@ -23,29 +22,30 @@ namespace Sea
 		return false;
 	}
 
-	u32 Mouse::GetMousePosX()
-	{
-		return u32();
+	glm::vec2 Mouse::GetMousePosition()
+	{	
+		s32 x, y;
+		SDL_GetMouseState(&x, &y);
+		return glm::vec2(x,y);
 	}
 
-	u32 Mouse::GetMousePosY()
+	glm::vec2 Mouse::GetDesktopMousePosition()
 	{
-		return u32();
+		s32 x, y;
+		SDL_GetGlobalMouseState(&x, &y);
+		return glm::vec2(x, y);
 	}
 
-	glm::vec2 Mouse::GetMousePos()
+	glm::vec2 Mouse::GetRelativeMousePosition()
 	{
-		return glm::vec2();
+		s32 x, y;
+		SDL_GetRelativeMouseState(&x, &y);
+		return glm::vec2(x, y);
 	}
 
-	glm::vec2 Mouse::GetMouseRelativePos()
+	s32 Mouse::GetCurrentButton()
 	{
-		return glm::vec2();
-	}
-
-	u32 Mouse::GetCurrentButton()
-	{
-		return currentButton;
+		return SDL_GetGlobalMouseState(nullptr, nullptr);
 	}
 
 	void Mouse::Reset(Button button)

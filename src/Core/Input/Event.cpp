@@ -29,7 +29,6 @@ namespace Sea
 				Input::ResetKeyPressed((Key::Keys)((s32)m_handle.key.keysym.sym));
 				break;
 			case SDL_MOUSEBUTTONDOWN:
-				Mouse::currentButton = m_handle.button.button;
 				Mouse::buttonsDown.push_back((Mouse::Button)m_handle.button.button);
 				break;
 			case SDL_MOUSEBUTTONUP:

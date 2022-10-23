@@ -14,6 +14,7 @@ namespace Sea
         static const Color Blue;
         static const Color Black;
         static const Color White;
+        static const Color Nothing;
     };
 
     struct Color final

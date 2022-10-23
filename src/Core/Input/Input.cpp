@@ -1,10 +1,11 @@
 #include "Sea/Core/Input/Input.hpp"
+#include "Sea/Core/Input/Mouse.hpp"
 #include <iostream>
 
 namespace Sea
 {
-	std::list<Key::Scancode> Input::scancodesPressed;
-	std::list<Key::Keys> Input::keysPressed;
+	List<Key::Scancode> Input::scancodesPressed;
+	List<Key::Keys> Input::keysPressed;
 
 	bool Input::IsKeyDown(Key::Scancode code)
 	{	
@@ -13,7 +14,7 @@ namespace Sea
 
 	bool Input::IsKeyPressed(Key::Scancode code)
 	{	
-		if (std::find(scancodesPressed.begin(), scancodesPressed.end(), code) == scancodesPressed.end() && IsKeyDown(code))
+		if (!Lists::Contains(scancodesPressed, code) && IsKeyDown(code))
 		{
 			scancodesPressed.push_back(code);
 			return true;
@@ -28,7 +29,7 @@ namespace Sea
 
 	bool Input::IsKeyPressed(Key::Keys key)
 	{
-		if (std::find(keysPressed.begin(), keysPressed.end(), key) == keysPressed.end() && IsKeyDown(key))
+		if (!Lists::Contains(keysPressed, key) && IsKeyDown(key))
 		{
 			keysPressed.push_back(key);
 			return true;
@@ -36,20 +37,24 @@ namespace Sea
 		return false;
 	}
 
+	bool Input::IsButtonPressed(Mouse::Button button)
+	{
+		return Mouse::IsButtonPressed(button);
+	}
+
+	bool Input::IsButtonDown(Mouse::Button button)
+	{
+		return Mouse::IsButtonDown(button);
+	}
+
 	void Input::ResetKeyPressed(Key::Keys key)
 	{
-		if (std::find(Input::keysPressed.begin(), Input::keysPressed.end(), key) != Input::keysPressed.end())
-		{
-			Input::keysPressed.remove(key);
-		}
+		if (Lists::Contains(keysPressed, key)) Input::keysPressed.remove(key);
 	}
 
 	void Input::ResetScancodePressed(Key::Scancode code)
 	{
-		if (std::find(Input::scancodesPressed.begin(), Input::scancodesPressed.end(), code) != Input::scancodesPressed.end())
-		{
-			Input::scancodesPressed.remove(code);
-		}
+		if (Lists::Contains(scancodesPressed, code)) Input::scancodesPressed.remove(code);
 	}
 
 

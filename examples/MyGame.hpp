@@ -41,18 +41,14 @@ void MyGame::Render()
 
 void MyGame::Update(float dt)
 {
-	if (Input::IsKeyDown(Key::Keys::Q))
+	if (Mouse::IsButtonDown(Mouse::Button::Left))
 	{
-		Log::Debug() << "Q";
+		Log::Debug() << "LEFT";
 	}
 
-	if (Input::IsKeyPressed(Key::Keys::S))
+	if (Mouse::IsButtonPressed(Mouse::Button::Right))
 	{
-		Log::Debug() << "S";
+		Log::Debug() << "RIGHT";
 	}
 
-	if (Input::IsKeyPressed(Key::Keys::A))
-	{
-		Log::Debug() << "A";
-	}
 }

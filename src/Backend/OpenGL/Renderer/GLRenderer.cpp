@@ -1,28 +1,30 @@
 #include <Sea/Backend/OpenGL/Renderer/GLRenderer.hpp>
 #include <Sea/Backend/OpenGL/GL.hpp>
 #include <Sea/Common/Color.hpp>
+#include <Sea/Common/File.hpp>
+#include <Sea/Backend/OpenGL/GLShader.hpp>
 #include <mcl/Logger.hpp>
 
-namespace Sea::Backend
+namespace Sea::Backend::OpenGL
 {
-	void OpenGL::GLRenderer::ClearColor(Color color) const
+	void GLRenderer::ClearColor(Color color) const
 	{	
 		glClearColor(color.r, color.g, color.b, color.a);
 	}
 
-	void OpenGL::GLRenderer::Clear() const
+	void GLRenderer::Clear() const
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	OpenGL::GLRenderer::GLRenderer()
+	std::shared_ptr<Shader> GLRenderer::CreateShader(File fragFile, File vertFile) const
 	{
-
+		return std::make_shared<GLShader>(fragFile, vertFile);
 	}
-
-	OpenGL::GLRenderer::~GLRenderer()
+	
+	std::shared_ptr<Shader> GLRenderer::CreateShader(std::string fragSource, std::string vertSource) const
 	{
-
+		return std::make_shared<GLShader>(fragSource, vertSource);
 	}
 }
 

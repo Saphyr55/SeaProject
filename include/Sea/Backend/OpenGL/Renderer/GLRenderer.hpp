@@ -10,10 +10,12 @@ namespace Sea::Backend::OpenGL
     public:
         void ClearColor(Color color) const;
         void Clear() const;
+		std::shared_ptr<Shader> CreateShader(File fragFile, File vertFile)const;
+        std::shared_ptr<Shader> CreateShader(std::string fragSource, std::string vertSource) const;
 
     public:
-        GLRenderer();
-        ~GLRenderer();
+        GLRenderer()=default;
+        ~GLRenderer()=default;
     };
     
 } 

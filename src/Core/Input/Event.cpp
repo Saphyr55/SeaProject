@@ -1,6 +1,6 @@
 #include "Sea/Core/Input/Event.hpp"
 #include "Sea/Core/Input/Input.hpp"
-#include "Sea/Core/Engine.hpp"
+#include "Sea/Core/Application.hpp"
 #include "Sea/Core/Game.hpp"
 #include "mcl/Logger.hpp"
 #include "Sea/Core/Input/Key.hpp">
@@ -34,6 +34,12 @@ namespace Sea
 			case SDL_MOUSEBUTTONUP:
 				Mouse::Reset((Mouse::Button)m_handle.button.button);
 				Mouse::buttonsDown.remove((Mouse::Button)m_handle.button.button);
+				break;
+			case SDL_MOUSEMOTION:
+				Mouse::RelativePosY = (f32) m_handle.motion.yrel;
+				Mouse::RelativePosX = (f32) m_handle.motion.xrel;
+				Mouse::PosX = m_handle.motion.x;
+				Mouse::PosY = m_handle.motion.y;
 				break;
 			default:
 				break;

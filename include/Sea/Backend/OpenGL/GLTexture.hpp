@@ -12,7 +12,7 @@ namespace Sea::Backend::OpenGL
     {
     public:
         
-        void TexUnit(ShaderPtr shader, const char* uniform, u32 unit);
+        void TexUniform(ShaderPtr shader, const char* uniform, u32 uni);
         void Bind();
         void Unbind();
         void Delete();
@@ -20,8 +20,11 @@ namespace Sea::Backend::OpenGL
         s32 GetWidth();
         s32 GetHeight();
 
-		GLTexture(File& image, u32 texType, u32 slot, u32 format, u32 pixelType);
+		GLTexture(File image, u32 texType, u32 slot, u32 format, u32 pixelType);
 		~GLTexture() = default;
+
+    private:
+        void SetDefaultParameteri();
 
     private:
         u32 id, m_type, m_slot, m_format, m_pixelType;

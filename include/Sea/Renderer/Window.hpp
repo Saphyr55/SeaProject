@@ -14,7 +14,7 @@ namespace Sea
 
 	class Window
 	{	
-		friend class Engine;
+		friend class Application;
 		friend class Context;
 		struct Properties;
 
@@ -27,7 +27,7 @@ namespace Sea
 		virtual void Viewport() = 0;
 		virtual void Viewport(u32 h, u32 w) = 0;
 		virtual void Viewport(u32 x, u32 y, u32 h, u32 w) = 0;
-
+		
 		void Hide();
 		void Show();
 		void Close();
@@ -35,7 +35,10 @@ namespace Sea
 		bool IsClosed();
 		void SetSize(f32 w, f32 h);
 		void SetResizable(bool resizable);
+		void SetTitle(std::string title);
 		void WrapMouse(f32 x, f32 y);
+		void GrapMouse();
+		void UngrapMouse();
 		inline SDL_Window* GetHandle() { return m_handle; }
 		inline Properties GetProperties() { return m_properties; }
 		inline const Renderer& GetRenderer() { return *m_renderer; }
@@ -47,13 +50,13 @@ namespace Sea
 	public:
 		struct Properties
 		{
-			ContextType context = ContextType::OpenGL;
-			std::string title = "No Title";
-			std::string fileIcon = "";
-			u32 width = 1080;
-			u32 height = 720;
-			bool resizable = false;
-			bool fullscreen = false;
+			ContextType Context = ContextType::OpenGL;
+			std::string Title = "No Title";
+			std::string FileIcon = "";
+			u32 Width = 1080;
+			u32 Height = 720;
+			bool Resizable = false;
+			bool Fullscreen = false;
 
 			Properties() = default;
 			Properties(const Properties&) = default;

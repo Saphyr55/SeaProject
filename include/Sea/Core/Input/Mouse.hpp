@@ -17,6 +17,11 @@ namespace Sea
 	friend class Event;
 
 	public:
+		static f32 RelativePosX;
+		static f32 RelativePosY;
+		static s32 PosX;
+		static s32 PosY;
+
 		enum class Button
 		{
 			Left = 1,
@@ -25,7 +30,8 @@ namespace Sea
 			XButton1 = 4,
 			XButton2 = 5,
 		};
-
+		
+		static bool IsMouseMoved();
 		static bool IsButtonDown(Button);
 		static bool IsButtonPressed(Button);
 		static glm::vec2 GetMousePosition();

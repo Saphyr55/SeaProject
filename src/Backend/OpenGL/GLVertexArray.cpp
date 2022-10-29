@@ -9,7 +9,7 @@ namespace Sea::Backend::OpenGL
         glGenVertexArrays(1, &id);
     }
 
-	void GLVertexArray::LinkVertexBuffer(GLVertexBuffer vertexBuffer, u32 layout, u32 numComp, u32 type, u32 stride, void* offset)
+	void GLVertexArray::LinkVertexBuffer(GLVertexBuffer& vertexBuffer, u32 layout, u32 numComp, u32 type, u32 stride, void* offset)
 	{
 		vertexBuffer.Bind();
 		glVertexAttribPointer(layout, numComp, type, GL_FALSE, stride, offset);
@@ -17,7 +17,7 @@ namespace Sea::Backend::OpenGL
 		vertexBuffer.Unbind();
 	}
 
-    void GLVertexArray::LinkVertexBuffer(GLVertexBuffer vertexBuffer, u32 layout)
+    void GLVertexArray::LinkVertexBuffer(GLVertexBuffer& vertexBuffer, u32 layout)
     {
         vertexBuffer.Bind();
         glVertexAttribPointer(layout, 3, GL_FLOAT, GL_FALSE ,0, (void*)0);

@@ -12,13 +12,13 @@ namespace Sea::Backend::OpenGL
 
 		auto flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
-		if (m_properties.resizable) flags |= SDL_WINDOW_RESIZABLE;
-		if (m_properties.fullscreen) flags |= SDL_WINDOW_FULLSCREEN;
+		if (m_properties.Resizable) flags |= SDL_WINDOW_RESIZABLE;
+		if (m_properties.Fullscreen) flags |= SDL_WINDOW_FULLSCREEN;
 
 		m_handle = SDL_CreateWindow(
-			m_properties.title.c_str(),
+			m_properties.Title.c_str(),
 			SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-			m_properties.width, m_properties.height, flags
+			m_properties.Width, m_properties.Height, flags
 		);
 
 		if (m_handle == nullptr) throw(std::string("Failed to create window: ") + SDL_GetError());
@@ -28,10 +28,6 @@ namespace Sea::Backend::OpenGL
 		gladLoadGLLoader(SDL_GL_GetProcAddress); // Check OpenGL properties
 
 		if (GL_VERSION == NULL) throw("Enable to init OpenGL");
-
-		// Disable depth test and face culling.
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_CULL_FACE);
 	}
 
 	void GLWindow::Swap()
@@ -46,12 +42,12 @@ namespace Sea::Backend::OpenGL
 
 	void GLWindow::Viewport()
 	{
-		Viewport(m_properties.width, m_properties.height);
+		Viewport(m_properties.Width, m_properties.Height);
 	}
 
 	void GLWindow::Viewport(u32 h, u32 w)
 	{
-		Viewport(0, 0, m_properties.width, m_properties.height);
+		Viewport(0, 0, m_properties.Width, m_properties.Height);
 	}
 
 	void GLWindow::Viewport(u32 x, u32 y, u32 h, u32 w)

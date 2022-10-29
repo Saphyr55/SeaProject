@@ -10,15 +10,16 @@
 namespace Sea::Backend::OpenGL
 {
 
-	void GLRenderer::InitGraphics() const
+	void GLRenderer::Enable() const
 	{
-		ClearColor(Colors::Nothing);
-		glFrontFace(GL_CW);
-		glCullFace(GL_BACK);
-		glEnable(GL_CULL_FACE);
+		//ClearColor(Colors::Nothing);
+		//glFrontFace(GL_CW);
+		//glCullFace(GL_BACK);
+// 		glEnable(GL_DEPTH_TEST);
+// 		glEnable(GL_FRAMEBUFFER_SRGB);
+// 		glEnable(GL_DEPTH_CLAMP);
+// 		glEnable(GL_CULL_FACE);
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_FRAMEBUFFER_SRGB);
-		glEnable(GL_DEPTH_CLAMP);
 	}
 
 	void GLRenderer::ClearColor(Color color) const

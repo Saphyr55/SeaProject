@@ -16,7 +16,7 @@ namespace Sea
     class Renderer
     {
     public:
-        virtual void InitGraphics() const = 0;
+        virtual void Enable() const = 0;
         virtual void ClearColor(Color color) const = 0;
         virtual void Clear() const = 0;
         virtual std::shared_ptr<Shader> CreateShader(File fragFile, File vertFile)const=0;

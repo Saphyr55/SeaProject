@@ -6,6 +6,15 @@ namespace Sea
 {
 	List<Mouse::Button> Mouse::buttonsDown;
 	List<Mouse::Button> Mouse::buttonsPressed;
+	f32 Mouse::RelativePosX = 0;
+	f32 Mouse::RelativePosY = 0;
+	s32 Mouse::PosX = 0;
+	s32 Mouse::PosY = 0;
+
+	bool Mouse::IsMouseMoved()
+	{
+		return Mouse::RelativePosX != 0;
+	}
 
 	bool Mouse::IsButtonDown(Button button)
 	{
@@ -38,9 +47,7 @@ namespace Sea
 
 	glm::vec2 Mouse::GetRelativeMousePosition()
 	{
-		s32 x, y;
-		SDL_GetRelativeMouseState(&x, &y);
-		return glm::vec2(x, y);
+		return glm::vec2(RelativePosX, RelativePosY);
 	}
 
 	s32 Mouse::GetCurrentButton()

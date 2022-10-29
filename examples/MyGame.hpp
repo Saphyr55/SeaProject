@@ -8,8 +8,15 @@
 #include <Sea/Common/Color.hpp>
 #include <mcl/Logger.hpp>
 #include <Sea/Backend/OpenGL/GL.hpp>
+#include <Sea/Backend/OpenGL/GLMesh.hpp>
 #include <Sea/Graphic/Shader.hpp>
+#include <Sea/Backend/OpenGL/GLVertexBuffer.hpp>
+#include <Sea/Backend/OpenGL/GLElementBuffer.hpp>
+#include <Sea/Backend/OpenGL/GLVertexArray.hpp>
+#include <stb/stb_image.h>
+#include <Sea/Backend/OpenGL/GLTexture.hpp>
 
+using namespace Sea::Backend::OpenGL;
 using namespace Sea;
 using mcl::Log;
 
@@ -22,63 +29,77 @@ public:
 	void Before() override;
 	void After() override;
 
+	MyGame()=default;
+	MyGame(const MyGame&) = default;
+	MyGame(MyGame&&) = default;
+	~MyGame() = default;
+
 private:
-	std::shared_ptr<Shader> shader;
-	u32 vao, vbo, ebo;
+	MeshPtr mesh;
+	ShaderPtr shader;
+	GLVertexArrayPtr vao;
+	GLVertexBufferPtr vbo;
+	GLElementBufferPtr ebo;
+	GLTexturePtr texture;
 };
 
 void MyGame::Before()
 {
-	const f32 vertices[] = 
+	f32 vertices[] =
 	{
-		 0.5f,  0.5f, 0.0f,  // top right
-		 0.5f, -0.5f, 0.0f,  // bottom right
-		-0.5f, -0.5f, 0.0f,  // bottom left
-		-0.5f,  0.5f, 0.0f   // top left 
+		 0.5f,  0.5f, 0.0f, 0.0f, 0.0f, // top right
+		 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // bottom right
+		-0.5f, -0.5f, 0.0f, 1.0f, 1.0f, // bottom left
+		-0.5f,  0.5f, 0.0f, 1.0f, 0.0f  // top left 
 	};
 
-	const u32 indices[] = 
+	u32 indices[] = 
 	{
 		0, 1, 3,   // first triangle
-		1, 2, 3    // second triangle
+		1, 2, 3,    // second triangle
 	};
 	
-	shader = GetRenderer().CreateShader(
-		File("../../examples/shaders/shader.vert"),
-		File("../../examples/shaders/shader.frag")
+	shader = GetRenderer().CreateShader
+	(
+		File("./examples/shaders/shader.vert"),
+		File("./examples/shaders/shader.frag")
 	);
+
 	shader->Use();
 
-	// Gen
-	glGenVertexArrays(1, &vao);
-	glGenBuffers(1, &vbo);
-	glGenBuffers(1, &ebo);
+	texture = std::make_shared<GLTexture>
+	(
+			File("./examples/res/image.png"),
+			GL_TEXTURE_2D,
+			GL_TEXTURE0,
+			GL_RGBA,
+			GL_UNSIGNED_BYTE
+	);
 
-	// Bind
-	glBindVertexArray(vao);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	// Gen ebo and attrib data
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-	glEnableVertexAttribArray(0);
+	vao = std::make_shared<GLVertexArray>();
+	vao->Bind();
 	
-	// Unbind
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	vbo = std::make_shared<GLVertexBuffer>(vertices, sizeof(vertices));
+	ebo = std::make_shared<GLElementBuffer>(indices, sizeof(indices));
+
+	vao->LinkVertexBuffer(*vbo, 0, 3, GL_FLOAT, 5 * (sizeof(f32)), (void*)0);
+	vao->LinkVertexBuffer(*vbo, 1, 2, GL_FLOAT, 5 * (sizeof(f32)), (void*)(3 * sizeof(f32)));
+
+	vao->Unbind();
+	vbo->Unbind();
+	ebo->Unbind();
+	
+	texture->Bind();
+	texture->TexUnit(shader, "tex0", 0);
+
 }
 
 void MyGame::After()
 {
-	glDeleteVertexArrays(1, &vao);
-	glDeleteBuffers(1, &vbo);
-	glDeleteBuffers(1, &ebo);
+	vao->Delete();
+	vbo->Delete();
+	ebo->Delete();
+	texture->Delete();
 	shader->Delete();
 }
 
@@ -88,7 +109,8 @@ void MyGame::Render()
 	GetRenderer().ClearColor(Colors::Nothing);
 	GetRenderer().Clear();
 	shader->Use();
-	glBindVertexArray(vao);
+	texture->Bind();
+	vao->Bind();
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 

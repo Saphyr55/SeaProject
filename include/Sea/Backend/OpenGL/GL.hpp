@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 #include <SDL2/SDL.h>
+#include "Sea/Common/CommonType.hpp"
 
 namespace Sea::Backend::OpenGL
 {

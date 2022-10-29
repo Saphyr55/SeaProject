@@ -27,6 +27,7 @@ namespace Sea
 		if (m_game)
 		{
 			m_game->Run();
+			m_game->GetRenderer().InitGraphics();
 			m_game->Before();
 		}
 	}
@@ -44,7 +45,7 @@ namespace Sea
 		while (m_game->IsRunning())
 		{
 			m_game->GetWindow().CreateEvent();
-			
+
 			while (m_game->GetWindow().IsOpen())
 			{
 				m_game->GetWindow().Swap();
@@ -58,7 +59,9 @@ namespace Sea
 
 	void Engine::Init()
 	{
-		if (SDL_Init(SDL_INIT_EVERYTHING) != 0) throw std::runtime_error("Init SDL fail");
+		if (SDL_Init(SDL_INIT_EVERYTHING) != 0) 
+			throw std::runtime_error("Init SDL fail");
+	//	File::FROM_SOURCE = 
 	}
 
 	void Engine::Run()

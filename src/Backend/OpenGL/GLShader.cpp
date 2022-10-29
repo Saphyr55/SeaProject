@@ -16,6 +16,11 @@ namespace Sea::Backend::OpenGL
 		glDeleteShader(programId);
 	}
 
+	u32 GLShader::GetId()
+	{
+		return programId;
+	}
+
 	GLShader::GLShader(File vertexShader, File fragmentShader)
 		: GLShader(vertexShader.Read(), fragmentShader.Read()) 
 	{

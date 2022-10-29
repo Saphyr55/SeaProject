@@ -10,6 +10,7 @@ namespace Sea::Backend::OpenGL
 	public:
 		void Use();
 		void Delete();
+		u32 GetId();
 
 		GLShader(File /*vertexFragment*/, File /*fragmentShader*/);
 		GLShader(std::string /*vertexShaderSource*/, std::string /*fragmentShaderSource*/);

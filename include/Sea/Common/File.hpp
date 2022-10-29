@@ -8,11 +8,15 @@ namespace Sea
 	class File final
 	{
 	public:
+		static std::string FROM_SOURCE;
+
+	public:
 		static const std::string GetFileContent(File /* file */);
 		static const std::string GetFileContent(const std::string /* filepath */);
 
 		const std::string Read();
 		const std::string GetContent();
+		const std::string GetPath();
 
 		File(const std::string filepath);
 		File(const File&) = default;

@@ -1,12 +1,26 @@
+#include <mcl/Logger.hpp>
+
 #include <Sea/Backend/OpenGL/Renderer/GLRenderer.hpp>
 #include <Sea/Backend/OpenGL/GL.hpp>
-#include <Sea/Common/Color.hpp>
-#include <Sea/Common/File.hpp>
 #include <Sea/Backend/OpenGL/GLShader.hpp>
-#include <mcl/Logger.hpp>
+#include <Sea/Backend/OpenGL/GLMesh.hpp>
+#include <Sea/Common/File.hpp>
+#include <Sea/Common/Color.hpp>
 
 namespace Sea::Backend::OpenGL
 {
+
+	void GLRenderer::InitGraphics() const
+	{
+		ClearColor(Colors::Nothing);
+		glFrontFace(GL_CW);
+		glCullFace(GL_BACK);
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_FRAMEBUFFER_SRGB);
+		glEnable(GL_DEPTH_CLAMP);
+	}
+
 	void GLRenderer::ClearColor(Color color) const
 	{	
 		glClearColor(color.r, color.g, color.b, color.a);
@@ -26,6 +40,12 @@ namespace Sea::Backend::OpenGL
 	{
 		return std::make_shared<GLShader>(fragSource, vertSource);
 	}
+
+	std::shared_ptr<Mesh> GLRenderer::CreateMesh() const
+	{
+		return std::make_shared<GLMesh>();
+	}
+
 }
 
 

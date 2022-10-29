@@ -9,7 +9,7 @@ namespace Sea
 
 	class Engine final
 	{
-		friend class Event;
+	friend class Event;
 
 	public:
 		void Run();

@@ -4,6 +4,8 @@
 
 namespace Sea
 {
+	std::string File::FROM_SOURCE = "../../";
+
 	const std::string File::GetFileContent(File file)
 	{
 		file.Read();
@@ -29,8 +31,14 @@ namespace Sea
 		return std::string(m_content);
 	}
 
-	File::File(const std::string filepath) :
-		m_filepath(filepath)
+	const std::string File::GetPath()
 	{
+		return m_filepath;
+	}
+
+	File::File(const std::string filepath) :
+		m_filepath(FROM_SOURCE+filepath)
+	{
+
 	}
 }

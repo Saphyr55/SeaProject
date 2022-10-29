@@ -5,14 +5,15 @@
 
 namespace Sea
 {
+
 	class Shader
 	{
 	public:
 		virtual void Use()=0;
 		virtual void Delete()=0;
-
-	private:
-
+		virtual u32 GetId() = 0;
 	};
+
+	using ShaderPtr = std::shared_ptr<Shader>;
 
 }

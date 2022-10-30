@@ -4,7 +4,6 @@
 
 namespace Sea
 {
-	using WindowPtr = std::shared_ptr<Window>;
 
 	class Renderer;
 	class Application;

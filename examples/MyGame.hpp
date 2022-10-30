@@ -1,5 +1,6 @@
 #pragma once
 
+#include <utility>
 #include <iostream>
 #include <filesystem>
 
@@ -32,7 +33,9 @@ public:
 	void Render() override;
 	void Update(f32 dt) override;
 	void Before() override;
-	void After() override;
+	void After() override; 
+	void Input(f32 dt);
+	glm::vec3 DampedString(const glm::vec3 currentPos, const glm::vec3 targetPos, f32 frametime, f32 springStrength);
 
 	MyGame()=default;
 	MyGame(const MyGame&) = default;
@@ -57,7 +60,10 @@ private:
 	static u32 indices[], lightIndices[];
 
 	f32 speed = .01f;
-	s32 state = 0;
+	s32 state = 1;
+	f32 ambientWorld = 0.19f;
+
+	f32 lastX, lastY;
 };
 
 f32 MyGame::vertices[] =
@@ -94,7 +100,7 @@ u32 MyGame::indices[] =
 	13, 15, 14 // Facing side
 };
 
-f32  MyGame::lightVertices[] =
+f32 MyGame::lightVertices[] =
 {
 	-0.1f, -0.1f,  0.1f,
 	-0.1f, -0.1f, -0.1f,
@@ -128,7 +134,7 @@ void MyGame::Before()
 	(	
 		GetWindow().GetProperties().Width,
 		GetWindow().GetProperties().Height,
-		glm::vec3(0.0f, .5f, 2.0f)
+		glm::vec3(0.0f, 0.5f, 2.0f)
 	);
 
 	shader = GetRenderer().CreateShader
@@ -154,7 +160,7 @@ void MyGame::Before()
 
 	vao->LinkVertexBuffer(*vbo, 0, 3, GL_FLOAT, 11 * (sizeof(f32)), (void*)0);
 	vao->LinkVertexBuffer(*vbo, 1, 3, GL_FLOAT, 11 * (sizeof(f32)), (void*)(3 * sizeof(f32)));
-	vao->LinkVertexBuffer(*vbo, 2, 2, GL_FLOAT, 11 * (sizeof(f32)), (void*)(6 * sizeof(f32)));
+	vao->LinkVertexBuffer(*vbo, 2, 2, GL_FLOAT, 11 * (sizeof(f32)), (void*)(6 * sizeof(f32))); 
 	vao->LinkVertexBuffer(*vbo, 3, 3, GL_FLOAT, 11 * (sizeof(f32)), (void*)(8 * sizeof(f32)));
 
 	vao->Unbind();
@@ -164,6 +170,7 @@ void MyGame::Before()
 	texture->Bind();
 	shader->Use();
 	shader->Set1Int("tex0", 0);
+	shader->Set1Float("ambient", ambientWorld);
 
 	shaderLight = GetRenderer().CreateShader
 	(
@@ -184,7 +191,7 @@ void MyGame::Before()
 	eboLightCube->Unbind();
 
 	shaderLight->Use();
-	auto lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	auto lightColor = Colors::White.toVec4f();
 	auto lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
 	auto lightModel = glm::mat4(1.0f);
 	lightModel = glm::translate(lightModel, lightPos);
@@ -198,6 +205,7 @@ void MyGame::Before()
 	shader->SetMatrix4fv("model", pyramidModel);
 	shader->SetVec4f("lightColor", lightColor);
 	shader->SetVec3f("lightPos", lightPos);
+
 
 }
 
@@ -219,7 +227,7 @@ void MyGame::After()
 
 void MyGame::Render()
 {	
-	GetRenderer().ClearColor(Colors::Nothing);
+	GetRenderer().ClearColor(Colors::Black);
 	GetRenderer().Clear();
 	GetWindow().Viewport();
 
@@ -240,38 +248,68 @@ void MyGame::Render()
 
 
 void MyGame::Update(f32 dt)
+{	
+
+	Input(dt);
+	if (state == 1)
+	{
+		Mouse::OnMoved([=]() {
+			f32 sensitivity = .1f * dt;
+
+			camera->Yaw += Mouse::RelativePosX * sensitivity;
+			camera->Pitch += Mouse::RelativePosY * sensitivity;
+
+			if (camera->Pitch > 89.0f) camera->Pitch = 89.0f;
+			if (camera->Pitch < -89.0f) camera->Pitch = -89.0f;
+
+			glm::vec3 new_orientation;
+			new_orientation.x = cos(glm::radians(camera->Yaw)) * cos(glm::radians(camera->Pitch));
+			new_orientation.y = -sin(glm::radians(camera->Pitch));
+			new_orientation.z = sin(glm::radians(camera->Yaw)) * cos(glm::radians(camera->Pitch));
+			camera->Orientation = glm::normalize(new_orientation);
+		});
+	}
+
+
+}
+
+void MyGame::Input(f32 dt)
 {
-	speed = 0.025f * dt;
+	speed = .01f * dt;
+
+	glm::vec3 targetPos = camera->Position;
 
 	if (Input::IsKeyDown(Key::Keys::Z))
 	{
-		camera->Position += speed * camera->Orientation;
+		targetPos += speed * camera->Orientation;
 	}
 
 	if (Input::IsKeyDown(Key::Keys::S))
 	{
-		camera->Position += speed * -camera->Orientation;
+		targetPos += speed * -camera->Orientation;
 	}
 
 	if (Input::IsKeyDown(Key::Keys::Q))
 	{
-		camera->Position += speed * -glm::normalize(glm::cross(camera->Orientation, camera->Up));
+		targetPos += speed * -glm::normalize(glm::cross(camera->Orientation, camera->Up));
 	}
 
 	if (Input::IsKeyDown(Key::Keys::D))
 	{
-		camera->Position += speed * glm::normalize(glm::cross(camera->Orientation, camera->Up));
+		targetPos += speed * glm::normalize(glm::cross(camera->Orientation, camera->Up));
 	}
 
 	if (Input::IsKeyDown(Key::Keys::LSHIFT))
 	{
-		camera->Position += speed * -camera->Up;
+		targetPos += speed * -camera->Up;
 	}
 
 	if (Input::IsKeyDown(Key::Keys::SPACE))
 	{
-		camera->Position += speed * camera->Up;
+		targetPos += speed * camera->Up;
 	}
+
+	camera->Position = DampedString(camera->Position, targetPos, dt, 1);
 
 	if (Input::IsKeyPressed(Key::Keys::ESCAPE))
 	{
@@ -279,37 +317,34 @@ void MyGame::Update(f32 dt)
 		{
 		case 0:
 			state = 1;
+			GetWindow().SetMouseOnMiddlePosistion();
 			GetWindow().GrapMouse();
-			SDL_ShowCursor(SDL_DISABLE);
+			Mouse::ShowCursor(false);
+			Mouse::SetRelativeMouseMode(true);
 			break;
 		case 1:
 			state = 0;
+			GetWindow().SetMouseOnMiddlePosistion();
 			GetWindow().UngrapMouse();
-			SDL_ShowCursor(SDL_ENABLE);
+			Mouse::ShowCursor(true);
+			Mouse::SetRelativeMouseMode(false);
 			break;
 		default:
 			break;
 		}
 	}
+}
 
-	if (state == 1 && Mouse::IsMouseMoved())
-	{	
-		f32 sensitivity = 0.1f;
-		camera->Yaw += Mouse::RelativePosX * sensitivity;
-		camera->Pitch += Mouse::RelativePosY * sensitivity;
-
-		if (camera->Pitch > 89.0f)
-			camera->Pitch = 89.0f;
-		if (camera->Pitch < -89.0f)
-			camera->Pitch = -89.0f;
-
-		glm::vec3 new_orientation;
-		new_orientation.x = cos(glm::radians(camera->Yaw)) * cos(glm::radians(camera->Pitch));
-		new_orientation.y = sin(glm::radians(-camera->Pitch));
-		new_orientation.z = sin(glm::radians(camera->Yaw)) * cos(glm::radians(camera->Pitch));
-		camera->Orientation = glm::normalize(new_orientation);
-
-		GetWindow().WrapMouse(GetWindow().GetProperties().Width / 2, GetWindow().GetProperties().Height / 2);
-	}
-
+glm::vec3 MyGame::DampedString(const glm::vec3 currentPos, const glm::vec3 targetPos, f32 frametime, f32 springStrength)
+{
+	glm::vec3 displacement = targetPos - currentPos;
+	f32 displacementLength = displacement.length();
+	if (displacementLength == 0.f)
+		return currentPos;
+	f32 invDisplacementLength = 1.f / displacementLength;
+	const f32 dampConstant = 0.000065f; 
+	f32 springMagitude = springStrength * displacementLength + dampConstant * invDisplacementLength;
+	f32 scalar = std::min(invDisplacementLength * springMagitude * frametime, 1.f);
+	displacement *= scalar;
+	return currentPos + displacement;
 }

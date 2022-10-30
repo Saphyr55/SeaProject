@@ -13,7 +13,7 @@ namespace Sea::Backend::OpenGL
 	void GLCamera::SetViewProjection(f32 fov, f32 zNear, f32 zFar)
 	{
 		ProjectionView = 
-			glm::perspective(glm::radians(fov), (f32)((f32)Width / (f32)Height), zNear, zFar)* // porjection
+			glm::perspective(glm::radians(fov), (f32)((f32)Width / (f32)Height), zNear, zFar)* // projection
 			glm::lookAt(Position, Position + Orientation, Up); // view
 	}
 

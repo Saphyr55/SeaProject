@@ -2,22 +2,25 @@
 
 #include <SDL2/SDL.h>
 #include <memory>
-#include <functional>
 #include <vector>
 
 namespace Sea
 {	
 	class Game;
-	using Callback = std::function<void(void)>;
 
 	class Event final
 	{
-		friend class Input;
+	friend class Input;
 
 	public:
 		void HandleEvent(Game& game);
+		void ClearEvent();
 
 	private:
+		bool mousefirst = true;
+		bool mouseMotion = false;
 		SDL_Event m_handle;
 	};
+
+
 }

@@ -69,9 +69,14 @@ namespace Sea
 		SDL_SetWindowTitle(m_handle, title.c_str());
 	}
 
-	void Window::WrapMouse(f32 x, f32 y)
+	void Window::SetMousePostion(f32 x, f32 y)
 	{
 		SDL_WarpMouseInWindow(nullptr, x, y);
+	}
+
+	void Window::SetMouseOnMiddlePosistion()
+	{
+		SetMousePostion(m_properties.Width / 2, m_properties.Height / 2);
 	}
 
 	void Window::GrapMouse()

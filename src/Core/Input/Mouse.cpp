@@ -1,6 +1,9 @@
 #include <Sea/Core/Input/Mouse.hpp>
 #include <Sea/Common/List.hpp>
 #include <SDL2/SDL.h>
+#include <mcl/Logger.hpp>
+
+using mcl::Log;
 
 namespace Sea
 {
@@ -10,10 +13,25 @@ namespace Sea
 	f32 Mouse::RelativePosY = 0;
 	s32 Mouse::PosX = 0;
 	s32 Mouse::PosY = 0;
+	bool Mouse::IsMoved = false;
+	List<std::function<void(void)>> Mouse::callbacks;
 
-	bool Mouse::IsMouseMoved()
+	void Mouse::ShowCursor(bool show)
 	{
-		return Mouse::RelativePosX != 0;
+		SDL_ShowCursor((show) ? SDL_ENABLE : SDL_DISABLE);
+	}
+
+	void Mouse::SetRelativeMouseMode(bool active)
+	{
+		if (SDL_SetRelativeMouseMode((active) ? SDL_TRUE : SDL_FALSE) == -1)
+		{
+			Log::Warning()<<"Relative Mouse Mode not supported";
+		}
+	}
+
+	void Mouse::OnMoved(std::function<void(void)> callback)
+	{
+		callbacks.push_back(callback);
 	}
 
 	bool Mouse::IsButtonDown(Button button)
@@ -46,8 +64,10 @@ namespace Sea
 	}
 
 	glm::vec2 Mouse::GetRelativeMousePosition()
-	{
-		return glm::vec2(RelativePosX, RelativePosY);
+	{	
+		s32 x, y;
+		SDL_GetRelativeMouseState(&x, &y);
+		return glm::vec2(x, y);
 	}
 
 	s32 Mouse::GetCurrentButton()

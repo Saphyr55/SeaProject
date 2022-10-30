@@ -8,17 +8,16 @@ layout (location = 3) in vec3 aNormal;
 out vec3 color;
 out vec2 texCoord;  
 out vec3 normal;
-out vec3 crntPos;
+out vec3 fragPos;
 
 uniform mat4 model;
 uniform mat4 cameraProjectionView;
 
 void main()
 {
-    crntPos = vec3(model * vec4(aPos, 1.0f));
-
     gl_Position = cameraProjectionView * model * vec4(aPos, 1.0);
-    //gl_Position = vec4(aPos, 1.0);
+
+    fragPos = vec3(model * vec4(aPos, 1.0f));
     color = aColor;
     texCoord = aTex;
     normal = aNormal;

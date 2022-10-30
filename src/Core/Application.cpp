@@ -64,12 +64,13 @@ namespace Sea
 			{
 				m_clock.StartTick(*m_game);
 				m_game->StartFPS();
-				m_game->GetWindow().Swap();
+				m_game->GetWindow().m_event->ClearEvent();
 				m_game->GetWindow().Update();
-				m_game->GetWindow().m_event->HandleEvent(*m_game);
-				m_game->Update(m_clock.Delta);
 				m_game->Render();
+				m_game->Update(m_clock.Delta);
+				m_game->GetWindow().m_event->HandleEvent(*m_game);
 				m_game->EndFPS();
+				m_game->GetWindow().Swap();
 				m_clock.EndTick();
 			}
 

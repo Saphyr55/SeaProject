@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <list>
 
@@ -21,6 +22,7 @@ namespace Sea
 		static f32 RelativePosY;
 		static s32 PosX;
 		static s32 PosY;
+		static bool IsMoved;
 
 		enum class Button
 		{
@@ -30,8 +32,10 @@ namespace Sea
 			XButton1 = 4,
 			XButton2 = 5,
 		};
-		
-		static bool IsMouseMoved();
+
+		static void ShowCursor(bool show);
+		static void SetRelativeMouseMode(bool active);
+		static void OnMoved(std::function<void(void)> callback);
 		static bool IsButtonDown(Button);
 		static bool IsButtonPressed(Button);
 		static glm::vec2 GetMousePosition();
@@ -43,6 +47,7 @@ namespace Sea
 		static void Reset(Button);
 
 	private:
+		static List<std::function<void(void)>> callbacks;
 		static List<Button> buttonsDown;
 		static List<Button> buttonsPressed;
 	};

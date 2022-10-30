@@ -42,6 +42,11 @@ namespace Sea::Backend::OpenGL
 		glUniform1i(GetUniformLocation(uniform), value);
 	}
 
+	void GLShader::Set1Float(std::string uniform, f32 value)
+	{
+		glUniform1f(GetUniformLocation(uniform), value);
+	}
+
 	u32 GLShader::GetId()
 	{
 		return programId;

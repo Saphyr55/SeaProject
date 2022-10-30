@@ -36,9 +36,11 @@ namespace Sea
 		void SetSize(f32 w, f32 h);
 		void SetResizable(bool resizable);
 		void SetTitle(std::string title);
-		void WrapMouse(f32 x, f32 y);
+		void SetMousePostion(f32 x, f32 y);
+		void SetMouseOnMiddlePosistion();
 		void GrapMouse();
 		void UngrapMouse();
+		inline Event& GetEvent() { m_event; }
 		inline SDL_Window* GetHandle() { return m_handle; }
 		inline Properties GetProperties() { return m_properties; }
 		inline const Renderer& GetRenderer() { return *m_renderer; }
@@ -79,4 +81,7 @@ namespace Sea
 		std::shared_ptr<Event> m_event;
 	
 	};
+
+	using WindowPtr = std::shared_ptr<Window>;
+
 }

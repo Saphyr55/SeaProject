@@ -12,11 +12,11 @@ namespace Sea
 	
 	void Event::HandleEvent(Game& game)
 	{
-
 		while (SDL_PollEvent(&m_handle))
 		{	
-			SDL_PumpEvents();
-			
+
+			Mouse::IsMoved = (m_handle.type == SDL_MOUSEMOTION) ? true : false;
+
 			switch (m_handle.type)
 			{
 			case SDL_QUIT:
@@ -36,17 +36,21 @@ namespace Sea
 				Mouse::buttonsDown.remove((Mouse::Button)m_handle.button.button);
 				break;
 			case SDL_MOUSEMOTION:
-				Mouse::RelativePosY = (f32) m_handle.motion.yrel;
-				Mouse::RelativePosX = (f32) m_handle.motion.xrel;
+				for (auto callback : Mouse::callbacks) callback();
+				Mouse::RelativePosY = m_handle.motion.yrel;
+				Mouse::RelativePosX = m_handle.motion.xrel;
 				Mouse::PosX = m_handle.motion.x;
 				Mouse::PosY = m_handle.motion.y;
 				break;
 			default:
 				break;
 			}
-
 		}
+	}
 
+	void Event::ClearEvent()
+	{
+		Mouse::callbacks.clear();
 	}
 
 }

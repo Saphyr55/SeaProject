@@ -15,6 +15,7 @@ namespace Sea::Backend::OpenGL
 		void Set4Float(std::string uniform, f32 x, f32 y, f32 z, f32 w);
 		void SetMatrix4fv(std::string uniform, glm::mat4 value);
 		void Set1Int(std::string uniform, s32 value);
+		void Set1Float(std::string uniform, f32 value);
 		u32 GetId();
 
 		GLShader(File /*vertexFragment*/, File /*fragmentShader*/);

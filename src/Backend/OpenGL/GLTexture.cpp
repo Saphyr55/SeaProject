@@ -5,65 +5,62 @@
 
 namespace Sea::Backend::OpenGL
 {
-	GLTexture::GLTexture(File image, u32 texType, u32 slot, u32 format, u32 pixelType)
-		: imageFile(image), m_type(texType), m_format(format), m_slot(slot), m_pixelType(pixelType)
+	GLTexture::GLTexture(File image, Type texType, u32 slot)
+		: Texture(image, texType, slot)
 	{
 		s32 channel;
 		u8* bytes = stbi_load(imageFile.GetPath().c_str(), &width, &height, &channel, 0);
 		glGenTextures(1, &id);
-		glActiveTexture(slot);
 		Bind();
 		SetDefaultParameteri();
-		glTexImage2D(m_type, 0, GL_RGBA, width, height, 0, format, m_pixelType, bytes);
-		glGenerateMipmap(m_type);
+		SetupFormatFromChannel(channel);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, GL_UNSIGNED_BYTE, bytes);
+		glGenerateMipmap(GL_TEXTURE_2D);
 		stbi_image_free(bytes);
 		Unbind();
 	}
 
-	void GLTexture::SetDefaultParameteri()
+	void GLTexture::SetupFormatFromChannel(s32 channel)
 	{
-		glTexParameteri(m_type, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(m_type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-		glTexParameteri(m_type, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(m_type, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		switch (channel)
+		{
+		case 4:
+			format = GL_RGBA;
+			break;
+		case 3:
+			format = GL_RGB;
+			break;
+		case 1:
+			format = GL_RED;
+			break;
+		default:
+			throw std::exception("Automatic Texture type recognition failed");
+		}
 	}
 
-	void GLTexture::TexUniform(ShaderPtr shader, const char* uniform, u32 uni)
-	{	
-		u32 tex0Uni = glGetUniformLocation(shader->GetId(), uniform);
-		shader->Use();
-		glUniform1i(tex0Uni, uni);
+	void GLTexture::SetDefaultParameteri()
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	}
 
 	void GLTexture::Bind()
 	{
-		glBindTexture(m_type, id);
+		glActiveTexture(GL_TEXTURE0 + m_slot);
+		glBindTexture(GL_TEXTURE_2D, id);
 	}
 
 	void GLTexture::Unbind()
 	{
-		glBindTexture(m_type, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void GLTexture::Delete()
 	{
 		glDeleteTextures(1, &id);
-	}
-
-	u32 GLTexture::GetId()
-	{
-		return id;
-	}
-
-	s32 GLTexture::GetWidth()
-	{
-		return width;
-	}
-
-	s32 GLTexture::GetHeight()
-	{
-		return height;
 	}
 
 }

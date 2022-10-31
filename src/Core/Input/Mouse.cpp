@@ -7,15 +7,6 @@ using mcl::Log;
 
 namespace Sea
 {
-	List<Mouse::Button> Mouse::buttonsDown;
-	List<Mouse::Button> Mouse::buttonsPressed;
-	f32 Mouse::RelativePosX = 0;
-	f32 Mouse::RelativePosY = 0;
-	s32 Mouse::PosX = 0;
-	s32 Mouse::PosY = 0;
-	bool Mouse::IsMoved = false;
-	List<std::function<void(void)>> Mouse::callbacks;
-
 	void Mouse::ShowCursor(bool show)
 	{
 		SDL_ShowCursor((show) ? SDL_ENABLE : SDL_DISABLE);
@@ -79,5 +70,14 @@ namespace Sea
 	{
 		if (Lists::Contains(buttonsPressed, button)) buttonsPressed.remove(button);
 	}
+
+	List<Mouse::Button> Mouse::buttonsDown;
+	List<Mouse::Button> Mouse::buttonsPressed;
+	f32 Mouse::RelativePosX = 0;
+	f32 Mouse::RelativePosY = 0;
+	s32 Mouse::PosX = 0;
+	s32 Mouse::PosY = 0;
+	bool Mouse::IsMoved = false;
+	List<std::function<void(void)>> Mouse::callbacks;
 
 }

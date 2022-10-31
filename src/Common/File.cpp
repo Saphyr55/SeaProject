@@ -1,6 +1,9 @@
 #include "Sea/Common/File.hpp"
 
 #include <fstream>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 namespace Sea
 {
@@ -36,9 +39,14 @@ namespace Sea
 		return m_filepath;
 	}
 
-	File::File(const std::string filepath) :
-		m_filepath(FROM_SOURCE+filepath)
+	const std::string File::GetExtenstion()
 	{
+		return m_ext;
+	}
 
+	File::File(const std::string filepath) :
+		m_filepath(FROM_SOURCE+filepath), m_ext(fs::path(filepath).extension().string())
+	{
+		
 	}
 }

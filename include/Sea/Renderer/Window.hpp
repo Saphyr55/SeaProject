@@ -19,7 +19,7 @@ namespace Sea
 		struct Properties;
 
 	public:
-		static std::shared_ptr<Window> Of(Window::Properties& properties);
+		static Ref<Window> Of(Window::Properties& properties);
 
 		virtual void Run()=0;
 		virtual void Swap()=0;
@@ -45,9 +45,11 @@ namespace Sea
 		inline Properties GetProperties() { return m_properties; }
 		inline const Renderer& GetRenderer() { return *m_renderer; }
 
-	private:
+	protected:
+		void SetupFlags();
 		void CreateEvent();
 		void Update();
+		void SetupIcon();
 
 	public:
 		struct Properties
@@ -59,11 +61,7 @@ namespace Sea
 			u32 Height = 720;
 			bool Resizable = false;
 			bool Fullscreen = false;
-
-			Properties() = default;
-			Properties(const Properties&) = default;
-			Properties(Properties&&) = default;
-			~Properties() = default;
+			bool Maximazed = false;
 		};
 
 	public:
@@ -73,6 +71,7 @@ namespace Sea
 		~Window();
 
 	protected:
+		s32 flags;
 		bool m_isOpen = true;
 		SDL_Window* m_handle;
 		Properties m_properties;

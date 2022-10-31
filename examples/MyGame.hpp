@@ -10,17 +10,20 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <Sea/Common/Color.hpp>
+
 #include <Sea/Core/Game.hpp>
 #include <Sea/Core/Input/Input.hpp>
-#include <Sea/Common/Color.hpp>
+#include <Sea/Core/Mold.hpp>
+
+#include <Sea/Renderer/Camera.hpp>
+
 #include <Sea/Backend/OpenGL/GL.hpp>
 #include <Sea/Backend/OpenGL/GLMesh.hpp>
-#include <Sea/Graphic/Shader.hpp>
+#include <Sea/Backend/OpenGL/GLTexture.hpp>
+#include <Sea/Backend/OpenGL/GLVertexArray.hpp>
 #include <Sea/Backend/OpenGL/GLVertexBuffer.hpp>
 #include <Sea/Backend/OpenGL/GLElementBuffer.hpp>
-#include <Sea/Backend/OpenGL/GLVertexArray.hpp>
-#include <Sea/Backend/OpenGL/GLTexture.hpp>
-#include <Sea/Backend/OpenGL/GLCamera.hpp>
 
 using namespace Sea::Backend::OpenGL;
 using namespace Sea;
@@ -35,6 +38,8 @@ public:
 	void Before() override;
 	void After() override; 
 	void Input(f32 dt);
+	void DefaultCursor();
+	void CameraCursor();
 	glm::vec3 DampedString(const glm::vec3 currentPos, const glm::vec3 targetPos, f32 frametime, f32 springStrength);
 
 	MyGame()=default;
@@ -43,73 +48,48 @@ public:
 	~MyGame() = default;
 
 private:
-	ShaderPtr shader;
-	GLVertexArrayPtr vao;
-	GLVertexBufferPtr vbo;
-	GLElementBufferPtr ebo;
+	Ref<Camera> camera;
 
-	ShaderPtr shaderLight;
-	GLVertexArrayPtr vaoLightCube;
-	GLVertexBufferPtr vboLightCube;
-	GLElementBufferPtr eboLightCube;
+	Ref<Shader> shader;
+	Ref<Shader> shaderLight;
 
-	GLTexturePtr texture;
-	GLCameraPtr camera;
+	Ref<Mesh> floor;
+	Ref<Mesh> light;
 
-	static f32 vertices[], lightVertices[];
+	static Vertex vertices[], lightVertices[];
 	static u32 indices[], lightIndices[];
-
-	f32 speed = .01f;
+	
+	f32 initSpeed = .025f;
+	f32 speed = initSpeed;
 	s32 state = 1;
 	f32 ambientWorld = 0.19f;
-
-	f32 lastX, lastY;
+	u32 specularAmountPow = 16;
 };
 
-f32 MyGame::vertices[] =
+Vertex MyGame::vertices[] =
 {
-	-0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,      0.0f, -1.0f, 0.0f, // Bottom side
-	-0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 5.0f,      0.0f, -1.0f, 0.0f, // Bottom side
-	 0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 5.0f,      0.0f, -1.0f, 0.0f, // Bottom side
-	 0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, -1.0f, 0.0f, // Bottom side
-
-	-0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,     -0.8f, 0.5f,  0.0f, // Left Side
-	-0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,     -0.8f, 0.5f,  0.0f, // Left Side
-	 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,     -0.8f, 0.5f,  0.0f, // Left Side
-
-	-0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f, -0.8f, // Non-facing side
-	 0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 0.0f,      0.0f, 0.5f, -0.8f, // Non-facing side
-	 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.0f, 0.5f, -0.8f, // Non-facing side
-
-	 0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 0.0f,      0.8f, 0.5f,  0.0f, // Right side
-	 0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.8f, 0.5f,  0.0f, // Right side
-	 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.8f, 0.5f,  0.0f, // Right side
-
-	 0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f,  0.8f, // Facing side
-	-0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,      0.0f, 0.5f,  0.8f, // Facing side
-	 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.0f, 0.5f,  0.8f  // Facing side
+	Vertex{ glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f) },
+	Vertex{ glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f) },
+	Vertex{ glm::vec3( 1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f) },
+	Vertex{ glm::vec3( 1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f) }
 };
 
 u32 MyGame::indices[] =
 {
-	0, 1, 2, // Bottom side
-	0, 2, 3, // Bottom side
-	4, 6, 5, // Left side
-	7, 9, 8, // Non-facing side
-	10, 12, 11, // Right side
-	13, 15, 14 // Facing side
+	0, 1, 2,
+	0, 2, 3
 };
 
-f32 MyGame::lightVertices[] =
+Vertex MyGame::lightVertices[] =
 {
-	-0.1f, -0.1f,  0.1f,
-	-0.1f, -0.1f, -0.1f,
-	 0.1f, -0.1f, -0.1f,
-	 0.1f, -0.1f,  0.1f,
-	-0.1f,  0.1f,  0.1f,
-	-0.1f,  0.1f, -0.1f,
-	 0.1f,  0.1f, -0.1f,
-	 0.1f,  0.1f,  0.1f
+	Vertex{glm::vec3(-0.1f, -0.1f,  0.1f) },
+	Vertex{glm::vec3(-0.1f, -0.1f, -0.1f) },
+	Vertex{glm::vec3(0.1f, -0.1f, -0.1f)  },
+	Vertex{glm::vec3(0.1f, -0.1f,  0.1f)  },
+	Vertex{glm::vec3(-0.1f,  0.1f,  0.1f) },
+	Vertex{glm::vec3(-0.1f,  0.1f, -0.1f) },
+	Vertex{glm::vec3(0.1f,  0.1f, -0.1f)  },
+	Vertex{glm::vec3(0.1f,  0.1f,  0.1f)  }
 };
 
 u32 MyGame::lightIndices[] =
@@ -130,143 +110,103 @@ u32 MyGame::lightIndices[] =
 
 void MyGame::Before()
 {
-	camera = std::make_shared<GLCamera>
-	(	
-		GetWindow().GetProperties().Width,
-		GetWindow().GetProperties().Height,
-		glm::vec3(0.0f, 0.5f, 2.0f)
-	);
+	camera = CreateRef<Camera>(GetWindow().GetProperties().Width, GetWindow().GetProperties().Height, glm::vec3(0.0f, 0.5f, 2.0f));
 
-	shader = GetRenderer().CreateShader
-	(
-		File("./examples/shaders/shader.vert"),
-		File("./examples/shaders/shader.frag")
-	);
+	switch (state)
+	{
+	case 0:
+		DefaultCursor();
+		break;
+	case 1:
+		CameraCursor();
+		break;
+	default:
+		break;
+	}
 
-	texture = std::make_shared<GLTexture>
-	(
-		File("./examples/res/brick.png"),
-		GL_TEXTURE_2D,
-		GL_TEXTURE0,
-		GL_RGBA,
-		GL_UNSIGNED_BYTE
-	);
+	Ref<Texture> textures[] =
+	{
+		Mould<Texture>(File("./examples/res/planks.png"), Texture::Type::DIFFUSE, 0, GL_RGBA, GL_UNSIGNED_BYTE),
+		Mould<Texture>(File("./examples/res/planksSpec.png"), Texture::Type::SPECULAR, 1, GL_RED, GL_UNSIGNED_BYTE)
+	};
 
-	vao = std::make_shared<GLVertexArray>();
-	vao->Bind();
+	// Default shader
+	shader = Mould<Shader>(File("./examples/shaders/shader.vert"), File("./examples/shaders/shader.frag"));
+	// Light shader
+	shaderLight = Mould<Shader>(File("./examples/shaders/light.vert"), File("./examples/shaders/light.frag"));
 	
-	vbo = std::make_shared<GLVertexBuffer>(vertices, sizeof(vertices));
-	ebo = std::make_shared<GLElementBuffer>(indices, sizeof(indices));
+	// Store mesh data in vectors for the mesh
+	std::vector<Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
+	std::vector<u32> ind(indices, indices + sizeof(indices) / sizeof(u32));
+	std::vector<Ref<Texture>> texs;
+	texs.push_back(textures[0]);
+	texs.push_back(textures[1]);
 
-	vao->LinkVertexBuffer(*vbo, 0, 3, GL_FLOAT, 11 * (sizeof(f32)), (void*)0);
-	vao->LinkVertexBuffer(*vbo, 1, 3, GL_FLOAT, 11 * (sizeof(f32)), (void*)(3 * sizeof(f32)));
-	vao->LinkVertexBuffer(*vbo, 2, 2, GL_FLOAT, 11 * (sizeof(f32)), (void*)(6 * sizeof(f32))); 
-	vao->LinkVertexBuffer(*vbo, 3, 3, GL_FLOAT, 11 * (sizeof(f32)), (void*)(8 * sizeof(f32)));
+	// Create floor mesh
+	floor = Mould<Mesh>(verts, ind, texs);
 
-	vao->Unbind();
-	vbo->Unbind();
-	ebo->Unbind();
-	
-	texture->Bind();
-	shader->Use();
-	shader->Set1Int("tex0", 0);
-	shader->Set1Float("ambient", ambientWorld);
+	// Store mesh data in vectors for the mesh
+	std::vector<Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
+	std::vector<u32> lightInd(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(u32));
 
-	shaderLight = GetRenderer().CreateShader
-	(
-		File("./examples/shaders/light.vert"),
-		File("./examples/shaders/light.frag")
-	);
+	// Create light mesh
+	light =	Mould<Mesh>(lightVerts, lightInd, texs);
 
-	vaoLightCube = std::make_shared<GLVertexArray>();
-	vaoLightCube->Bind();
-
-	vboLightCube = std::make_shared<GLVertexBuffer>(lightVertices, sizeof(lightVertices));
-	eboLightCube = std::make_shared<GLElementBuffer>(lightIndices, sizeof(lightIndices));
-
-	vaoLightCube->LinkVertexBuffer(*vboLightCube, 0, 3, GL_FLOAT, 3 * sizeof(f32), (void*)0);
-
-	vaoLightCube->Unbind();
-	vboLightCube->Unbind();
-	eboLightCube->Unbind();
-
-	shaderLight->Use();
 	auto lightColor = Colors::White.toVec4f();
 	auto lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
 	auto lightModel = glm::mat4(1.0f);
 	lightModel = glm::translate(lightModel, lightPos);
+
+	auto floorPos = glm::vec3(0.0f, 0.0f, 0.0f);
+	auto floorModel = glm::mat4(1.0f);
+	floorModel = glm::translate(floorModel, floorPos);
+
+	shaderLight->Use();
 	shaderLight->SetMatrix4fv("model", lightModel);
 	shaderLight->SetVec4f("lightColor", lightColor);
 
 	shader->Use();
-	auto pyramidPos = glm::vec3(0.0f, 0.0f, 0.0f);
-	auto pyramidModel = glm::mat4(1.0f);
-	pyramidModel = glm::translate(pyramidModel, pyramidPos);
-	shader->SetMatrix4fv("model", pyramidModel);
+	shader->SetMatrix4fv("model", floorModel);
 	shader->SetVec4f("lightColor", lightColor);
 	shader->SetVec3f("lightPos", lightPos);
-
+	shader->Set1Float("ambient", ambientWorld);
+	shader->Set1UInt("specAmountPow", specularAmountPow);
 
 }
 
 void MyGame::After()
-{
-	vao->Delete();
-	vbo->Delete();
-	ebo->Delete();
-	
-	vaoLightCube->Delete();
-	vboLightCube->Delete();
-	eboLightCube->Delete();
-	
-	texture->Delete();
-
+{	
 	shaderLight->Delete();
 	shader->Delete();
 }
 
 void MyGame::Render()
-{	
+{
 	GetRenderer().ClearColor(Colors::Black);
 	GetRenderer().Clear();
 	GetWindow().Viewport();
 
-	camera->SetViewProjection(45.f, .1f, 100.f);
-
-	shader->Use();
-	shader->SetVec3f("cameraPos", camera->Position);
-	shader->SetMatrix4fv("cameraProjectionView", camera->ProjectionView);
-	texture->Bind();
-	vao->Bind();
-	glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(s32), GL_UNSIGNED_INT, 0);
-
-	shaderLight->Use();
-	shaderLight->SetMatrix4fv("cameraProjectionView", camera->ProjectionView);
-	vaoLightCube->Bind();
-	glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(s32), GL_UNSIGNED_INT, 0);
+	camera->SetViewProjection(45.0f, 0.1f, 100.0f);
+	
+ 	floor->Draw(*shader, *camera);
+ 	light->Draw(*shaderLight, *camera);
 }
-
 
 void MyGame::Update(f32 dt)
 {	
-
 	Input(dt);
 	if (state == 1)
 	{
-		Mouse::OnMoved([=]() {
-			f32 sensitivity = .1f * dt;
-
+		Mouse::OnMoved([&]() 
+		{
+			f32 sensitivity = .1f;
 			camera->Yaw += Mouse::RelativePosX * sensitivity;
 			camera->Pitch += Mouse::RelativePosY * sensitivity;
 
 			if (camera->Pitch > 89.0f) camera->Pitch = 89.0f;
 			if (camera->Pitch < -89.0f) camera->Pitch = -89.0f;
 
-			glm::vec3 new_orientation;
-			new_orientation.x = cos(glm::radians(camera->Yaw)) * cos(glm::radians(camera->Pitch));
-			new_orientation.y = -sin(glm::radians(camera->Pitch));
-			new_orientation.z = sin(glm::radians(camera->Yaw)) * cos(glm::radians(camera->Pitch));
-			camera->Orientation = glm::normalize(new_orientation);
+			camera->SetOrientation(camera->Yaw, camera->Pitch);
 		});
 	}
 
@@ -275,7 +215,7 @@ void MyGame::Update(f32 dt)
 
 void MyGame::Input(f32 dt)
 {
-	speed = .01f * dt;
+	speed *= dt;
 
 	glm::vec3 targetPos = camera->Position;
 
@@ -309,6 +249,15 @@ void MyGame::Input(f32 dt)
 		targetPos += speed * camera->Up;
 	}
 
+	if (Input::IsKeyDown(Key::Keys::LCTRL))
+	{	
+		speed = initSpeed * 2;
+	}
+	else
+	{
+		speed = initSpeed;
+	}
+
 	camera->Position = DampedString(camera->Position, targetPos, dt, 1);
 
 	if (Input::IsKeyPressed(Key::Keys::ESCAPE))
@@ -317,22 +266,33 @@ void MyGame::Input(f32 dt)
 		{
 		case 0:
 			state = 1;
-			GetWindow().SetMouseOnMiddlePosistion();
-			GetWindow().GrapMouse();
-			Mouse::ShowCursor(false);
-			Mouse::SetRelativeMouseMode(true);
+			CameraCursor();
 			break;
 		case 1:
 			state = 0;
-			GetWindow().SetMouseOnMiddlePosistion();
-			GetWindow().UngrapMouse();
-			Mouse::ShowCursor(true);
-			Mouse::SetRelativeMouseMode(false);
+			DefaultCursor();
 			break;
 		default:
 			break;
 		}
 	}
+
+}
+
+void MyGame::DefaultCursor()
+{
+	GetWindow().SetMouseOnMiddlePosistion();
+	GetWindow().UngrapMouse();
+	Mouse::ShowCursor(true);
+	Mouse::SetRelativeMouseMode(false);
+}
+
+void MyGame::CameraCursor()
+{
+	GetWindow().SetMouseOnMiddlePosistion();
+	GetWindow().GrapMouse();
+	Mouse::ShowCursor(false);
+	Mouse::SetRelativeMouseMode(true);
 }
 
 glm::vec3 MyGame::DampedString(const glm::vec3 currentPos, const glm::vec3 targetPos, f32 frametime, f32 springStrength)

@@ -18,11 +18,11 @@ namespace Sea::Backend::OpenGL
 		glDeleteBuffers(1, &id);
 	}
 
-	GLElementBuffer::GLElementBuffer(u32 indices[], u32 size)
+	GLElementBuffer::GLElementBuffer(std::vector<u32>& indices)
 	{
 		glGenBuffers(1, &id);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(u32), indices.data(), GL_STATIC_DRAW);
 	}
 
 }

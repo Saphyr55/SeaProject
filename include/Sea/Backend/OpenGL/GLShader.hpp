@@ -10,6 +10,7 @@ namespace Sea::Backend::OpenGL
 	public:
 		void Use();
 		void Delete();
+		void Set1UInt(std::string uniform, u32 value);
 		void SetVec4f(std::string uniform, glm::vec4 value);
 		void SetVec3f(std::string uniform, glm::vec3 value);
 		void Set4Float(std::string uniform, f32 x, f32 y, f32 z, f32 w);

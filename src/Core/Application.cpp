@@ -31,7 +31,7 @@ namespace Sea
 	}
 
 	void Application::CreateGameWindow(std::shared_ptr<Game> game, Window::Properties& properties)
-	{ 
+	{	
 		m_game = game;
 		m_game->m_window = Window::Of(properties);
 	}

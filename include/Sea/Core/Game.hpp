@@ -4,8 +4,6 @@
 
 namespace Sea
 {
-
-	class Renderer;
 	class Application;
 
 	class Game

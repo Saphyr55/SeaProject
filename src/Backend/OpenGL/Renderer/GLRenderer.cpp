@@ -26,21 +26,6 @@ namespace Sea::Backend::OpenGL
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	std::shared_ptr<Shader> GLRenderer::CreateShader(File fragFile, File vertFile) const
-	{
-		return std::make_shared<GLShader>(fragFile, vertFile);
-	}
-	
-	std::shared_ptr<Shader> GLRenderer::CreateShader(std::string fragSource, std::string vertSource) const
-	{
-		return std::make_shared<GLShader>(fragSource, vertSource);
-	}
-
-	std::shared_ptr<Mesh> GLRenderer::CreateMesh() const
-	{
-		return std::make_shared<GLMesh>();
-	}
-
 }
 
 

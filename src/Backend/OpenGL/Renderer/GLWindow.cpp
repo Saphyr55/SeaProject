@@ -9,11 +9,10 @@ namespace Sea::Backend::OpenGL
 	void GLWindow::Run()
 	{
 		OpenGL::Init();
+		SetupIcon();
+		SetupFlags();
 
-		auto flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
-
-		if (m_properties.Resizable) flags |= SDL_WINDOW_RESIZABLE;
-		if (m_properties.Fullscreen) flags |= SDL_WINDOW_FULLSCREEN;
+		flags |= SDL_WINDOW_OPENGL;
 
 		m_handle = SDL_CreateWindow(
 			m_properties.Title.c_str(),
@@ -58,7 +57,9 @@ namespace Sea::Backend::OpenGL
 	GLWindow::GLWindow(Window::Properties& properties) :
 		Window(properties)
 	{
-		m_renderer = std::make_shared<GLRenderer>(GLRenderer());
+		m_renderer = std::make_shared<GLRenderer>();
 	}
+
+
 }
 

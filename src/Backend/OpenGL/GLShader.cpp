@@ -17,6 +17,11 @@ namespace Sea::Backend::OpenGL
 		glDeleteShader(programId);
 	}
 
+	void GLShader::Set1UInt(std::string uniform, u32 value)
+	{
+		glUniform1ui(GetUniformLocation(uniform), value);
+	}
+
 	void GLShader::SetVec4f(std::string uniform, glm::vec4 value)
 	{
 		glUniform4fv(GetUniformLocation(uniform), 1, glm::value_ptr(value));

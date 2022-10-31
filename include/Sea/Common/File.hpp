@@ -17,6 +17,7 @@ namespace Sea
 		const std::string Read();
 		const std::string GetContent();
 		const std::string GetPath();
+		const std::string GetExtenstion();
 
 		File(const std::string filepath);
 		File(const File&) = default;
@@ -26,5 +27,6 @@ namespace Sea
 	private:
 		std::string m_content;
 		const std::string m_filepath;
+		std::string m_ext;
 	};
 }

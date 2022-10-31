@@ -7,46 +7,48 @@ using mcl::Log;
 namespace Sea::Backend::OpenGL
 {
 
-	GLMesh::GLMesh()
-	{
-		glGenVertexArrays(1, &vao);
-		glGenBuffers(1, &vbo);
-		glGenBuffers(1, &ebo);
-	}
-
-	void GLMesh::Delete()
-	{
-		glDeleteVertexArrays(1, &vao);
-		glDeleteBuffers(1, &vbo);
-		glDeleteBuffers(1, &ebo);
-	}
-
-	void GLMesh::Draw()
+	void GLMesh::Draw(Shader& shader, Camera& camera, glm::mat4 matrix, glm::vec3 translation, glm::quat rotation, glm::vec3 scale)
 	{		
-		glBindVertexArray(vao);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		shader.Use();
+		shader.SetMatrix4fv("cameraProjectionView", camera.ProjectionView);
+		shader.SetVec3f("cameraPos", camera.Position);
+		vao.Bind();
+		SetupTextures(shader);
+
+		// Initialize matrices
+		glm::mat4 trans = glm::mat4(1.0f);
+		glm::mat4 rot = glm::mat4(1.0f);
+		glm::mat4 sca = glm::mat4(1.0f);
+
+		// Transform the matrices to their correct form
+		trans = glm::translate(trans, translation);
+		rot = glm::mat4_cast(rotation);
+		sca = glm::scale(sca, scale);
+
+		// Push the matrices to the vertex shader
+		shader.SetMatrix4fv("translation", trans);
+		shader.SetMatrix4fv("rotation", rot);
+		shader.SetMatrix4fv("scale", sca);
+		shader.SetMatrix4fv("model", matrix);
+
+		glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
 	}
-	
-	void GLMesh::Add(f32 vertices[], u32 indices[])
-	{	
-		
-		// Bind
-		glBindVertexArray(vao);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-		// Gen ibo and attrib data
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	GLMesh::GLMesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Ref<Texture>>& textures) :
+		Mesh(vertices, indices, textures)
+	{
+		vao.Bind();
+		GLVertexBuffer vbo(vertices);
+		GLElementBuffer ebo(indices);
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		vao.LinkVertexBuffer(vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
+		vao.LinkVertexBuffer(vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(f32)));
+		vao.LinkVertexBuffer(vbo, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(f32)));
+		vao.LinkVertexBuffer(vbo, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(9 * sizeof(f32)));
 
-		glEnableVertexAttribArray(0);
-
-		// Unbind
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		vao.Unbind();
+		vbo.Unbind();
+		ebo.Unbind();
 	}
 
 

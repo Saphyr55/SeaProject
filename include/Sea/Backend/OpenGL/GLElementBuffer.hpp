@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 #include <Sea/Common/CommonType.hpp>
 
 namespace Sea::Backend::OpenGL
@@ -12,7 +13,7 @@ namespace Sea::Backend::OpenGL
 		void Unbind();
 		void Delete();
 
-		GLElementBuffer(u32 indices[], u32 size);
+		GLElementBuffer(std::vector<u32>& indices);
 		~GLElementBuffer()=default;
 
 	private:

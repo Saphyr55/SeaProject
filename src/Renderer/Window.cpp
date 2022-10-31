@@ -1,23 +1,30 @@
 #include "Sea/Renderer/Window.hpp"
 #include "Sea/Backend/OpenGL/Renderer/GLWindow.hpp"
 #include "Sea/Backend/OpenGL/GL.hpp"
+#include "Sea/Core/Mold.hpp"
+#include "Sea/Common/File.hpp"
+#include <SDL2/SDL_image.h>
+#include <mcl/Logger.hpp>
+
+using mcl::Log;
 
 namespace Sea
 {
-	std::shared_ptr<Window> Window::Of(Window::Properties &properties)
-	{
+	Ref<Window> Window::Of(Window::Properties &properties)
+	{	
 		switch (properties.Context)
 		{
 		case ContextType::OpenGL: 
-			return std::make_shared<Backend::OpenGL::GLWindow>(properties);
+			return CreateRef<Backend::OpenGL::GLWindow>(properties);
 		default: 
-			return std::make_shared<Backend::OpenGL::GLWindow>(properties);
+			return CreateRef<Backend::OpenGL::GLWindow>(properties);
 		}
 	}
 
 	Window::Window(Window::Properties &proterties) 
 		: m_properties(proterties), m_handle(nullptr)
 	{
+		Molder::context = m_properties.Context;
 	}
 
 	Window::~Window()
@@ -89,6 +96,14 @@ namespace Sea
 		SDL_SetWindowMouseGrab(m_handle, SDL_FALSE);
 	}
 
+	void Window::SetupFlags()
+	{	
+		flags = SDL_WINDOW_SHOWN;
+		if (m_properties.Resizable) flags |= SDL_WINDOW_RESIZABLE;
+		if (m_properties.Fullscreen) flags |= SDL_WINDOW_FULLSCREEN;
+		if (m_properties.Maximazed) flags |= SDL_WINDOW_MAXIMIZED;
+	}
+
 	void Window::CreateEvent()
 	{	
 		m_event = std::make_shared<Event>();
@@ -97,6 +112,21 @@ namespace Sea
 	void Window::Update()
 	{	
 		SDL_GetWindowSize(m_handle, (s32*)&m_properties.Width, (s32*)&m_properties.Height);
+	}
+
+	void Window::SetupIcon()
+	{	
+		if (!m_properties.FileIcon.empty())
+		{
+			SDL_Surface* icon = IMG_Load(File(m_properties.FileIcon).GetPath().c_str());
+			if (!icon)
+			{
+				Log::Warning() << "Icon was not loading : " + m_properties.FileIcon;
+				return;
+			}
+			SDL_SetWindowIcon(m_handle, icon);
+			SDL_FreeSurface(icon);
+		}
 	}
 
 }

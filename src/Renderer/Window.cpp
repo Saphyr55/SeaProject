@@ -1,21 +1,30 @@
 #include "Sea/Renderer/Window.hpp"
 #include "Sea/Backend/OpenGL/Renderer/GLWindow.hpp"
 #include "Sea/Backend/OpenGL/GL.hpp"
+#include "Sea/Core/Mold.hpp"
+#include "Sea/Common/File.hpp"
+#include <SDL2/SDL_image.h>
+#include <mcl/Logger.hpp>
+
+using mcl::Log;
 
 namespace Sea
 {
-	std::shared_ptr<Window> Window::Of(Window::Properties &properties)
-	{
-		switch (properties.context)
+	Ref<Window> Window::Of(Window::Properties &properties)
+	{	
+		switch (properties.Context)
 		{
-		case ContextType::OpenGL: return std::make_shared<Backend::OpenGL::GLWindow>(properties);
-		default: return std::make_shared<Backend::OpenGL::GLWindow>(properties);
+		case ContextType::OpenGL: 
+			return CreateRef<Backend::OpenGL::GLWindow>(properties);
+		default: 
+			return CreateRef<Backend::OpenGL::GLWindow>(properties);
 		}
 	}
 
 	Window::Window(Window::Properties &proterties) 
 		: m_properties(proterties), m_handle(nullptr)
 	{
+		Molder::context = m_properties.Context;
 	}
 
 	Window::~Window()
@@ -50,20 +59,49 @@ namespace Sea
 
 	void Window::SetSize(f32 w, f32 h)
 	{
-		m_properties.width = w;
-		m_properties.height = h;
-		SDL_SetWindowSize(m_handle, m_properties.width, m_properties.height);
+		m_properties.Width = w;
+		m_properties.Height = h;
+		SDL_SetWindowSize(m_handle, m_properties.Width, m_properties.Height);
 	}
 
 	void Window::SetResizable(bool resizable)
 	{
-		m_properties.resizable = resizable;
-		SDL_SetWindowResizable(m_handle, (SDL_bool) m_properties.resizable);
+		m_properties.Resizable = resizable;
+		SDL_SetWindowResizable(m_handle, (SDL_bool) m_properties.Resizable);
 	}
 
-	void Window::WrapMouse(f32 x, f32 y)
+	void Window::SetTitle(std::string title)
 	{
-		SDL_WarpMouseInWindow(m_handle, x, y);
+		m_properties.Title = title;
+		SDL_SetWindowTitle(m_handle, title.c_str());
+	}
+
+	void Window::SetMousePostion(f32 x, f32 y)
+	{
+		SDL_WarpMouseInWindow(nullptr, x, y);
+	}
+
+	void Window::SetMouseOnMiddlePosistion()
+	{
+		SetMousePostion(m_properties.Width / 2, m_properties.Height / 2);
+	}
+
+	void Window::GrapMouse()
+	{
+		SDL_SetWindowMouseGrab(m_handle, SDL_TRUE);
+	}
+
+	void Window::UngrapMouse()
+	{
+		SDL_SetWindowMouseGrab(m_handle, SDL_FALSE);
+	}
+
+	void Window::SetupFlags()
+	{	
+		flags = SDL_WINDOW_SHOWN;
+		if (m_properties.Resizable) flags |= SDL_WINDOW_RESIZABLE;
+		if (m_properties.Fullscreen) flags |= SDL_WINDOW_FULLSCREEN;
+		if (m_properties.Maximazed) flags |= SDL_WINDOW_MAXIMIZED;
 	}
 
 	void Window::CreateEvent()
@@ -73,7 +111,22 @@ namespace Sea
 
 	void Window::Update()
 	{	
-		SDL_GetWindowSize(m_handle, (s32*)&m_properties.width, (s32*)&m_properties.height);
+		SDL_GetWindowSize(m_handle, (s32*)&m_properties.Width, (s32*)&m_properties.Height);
+	}
+
+	void Window::SetupIcon()
+	{	
+		if (!m_properties.FileIcon.empty())
+		{
+			SDL_Surface* icon = IMG_Load(File(m_properties.FileIcon).GetPath().c_str());
+			if (!icon)
+			{
+				Log::Warning() << "Icon was not loading : " + m_properties.FileIcon;
+				return;
+			}
+			SDL_SetWindowIcon(m_handle, icon);
+			SDL_FreeSurface(icon);
+		}
 	}
 
 }

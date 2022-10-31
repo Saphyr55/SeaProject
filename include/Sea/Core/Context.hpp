@@ -16,9 +16,8 @@ namespace Sea
 
 	class Context
 	{
-
 	public:
-		Context() { }
+		Context() = default;
 		~Context() = default;
 	};
 

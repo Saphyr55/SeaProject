@@ -8,19 +8,25 @@ namespace Sea
 	class File final
 	{
 	public:
+		static std::string FROM_SOURCE;
+
+	public:
 		static const std::string GetFileContent(File /* file */);
-		static const std::string GetFileContent(const std::string /* filepath */);
+		static const std::string GetFileContent(const std::string filepath, bool _internal = true);
 
 		const std::string Read();
 		const std::string GetContent();
+		const std::string GetPath();
+		const std::string GetExtenstion();
 
-		File(const std::string filepath);
+		File(const std::string filepath, bool _internal = true);
 		File(const File&) = default;
 		File(File&&) = default;
 		~File() = default;
 
 	private:
 		std::string m_content;
-		const std::string m_filepath;
+		std::string m_filepath;
+		std::string m_ext;
 	};
 }

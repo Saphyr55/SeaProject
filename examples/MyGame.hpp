@@ -1,14 +1,22 @@
 #pragma once
 
+#include <utility>
 #include <iostream>
 #include <filesystem>
 
+#include <mcl/Logger.hpp>
+#include <stb/stb_image.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include <Sea/Common/Color.hpp>
+
 #include <Sea/Core/Game.hpp>
 #include <Sea/Core/Input/Input.hpp>
-#include <Sea/Common/Color.hpp>
-#include <mcl/Logger.hpp>
-#include <Sea/Backend/OpenGL/GL.hpp>
-#include <Sea/Graphic/Shader.hpp>
+#include <Sea/Core/Loader/GLTFLoader.hpp>
+
+#include <Sea/Graphic/Model.hpp>
 
 using namespace Sea;
 using mcl::Log;
@@ -18,82 +26,284 @@ class MyGame final : public Game
 
 public:
 	void Render() override;
-	void Update(float dt) override;
+	void Update(f32 dt) override;
 	void Before() override;
-	void After() override;
+	void After() override; 
+	void Input(f32 dt);
+	void DefaultCursor();
+	void CameraCursor();
+	glm::vec3 DampedString(const glm::vec3 currentPos, const glm::vec3 targetPos, f32 frametime, f32 springStrength);
+
+	MyGame()=default;
+	MyGame(const MyGame&) = default;
+	MyGame(MyGame&&) = default;
+	~MyGame() = default;
 
 private:
-	std::shared_ptr<Shader> shader;
-	u32 vao, vbo, ebo;
+	Ref<Camera> camera;
+
+	Ref<Shader> shader;
+	Ref<Shader> shaderLight;
+
+	Ref<Mesh> floor;
+	Ref<Mesh> light;
+
+	Ref<IModelLoader> modelLoader;
+	Ref<Model> model;
+
+	static Vertex vertices[], lightVertices[];
+	static u32 indices[], lightIndices[];
+	
+	f32 initSpeed = .025f;
+	f32 speed = initSpeed;
+	s32 state = 1;
+	f32 ambientWorld = 0.19f;
+	u32 specularAmountPow = 16;
+};
+
+Vertex MyGame::vertices[] =
+{
+	Vertex{ glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f) },
+	Vertex{ glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f) },
+	Vertex{ glm::vec3( 1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f) },
+	Vertex{ glm::vec3( 1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f) }
+};
+
+u32 MyGame::indices[] =
+{
+	0, 1, 2,
+	0, 2, 3
+};
+
+Vertex MyGame::lightVertices[] =
+{
+	Vertex{glm::vec3(-0.1f, -0.1f,  0.1f) },
+	Vertex{glm::vec3(-0.1f, -0.1f, -0.1f) },
+	Vertex{glm::vec3(0.1f, -0.1f, -0.1f)  },
+	Vertex{glm::vec3(0.1f, -0.1f,  0.1f)  },
+	Vertex{glm::vec3(-0.1f,  0.1f,  0.1f) },
+	Vertex{glm::vec3(-0.1f,  0.1f, -0.1f) },
+	Vertex{glm::vec3(0.1f,  0.1f, -0.1f)  },
+	Vertex{glm::vec3(0.1f,  0.1f,  0.1f)  }
+};
+
+u32 MyGame::lightIndices[] =
+{
+	0, 1, 2,
+	0, 2, 3,
+	0, 4, 7,
+	0, 7, 3,
+	3, 7, 6,
+	3, 6, 2,
+	2, 6, 5,
+	2, 5, 1,
+	1, 5, 4,
+	1, 4, 0,
+	4, 5, 6,
+	4, 6, 7
 };
 
 void MyGame::Before()
 {
-	const f32 vertices[] = 
+
+	camera = CreateRef<Camera>(GetWindow().GetProperties().Width, GetWindow().GetProperties().Height, glm::vec3(0.0f, 0.5f, 2.0f));
+
+	switch (state)
 	{
-		 0.5f,  0.5f, 0.0f,  // top right
-		 0.5f, -0.5f, 0.0f,  // bottom right
-		-0.5f, -0.5f, 0.0f,  // bottom left
-		-0.5f,  0.5f, 0.0f   // top left 
+	case 0:
+		DefaultCursor();
+		break;
+	case 1:
+		CameraCursor();
+		break;
+	default:
+		break;
+	}
+
+	
+	Mold<Texture> textures[] =
+	{
+		Mould<Texture>(File("./examples/res/planks.png"), Texture::Type::DIFFUSE, 0),
+		Mould<Texture>(File("./examples/res/planksSpec.png"), Texture::Type::SPECULAR, 1)
 	};
 
-	const u32 indices[] = 
-	{
-		0, 1, 3,   // first triangle
-		1, 2, 3    // second triangle
-	};
+	// Default shader
+	shader = Mould<Shader>(File("./examples/shaders/shader.vert"), File("./examples/shaders/shader.frag"));
+	// Light shader
+	shaderLight = Mould<Shader>(File("./examples/shaders/light.vert"), File("./examples/shaders/light.frag"));
 	
-	shader = GetRenderer().CreateShader(
-		File("../../examples/shaders/shader.vert"),
-		File("../../examples/shaders/shader.frag")
-	);
+	// Store mesh data in vectors for the mesh
+	std::vector<Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
+	std::vector<u32> ind(indices, indices + sizeof(indices) / sizeof(u32));
+	std::vector<Mold<Texture>> texs;
+	texs.push_back(textures[0]);
+	texs.push_back(textures[1]);
+
+	// Create floor mesh
+	floor = Mould<Mesh>(verts, ind, texs);
+
+	// Store mesh data in vectors for the mesh
+	std::vector<Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
+	std::vector<u32> lightInd(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(u32));
+
+	// Create light mesh
+	light =	Mould<Mesh>(lightVerts, lightInd, texs);
+
+	auto lightColor = Colors::White.toVec4f();
+	auto lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
+	auto lightModel = glm::mat4(1.0f);
+	lightModel = glm::translate(lightModel, lightPos);
+
+	auto floorPos = glm::vec3(0.0f, 0.0f, 0.0f);
+	auto floorModel = glm::mat4(1.0f);
+	floorModel = glm::translate(floorModel, floorPos);
+
+	shaderLight->Use();
+	shaderLight->SetMatrix4fv("model", lightModel);
+	shaderLight->SetVec4f("lightColor", lightColor);
+
 	shader->Use();
+	shader->SetMatrix4fv("model", floorModel);
+	shader->SetVec4f("lightColor", lightColor);
+	shader->SetVec3f("lightPos", lightPos);
+	shader->Set1Float("ambient", ambientWorld);
+	shader->Set1UInt("specAmountPow", specularAmountPow);
 
-	// Gen
-	glGenVertexArrays(1, &vao);
-	glGenBuffers(1, &vbo);
-	glGenBuffers(1, &ebo);
-
-	// Bind
-	glBindVertexArray(vao);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	// Gen ebo and attrib data
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-	glEnableVertexAttribArray(0);
-	
-	// Unbind
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	modelLoader = CreateRef<GLTFLoader>("examples/res/md/bunny/scene.gltf");
+ 	model = CreateRef<Model>(modelLoader);
 }
 
 void MyGame::After()
-{
-	glDeleteVertexArrays(1, &vao);
-	glDeleteBuffers(1, &vbo);
-	glDeleteBuffers(1, &ebo);
+{	
+	shaderLight->Delete();
 	shader->Delete();
 }
 
 void MyGame::Render()
 {
-	GetWindow().Viewport();
-	GetRenderer().ClearColor(Colors::Nothing);
+	GetRenderer().ClearColor(Colors::EerieBlack);
 	GetRenderer().Clear();
-	shader->Use();
-	glBindVertexArray(vao);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	GetWindow().Viewport();
+
+	camera->SetViewProjection(45.0f, 0.1f, 100.0f);
+ 	model->Draw(*shader, *camera, glm::vec3(0.0f, 0.0f, 0.0f));
+ 	floor->Draw(*shader, *camera);
+ 	light->Draw(*shaderLight, *camera);
 }
 
+void MyGame::Update(f32 dt)
+{	
+	Input(dt);
+	if (state == 1)
+	{
+		Mouse::OnMoved([&]() 
+		{
+			f32 sensitivity = .1f;
+			camera->Yaw += Mouse::RelativePosX * sensitivity;
+			camera->Pitch += Mouse::RelativePosY * sensitivity;
 
-void MyGame::Update(float dt)
+			if (camera->Pitch > 89.0f) camera->Pitch = 89.0f;
+			if (camera->Pitch < -89.0f) camera->Pitch = -89.0f;
+
+			camera->SetOrientation(camera->Yaw, camera->Pitch);
+		});
+	}
+
+
+}
+
+void MyGame::Input(f32 dt)
 {
-	
+	speed *= dt;
+
+	glm::vec3 targetPos = camera->Position;
+
+	if (Input::IsKeyDown(Key::Keys::Z))
+	{
+		targetPos += speed * camera->Orientation;
+	}
+
+	if (Input::IsKeyDown(Key::Keys::S))
+	{
+		targetPos += speed * -camera->Orientation;
+	}
+
+	if (Input::IsKeyDown(Key::Keys::Q))
+	{
+		targetPos += speed * -glm::normalize(glm::cross(camera->Orientation, camera->Up));
+	}
+
+	if (Input::IsKeyDown(Key::Keys::D))
+	{
+		targetPos += speed * glm::normalize(glm::cross(camera->Orientation, camera->Up));
+	}
+
+	if (Input::IsKeyDown(Key::Keys::LSHIFT))
+	{
+		targetPos += speed * -camera->Up;
+	}
+
+	if (Input::IsKeyDown(Key::Keys::SPACE))
+	{
+		targetPos += speed * camera->Up;
+	}
+
+	if (Input::IsKeyDown(Key::Keys::LCTRL))
+	{	
+		speed = initSpeed * 2;
+	}
+	else
+	{
+		speed = initSpeed;
+	}
+
+	camera->Position = DampedString(camera->Position, targetPos, dt, 1);
+
+	if (Input::IsKeyPressed(Key::Keys::ESCAPE))
+	{
+		switch (state)
+		{
+		case 0:
+			state = 1;
+			CameraCursor();
+			break;
+		case 1:
+			state = 0;
+			DefaultCursor();
+			break;
+		default:
+			break;
+		}
+	}
+
+}
+
+void MyGame::DefaultCursor()
+{
+	GetWindow().SetMouseOnMiddlePosistion();
+	GetWindow().UngrapMouse();
+	Mouse::ShowCursor(true);
+	Mouse::SetRelativeMouseMode(false);
+}
+
+void MyGame::CameraCursor()
+{
+	GetWindow().SetMouseOnMiddlePosistion();
+	GetWindow().GrapMouse();
+	Mouse::ShowCursor(false);
+	Mouse::SetRelativeMouseMode(true);
+}
+
+glm::vec3 MyGame::DampedString(const glm::vec3 currentPos, const glm::vec3 targetPos, f32 frametime, f32 springStrength)
+{
+	glm::vec3 displacement = targetPos - currentPos;
+	f32 displacementLength = displacement.length();
+	if (displacementLength == 0.f)
+		return currentPos;
+	f32 invDisplacementLength = 1.f / displacementLength;
+	const f32 dampConstant = 0.000065f; 
+	f32 springMagitude = springStrength * displacementLength + dampConstant * invDisplacementLength;
+	f32 scalar = std::min(invDisplacementLength * springMagitude * frametime, 1.f);
+	displacement *= scalar;
+	return currentPos + displacement;
 }

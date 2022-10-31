@@ -14,12 +14,12 @@ namespace Sea
 
 	class Window
 	{	
-		friend class Engine;
+		friend class Application;
 		friend class Context;
 		struct Properties;
 
 	public:
-		static std::shared_ptr<Window> Of(Window::Properties& properties);
+		static Ref<Window> Of(Window::Properties& properties);
 
 		virtual void Run()=0;
 		virtual void Swap()=0;
@@ -27,7 +27,7 @@ namespace Sea
 		virtual void Viewport() = 0;
 		virtual void Viewport(u32 h, u32 w) = 0;
 		virtual void Viewport(u32 x, u32 y, u32 h, u32 w) = 0;
-
+		
 		void Hide();
 		void Show();
 		void Close();
@@ -35,30 +35,33 @@ namespace Sea
 		bool IsClosed();
 		void SetSize(f32 w, f32 h);
 		void SetResizable(bool resizable);
-		void WrapMouse(f32 x, f32 y);
+		void SetTitle(std::string title);
+		void SetMousePostion(f32 x, f32 y);
+		void SetMouseOnMiddlePosistion();
+		void GrapMouse();
+		void UngrapMouse();
+		inline Event& GetEvent() { m_event; }
 		inline SDL_Window* GetHandle() { return m_handle; }
 		inline Properties GetProperties() { return m_properties; }
 		inline const Renderer& GetRenderer() { return *m_renderer; }
 
-	private:
+	protected:
+		void SetupFlags();
 		void CreateEvent();
 		void Update();
+		void SetupIcon();
 
 	public:
 		struct Properties
 		{
-			ContextType context = ContextType::OpenGL;
-			std::string title = "No Title";
-			std::string fileIcon = "";
-			u32 width = 1080;
-			u32 height = 720;
-			bool resizable = false;
-			bool fullscreen = false;
-
-			Properties() = default;
-			Properties(const Properties&) = default;
-			Properties(Properties&&) = default;
-			~Properties() = default;
+			ContextType Context = ContextType::OpenGL;
+			std::string Title = "No Title";
+			std::string FileIcon = "";
+			u32 Width = 1080;
+			u32 Height = 720;
+			bool Resizable = false;
+			bool Fullscreen = false;
+			bool Maximazed = false;
 		};
 
 	public:
@@ -68,6 +71,7 @@ namespace Sea
 		~Window();
 
 	protected:
+		s32 flags;
 		bool m_isOpen = true;
 		SDL_Window* m_handle;
 		Properties m_properties;
@@ -76,4 +80,7 @@ namespace Sea
 		std::shared_ptr<Event> m_event;
 	
 	};
+
+	using WindowPtr = std::shared_ptr<Window>;
+
 }

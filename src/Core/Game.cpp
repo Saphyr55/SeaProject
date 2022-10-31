@@ -15,6 +15,11 @@ namespace Sea
         m_window->Close();
     }
 
+    f32 Game::GetFPS()
+    {
+        return fps;
+    }
+
     bool Game::IsRunning() 
     { 
         return m_isRunning; 
@@ -28,5 +33,16 @@ namespace Sea
     const Renderer& Game::GetRenderer()
     {
         return GetWindow().GetRenderer();
+    }
+
+    void Game::StartFPS()
+    {
+        startFPS = SDL_GetPerformanceCounter();
+    }
+
+    void Game::EndFPS()
+    {
+        endFPS = SDL_GetPerformanceCounter();
+		fps = 1 / ((endFPS - startFPS) / (f32)SDL_GetPerformanceFrequency());
     }
 }

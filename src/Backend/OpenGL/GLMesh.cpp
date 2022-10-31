@@ -1,5 +1,11 @@
 #include "Sea/Backend/OpenGL/GLMesh.hpp"
 #include "Sea/Backend/OpenGL/GL.hpp"
+#include "Sea/Graphic/Vertex.hpp"
+#include "Sea/Graphic/Shader.hpp"
+#include "Sea/Graphic/Texture.hpp"
+#include "Sea/Backend/OpenGL/GLElementBuffer.hpp"
+#include "Sea/Backend/OpenGL/GLVertexBuffer.hpp"
+
 #include <mcl/Logger.hpp>
 
 using mcl::Log;
@@ -34,7 +40,7 @@ namespace Sea::Backend::OpenGL
 		glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
 	}
 
-	GLMesh::GLMesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Ref<Texture>>& textures) :
+	GLMesh::GLMesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Mold<Texture>>& textures) :
 		Mesh(vertices, indices, textures)
 	{
 		vao.Bind();

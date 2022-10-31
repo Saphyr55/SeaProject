@@ -14,18 +14,10 @@
 
 #include <Sea/Core/Game.hpp>
 #include <Sea/Core/Input/Input.hpp>
-#include <Sea/Core/Mold.hpp>
+#include <Sea/Core/Loader/GLTFLoader.hpp>
 
-#include <Sea/Renderer/Camera.hpp>
+#include <Sea/Graphic/Model.hpp>
 
-#include <Sea/Backend/OpenGL/GL.hpp>
-#include <Sea/Backend/OpenGL/GLMesh.hpp>
-#include <Sea/Backend/OpenGL/GLTexture.hpp>
-#include <Sea/Backend/OpenGL/GLVertexArray.hpp>
-#include <Sea/Backend/OpenGL/GLVertexBuffer.hpp>
-#include <Sea/Backend/OpenGL/GLElementBuffer.hpp>
-
-using namespace Sea::Backend::OpenGL;
 using namespace Sea;
 using mcl::Log;
 
@@ -55,6 +47,9 @@ private:
 
 	Ref<Mesh> floor;
 	Ref<Mesh> light;
+
+	Ref<IModelLoader> modelLoader;
+	Ref<Model> model;
 
 	static Vertex vertices[], lightVertices[];
 	static u32 indices[], lightIndices[];
@@ -110,6 +105,7 @@ u32 MyGame::lightIndices[] =
 
 void MyGame::Before()
 {
+
 	camera = CreateRef<Camera>(GetWindow().GetProperties().Width, GetWindow().GetProperties().Height, glm::vec3(0.0f, 0.5f, 2.0f));
 
 	switch (state)
@@ -124,10 +120,11 @@ void MyGame::Before()
 		break;
 	}
 
-	Ref<Texture> textures[] =
+	
+	Mold<Texture> textures[] =
 	{
-		Mould<Texture>(File("./examples/res/planks.png"), Texture::Type::DIFFUSE, 0, GL_RGBA, GL_UNSIGNED_BYTE),
-		Mould<Texture>(File("./examples/res/planksSpec.png"), Texture::Type::SPECULAR, 1, GL_RED, GL_UNSIGNED_BYTE)
+		Mould<Texture>(File("./examples/res/planks.png"), Texture::Type::DIFFUSE, 0),
+		Mould<Texture>(File("./examples/res/planksSpec.png"), Texture::Type::SPECULAR, 1)
 	};
 
 	// Default shader
@@ -138,7 +135,7 @@ void MyGame::Before()
 	// Store mesh data in vectors for the mesh
 	std::vector<Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
 	std::vector<u32> ind(indices, indices + sizeof(indices) / sizeof(u32));
-	std::vector<Ref<Texture>> texs;
+	std::vector<Mold<Texture>> texs;
 	texs.push_back(textures[0]);
 	texs.push_back(textures[1]);
 
@@ -172,6 +169,8 @@ void MyGame::Before()
 	shader->Set1Float("ambient", ambientWorld);
 	shader->Set1UInt("specAmountPow", specularAmountPow);
 
+	modelLoader = CreateRef<GLTFLoader>("examples/res/md/bunny/scene.gltf");
+ 	model = CreateRef<Model>(modelLoader);
 }
 
 void MyGame::After()
@@ -182,12 +181,12 @@ void MyGame::After()
 
 void MyGame::Render()
 {
-	GetRenderer().ClearColor(Colors::Black);
+	GetRenderer().ClearColor(Colors::EerieBlack);
 	GetRenderer().Clear();
 	GetWindow().Viewport();
 
 	camera->SetViewProjection(45.0f, 0.1f, 100.0f);
-	
+ 	model->Draw(*shader, *camera, glm::vec3(0.0f, 0.0f, 0.0f));
  	floor->Draw(*shader, *camera);
  	light->Draw(*shaderLight, *camera);
 }

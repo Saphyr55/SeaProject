@@ -3,13 +3,16 @@
 #include <memory>
 #include <cstdint>
 
-namespace Sea {
-
+namespace Sea 
+{
 	template<typename T>
 	using Scope = std::unique_ptr<T>;
 
 	template<typename T>
 	using Ref = std::shared_ptr<T>;
+
+	template<typename T>
+	using Mold = std::shared_ptr<T>;
 
 	template<typename T, typename ... Args>
 	constexpr Scope<T> CreateScope(Args&& ... args)

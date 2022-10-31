@@ -1,9 +1,15 @@
 #include <Sea/Core/Loader/GLTFLoader.hpp>
+#include <mcl/Logger.hpp>
+#include <fstream>
+#include <iterator>
+#include <vector>
+
+using mcl::Log;
 
 namespace Sea
 {
 	
-	GLTFLoader::GLTFLoader(File file) : AbstractLoader(file)
+	GLTFLoader::GLTFLoader(File file) : AbstractModelLoader(file)
 	{
 		std::string content = m_file.Read();
 		m_dataJson = json::parse(content);
@@ -30,7 +36,7 @@ namespace Sea
 		// Combine all the vertex components and also get the indices and textures
 		std::vector<Vertex> vertices = AssembleVertices(positions, normals, texUVs);
 		std::vector<u32> indices = GetIndices(m_dataJson["accessors"][indAccInd]);
-		std::vector<Ref<Texture>> textures = GetTextures();
+		std::vector<Mold<Texture>> textures = GetTextures();
 
 		// Combine the vertices, indices, and textures into a mesh
 		meshes.push_back(Mould<Mesh>(vertices, indices, textures));
@@ -38,23 +44,23 @@ namespace Sea
 
 	void GLTFLoader::TraverseNode(u32 nextNode, glm::mat4 matrix)
 	{
-		// Current node
-		json node = m_dataJson["nodes"][nextNode];
+		json node = m_dataJson["nodes"][nextNode]; // Current node
 
 		// Get translation if it exists
 		glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f);
 		if (node.find("translation") != node.end())
 		{
-			float transValues[3];
-			for (unsigned int i = 0; i < node["translation"].size(); i++)
+			f32 transValues[3];
+			for (u32 i = 0; i < node["translation"].size(); i++)
 				transValues[i] = (node["translation"][i]);
 			translation = glm::make_vec3(transValues);
 		}
+
 		// Get quaternion if it exists
 		glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 		if (node.find("rotation") != node.end())
 		{
-			float rotValues[4] =
+			f32 rotValues[4] =
 			{
 				node["rotation"][3],
 				node["rotation"][0],
@@ -63,12 +69,13 @@ namespace Sea
 			};
 			rotation = glm::make_quat(rotValues);
 		}
+
 		// Get scale if it exists
 		glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
 		if (node.find("scale") != node.end())
 		{
-			float scaleValues[3];
-			for (unsigned int i = 0; i < node["scale"].size(); i++)
+			f32 scaleValues[3];
+			for (u32 i = 0; i < node["scale"].size(); i++)
 				scaleValues[i] = (node["scale"][i]);
 			scale = glm::make_vec3(scaleValues);
 		}
@@ -76,8 +83,8 @@ namespace Sea
 		glm::mat4 matNode = glm::mat4(1.0f);
 		if (node.find("matrix") != node.end())
 		{
-			float matValues[16];
-			for (unsigned int i = 0; i < node["matrix"].size(); i++)
+			f32 matValues[16];
+			for (u32 i = 0; i < node["matrix"].size(); i++)
 				matValues[i] = (node["matrix"][i]);
 			matNode = glm::make_mat4(matValues);
 		}
@@ -103,13 +110,13 @@ namespace Sea
 			scalesMeshes.push_back(scale);
 			matricesMeshes.push_back(matNextNode);
 
-			loadMesh(node["mesh"]);
+			LoadMesh(node["mesh"]);
 		}
 
 		// Check if the node has children, and if it does, apply this function to them with the matNextNode
 		if (node.find("children") != node.end())
 		{
-			for (unsigned int i = 0; i < node["children"].size(); i++)
+			for (u32 i = 0; i < node["children"].size(); i++)
 				TraverseNode(node["children"][i], matNextNode);
 		}
 	}
@@ -123,11 +130,13 @@ namespace Sea
 		// Store raw text data into bytesText
 		std::string fileStr = std::string(m_file.GetPath());
 		std::string fileDirectory = fileStr.substr(0, fileStr.find_last_of('/') + 1);
-		bytesText = File::GetFileContent(fileDirectory + uri);
 
-		// Transform the raw text data into bytes and put them in a vector
-		std::vector<u8> data(bytesText.begin(), bytesText.end());
-		return data;
+		std::ifstream input(fileDirectory + uri, std::ios::binary);
+
+		// copies all data into buffer
+		std::vector<u8> buffer(std::istreambuf_iterator<char>(input), {});
+
+		return buffer;
 	}
 
 	std::vector<f32> GLTFLoader::GetFloats(json accessor)
@@ -161,6 +170,7 @@ namespace Sea
 			f32 value;
 			std::memcpy(&value, bytes, sizeof(f32));
 			floatVec.push_back(value);
+			
 		}
 
 		return floatVec;
@@ -216,9 +226,14 @@ namespace Sea
 		return indices;
 	}
 
-	std::vector<Ref<Texture>> GLTFLoader::GetTextures()
+	Ref<Model> GLTFLoader::Load()
 	{
-		std::vector<Ref<Texture>> textures;
+		return nullptr;
+	}
+
+	std::vector<Mold<Texture>> GLTFLoader::GetTextures()
+	{
+		std::vector<Mold<Texture>> textures;
 
 		std::string fileStr = std::string(m_file.GetPath());
 		std::string fileDirectory = fileStr.substr(0, fileStr.find_last_of('/') + 1);
@@ -246,8 +261,8 @@ namespace Sea
 			{
 				// Load diffuse texture
 				if (texPath.find("baseColor") != std::string::npos)
-				{
-					Mold<Texture> diffuse = Mould<Texture>((fileDirectory + texPath).c_str(), "diffuse", loadedTex.size());
+				{	
+					Mold<Texture> diffuse = Mould<Texture>(File(fileDirectory + texPath, false), Texture::Type::DIFFUSE, loadedTex.size());
 					textures.push_back(diffuse);
 					loadedTex.push_back(diffuse);
 					loadedTexName.push_back(texPath);
@@ -255,7 +270,7 @@ namespace Sea
 				// Load specular texture
 				else if (texPath.find("metallicRoughness") != std::string::npos)
 				{
-					Ref<Texture> specular = Mould<Texture>((fileDirectory + texPath).c_str(), "specular", loadedTex.size());
+					Mold<Texture> specular = Mould<Texture>(File(fileDirectory + texPath, false), Texture::Type::SPECULAR, loadedTex.size());
 					textures.push_back(specular);
 					loadedTex.push_back(specular);
 					loadedTexName.push_back(texPath);

@@ -1,9 +1,6 @@
 #include <iostream>
 
 #include <Sea/Core/Application.hpp>
-#include <Sea/Renderer/Window.hpp>
-#include <Sea/Core/Context.hpp>
-#include <Sea/Common/Color.hpp>
 
 #include "MyGame.hpp"
 
@@ -11,6 +8,7 @@ int main(int argc, char const **argv)
 {
 	try
 	{
+		// fs::current_path().fs::path::parent_path()).string();
 		File::FROM_SOURCE = "../../";
 		Application sea;
 

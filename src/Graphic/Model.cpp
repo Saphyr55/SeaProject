@@ -3,15 +3,19 @@
 namespace Sea
 {
 
-    Model::Model(Ref<ILoader> loader) : m_loader(loader)
+    Model::Model(Ref<IModelLoader> loader) : matricesMeshes(loader->GetMatricesMeshes()), meshes(loader->GetMeshes())
     {
-
     }
 
-    void Model::Draw(Shader& shader, Camera& camera)
-    {
-		for (u32 i = 0; i < m_loader->GetMeshes().size(); i++)
-            m_loader->GetMeshes()[i]->Draw(shader, camera, m_loader->GetmatricesMeshes()[i]);
+	Model::Model(std::vector<Mold<Mesh>> meshes, std::vector<glm::mat4> matricesMeshes) : 
+        matricesMeshes(matricesMeshes), meshes(meshes)
+	{
+	}
+    
+    void Model::Draw(Shader& shader, Camera& camera, glm::vec3 translation, glm::quat rotation, glm::vec3 scale)
+    {   
+	    for (u32 i = 0; i < meshes.size(); i++)
+            meshes[i]->Draw(shader, camera, matricesMeshes[i], translation, rotation);
     }
 
 }

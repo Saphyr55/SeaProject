@@ -1,17 +1,19 @@
 #pragma once
 
-#include <vector>
-#include <Sea/Graphic/Mesh.hpp>
-#include <Sea/Graphic/Vertex.hpp>
-#include <Sea/Backend/OpenGL/GLTexture.hpp>
-#include <Sea/Graphic/Shader.hpp>
-#include "Sea/Backend/OpenGL/GLElementBuffer.hpp"
-#include "Sea/Backend/OpenGL/GLShader.hpp"
+#include "Sea/Graphic/Mesh.hpp"
 #include "Sea/Backend/OpenGL/GLVertexArray.hpp"
-#include "Sea/Backend/OpenGL/GLVertexBuffer.hpp"
+
+namespace Sea
+{
+	class Texture;
+	class Shader;
+	class Camera;
+	struct Vertex;
+}
 
 namespace Sea::Backend::OpenGL
-{
+{	
+
 	class GLMesh : public Mesh
 	{
 	public:
@@ -22,13 +24,11 @@ namespace Sea::Backend::OpenGL
 			glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f)
 		) override;
 
-		GLMesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Ref<Texture>>& textures);
+		GLMesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Mold<Texture>>& textures);
 
 	private:
 		GLVertexArray vao;
 
 	};
-
-	using GLMeshPtr = Ref<GLMesh>;
 
 }

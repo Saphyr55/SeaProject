@@ -1,5 +1,4 @@
-#include <Sea/Backend/OpenGL/GLTexture.hpp>
-#include <Sea/Graphic/Shader.hpp>
+#include "Sea/Backend/OpenGL/GLTexture.hpp"
 #include <string>
 #include <stb/stb_image.h>
 

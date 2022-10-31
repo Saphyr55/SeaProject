@@ -20,9 +20,9 @@ void main()
 {
     
     fragPos = vec3(model * translation * -rotation * scale * vec4(aPos,1.f));
-    color=aColor;
-    texCoord= mat2(0.0, -1.0, 1.0, 0.0) * aTex;
-    normal=mat3(transpose(inverse(model)))*aNormal;
+    color = aColor;
+    texCoord = mat2(0.0, -1.0, 1.0, 0.0) * aTex;
+    normal = mat3(transpose(inverse(model))) * aNormal;
     
-    gl_Position=cameraProjectionView*model*vec4(aPos,1.);
+    gl_Position = cameraProjectionView * model * vec4(aPos,1.);
 }

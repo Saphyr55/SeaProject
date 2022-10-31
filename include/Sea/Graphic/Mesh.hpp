@@ -22,7 +22,7 @@ namespace Sea
 			glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f)
 		) = 0;
 
-		Mesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Ref<Texture>>& textures);
+		Mesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Mold<Texture>>& textures);
 
 	protected:
 		void SetupTextures(Shader& shader);
@@ -30,10 +30,7 @@ namespace Sea
 	protected:
 		std::vector<Vertex> m_vertices;
 		std::vector<u32> m_indices;
-		std::vector<Ref<Texture>> m_textures;
+		std::vector<Mold<Texture>> m_textures;
 	};
-
-	using MeshPtr = Ref<Mesh>;
-
 }
 

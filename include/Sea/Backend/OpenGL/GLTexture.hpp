@@ -5,28 +5,20 @@
 #include <Sea/Graphic/Texture.hpp>
 #include <Sea/Common/File.hpp>
 
-namespace Sea
+namespace Sea::Backend::OpenGL
 {	
-
-	namespace Backend::OpenGL
+	class GLTexture : public Texture
 	{
+	public:
+		void Bind();
+		void Unbind();
+		void Delete();
 
-		class GLTexture : public Texture
-		{
-		public:
-			void Bind();
-			void Unbind();
-			void Delete();
+		GLTexture(File image, Type texType, u32 slot);
+		~GLTexture() = default;
 
-			GLTexture(File image, Type texType, u32 slot);
-			~GLTexture() = default;
-
-		private:
-			void SetupFormatFromChannel(s32 channel);
-			void SetDefaultParameteri();
-		};
-
-		using GLTexturePtr = Ref<GLTexture>;
-
-	}
+	private:
+		void SetupFormatFromChannel(s32 channel);
+		void SetDefaultParameteri();
+	};
 }

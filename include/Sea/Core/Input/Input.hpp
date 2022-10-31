@@ -1,12 +1,14 @@
 #pragma once
 
 #include <list>
+
 #include <SDL2/SDL.h>
 #include <glm/glm.hpp>
-#include "Sea/Core/Input/Key.hpp"
-#include "Sea/Common/CommonType.hpp"
-#include "Sea/Core/Input/Mouse.hpp"
+
 #include "Sea/Common/List.hpp"
+#include "Sea/Core/Input/Key.hpp"
+#include "Sea/Core/Input/Mouse.hpp"
+#include "Sea/Common/CommonType.hpp"
 
 namespace Sea
 {

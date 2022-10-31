@@ -2,26 +2,33 @@
 
 #include <fstream>
 #include <filesystem>
+#include <mcl/Logger.hpp>
 
+using mcl::Log;
 namespace fs = std::filesystem;
 
 namespace Sea
 {
-	std::string File::FROM_SOURCE = "../../";
+	std::string File::FROM_SOURCE = "";
 
 	const std::string File::GetFileContent(File file)
 	{
-		file.Read();
-		return file.GetContent();
+		return file.Read();
 	}
 
-	const std::string File::GetFileContent(const std::string filepath)
+	const std::string File::GetFileContent(const std::string filepath, bool _internal)
 	{
-		return GetFileContent(File(filepath));
+		return GetFileContent(File(filepath, _internal));
 	}
 
 	const std::string File::Read()
-	{
+	{	
+		if (!fs::exists(fs::path(m_filepath)))
+		{
+			Log::Error() << m_filepath << " doesn't exist";
+			throw std::exception();
+		}
+
 		std::ifstream ifs(m_filepath);
 		std::string content((std::istreambuf_iterator<char>(ifs)),
 			(std::istreambuf_iterator<char>()));
@@ -44,9 +51,10 @@ namespace Sea
 		return m_ext;
 	}
 
-	File::File(const std::string filepath) :
-		m_filepath(FROM_SOURCE+filepath), m_ext(fs::path(filepath).extension().string())
+	File::File(const std::string filepath, bool _internal) :
+		m_ext(fs::path(filepath).extension().string())
 	{
-		
+		if (_internal) m_filepath = FROM_SOURCE + filepath;
+		else m_filepath = filepath;
 	}
 }

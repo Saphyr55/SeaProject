@@ -145,6 +145,11 @@ void MyGame::Before()
 	shader->SetVec3f("light.diffuse", 0.5f, 0.5f, 0.5f); // darken diffuse light a bit
 	shader->SetVec3f("light.specular", 1.0f, 1.0f, 1.0f);
 	shader->SetVec3f("light.direction", 0.0f, 1.0f, 0.0f);
+	shader->SetFloat("light.constant", 1.0f);
+	shader->SetFloat("light.linear", 0.09f);
+	shader->SetFloat("light.quadratic", 0.032f);
+	shader->SetFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+	shader->SetFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
 }
 
 void MyGame::After()
@@ -163,17 +168,12 @@ void MyGame::Render()
 
 	shaderLight->Use();
 	shaderLight->SetVec4f("lightColor", Colors::White.toVec4f());
-	shaderLight->SetVec3f("lightPos", lightPos);
 
 	shader->Use();
-	shader->SetVec4f("lightColor", Colors::White.toVec4f());
-	shader->SetVec3f("lightPos", lightPos);
+	shader->SetVec3f("light.position", lightPos);
 
-	// cube->Draw(*shader, *camera, cubeModel, cubePos);
 	grindstone->Draw(*shader, *camera, grindstoneModel, grindstonePos);
-	// lantern->Draw(*shader, *camera, lanternModel, lanterPos);
 	light->Draw(*shaderLight, *camera, lightModel, lightPos);
-
 
 }
 

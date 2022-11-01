@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Sea/Core/Loader/IModelLoader.hpp"
-#include <Sea/Common/File.hpp>
+#include "Sea/Common/File.hpp"
 
 namespace Sea
 {
@@ -9,11 +9,11 @@ namespace Sea
 	{
 	public:
 		AbstractModelLoader(File file) : m_file(file) { }
-		AbstractModelLoader(std::string filePath) : AbstractModelLoader(File(filePath)) { } ;
+		AbstractModelLoader(std::string_view filePath) : AbstractModelLoader(File(filePath)) { } ;
 
 		virtual Ref<Model> Load() = 0;
-		virtual std::vector<Mold<Mesh>> GetMeshes() = 0;
-		virtual std::vector<glm::mat4> GetMatricesMeshes() = 0;
+		std::vector<Mold<Mesh>> GetMeshes() { return meshes; }
+		std::vector<glm::mat4> GetMatricesMeshes() { return matricesMeshes; }
 
 	protected:
 		File m_file;

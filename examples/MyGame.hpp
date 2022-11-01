@@ -17,6 +17,8 @@
 #include <Sea/Core/Loader/GLTFLoader.hpp>
 
 #include <Sea/Graphic/Model.hpp>
+#include <Sea/Core/Loader/AssimpModelLoader.hpp>
+#include <Sea/Graphic/Models/CubeModel.hpp>
 
 using namespace Sea;
 using mcl::Log;
@@ -40,39 +42,34 @@ public:
 	~MyGame() = default;
 
 private:
+	static Vertex vertices[], lightVertices[];
+	static u32 indices[], lightIndices[];
+
 	Ref<Camera> camera;
 
 	Ref<Shader> shader;
 	Ref<Shader> shaderLight;
 
-	Ref<Mesh> floor;
+	Ref<Model> lantern;
+	glm::vec3 lanterPos = glm::vec3(0.0f, -1.0f, 0.0f);
+	glm::mat4 lanternModel = glm::mat4(1.0f);
+
+	Ref<CubeModel> cube;
+	glm::vec3 cubePos = glm::vec3(-1.0f, 1.0f, 0.0f);
+	glm::mat4 cubeModel = glm::mat4(1.0f);
+
 	Ref<Mesh> light;
+	glm::vec3 lightPos = glm::vec3(1.0f, 1.0f, 0.0f);
+	glm::mat4 lightModel = glm::mat4(1.0f);
 
 	Ref<IModelLoader> modelLoader;
-	Ref<Model> model;
+	Ref<Model> grindstone;
+	glm::mat4 grindstoneModel = glm::mat4(1.0f);
+	glm::vec3 grindstonePos = glm::vec3(0.0f, 0.0f, 0.0f);
 
-	static Vertex vertices[], lightVertices[];
-	static u32 indices[], lightIndices[];
-	
 	f32 initSpeed = .025f;
 	f32 speed = initSpeed;
 	s32 state = 1;
-	f32 ambientWorld = 0.19f;
-	u32 specularAmountPow = 16;
-};
-
-Vertex MyGame::vertices[] =
-{
-	Vertex{ glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f) },
-	Vertex{ glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f) },
-	Vertex{ glm::vec3( 1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f) },
-	Vertex{ glm::vec3( 1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f) }
-};
-
-u32 MyGame::indices[] =
-{
-	0, 1, 2,
-	0, 2, 3
 };
 
 Vertex MyGame::lightVertices[] =
@@ -120,12 +117,14 @@ void MyGame::Before()
 		break;
 	}
 
+	// Grindstone
 	
-	Mold<Texture> textures[] =
-	{
-		Mould<Texture>(File("./examples/res/planks.png"), Texture::Type::DIFFUSE, 0),
-		Mould<Texture>(File("./examples/res/planksSpec.png"), Texture::Type::SPECULAR, 1)
-	};
+	grindstone = AssimpModelLoader("examples/res/md/grindstone/scene.gltf").Load();
+	// Cube
+	// cube = CreateRef<CubeModel>(Mould<Texture>(File("examples/res/container.png"), Texture::Type::Diffuse, 0));
+	// cube = CreateRef<CubeModel>(Colors::Strawberry);
+	// Lantern
+	// lantern = AssimpModelLoader("examples/res/md/lantern/Lantern.gltf").Load();
 
 	// Default shader
 	shader = Mould<Shader>(File("./examples/shaders/shader.vert"), File("./examples/shaders/shader.frag"));
@@ -133,49 +132,24 @@ void MyGame::Before()
 	shaderLight = Mould<Shader>(File("./examples/shaders/light.vert"), File("./examples/shaders/light.frag"));
 	
 	// Store mesh data in vectors for the mesh
-	std::vector<Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
-	std::vector<u32> ind(indices, indices + sizeof(indices) / sizeof(u32));
-	std::vector<Mold<Texture>> texs;
-	texs.push_back(textures[0]);
-	texs.push_back(textures[1]);
-
-	// Create floor mesh
-	floor = Mould<Mesh>(verts, ind, texs);
-
-	// Store mesh data in vectors for the mesh
 	std::vector<Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
 	std::vector<u32> lightInd(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(u32));
-
+	
 	// Create light mesh
-	light =	Mould<Mesh>(lightVerts, lightInd, texs);
-
-	auto lightColor = Colors::White.toVec4f();
-	auto lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
-	auto lightModel = glm::mat4(1.0f);
-	lightModel = glm::translate(lightModel, lightPos);
-
-	auto floorPos = glm::vec3(0.0f, 0.0f, 0.0f);
-	auto floorModel = glm::mat4(1.0f);
-	floorModel = glm::translate(floorModel, floorPos);
-
-	shaderLight->Use();
-	shaderLight->SetMatrix4fv("model", lightModel);
-	shaderLight->SetVec4f("lightColor", lightColor);
+	light =	Mould<Mesh>(lightVerts, lightInd, grindstone->GetTextures());
+	glm::vec4 lightColor = Colors::White.toVec4f();
 
 	shader->Use();
-	shader->SetMatrix4fv("model", floorModel);
-	shader->SetVec4f("lightColor", lightColor);
-	shader->SetVec3f("lightPos", lightPos);
-	shader->Set1Float("ambient", ambientWorld);
-	shader->Set1UInt("specAmountPow", specularAmountPow);
-
-	modelLoader = CreateRef<GLTFLoader>("examples/res/md/bunny/scene.gltf");
- 	model = CreateRef<Model>(modelLoader);
+	shader->SetFloat("material.shininess", 8.0f);
+	shader->SetVec3f("light.ambient", 0.2f, 0.2f, 0.2f);
+	shader->SetVec3f("light.diffuse", 0.5f, 0.5f, 0.5f); // darken diffuse light a bit
+	shader->SetVec3f("light.specular", 1.0f, 1.0f, 1.0f);
+	shader->SetVec3f("light.direction", 0.0f, 1.0f, 0.0f);
 }
 
 void MyGame::After()
 {	
-	shaderLight->Delete();
+ 	shaderLight->Delete();
 	shader->Delete();
 }
 
@@ -186,13 +160,26 @@ void MyGame::Render()
 	GetWindow().Viewport();
 
 	camera->SetViewProjection(45.0f, 0.1f, 100.0f);
- 	model->Draw(*shader, *camera, glm::vec3(0.0f, 0.0f, 0.0f));
- 	floor->Draw(*shader, *camera);
- 	light->Draw(*shaderLight, *camera);
+
+	shaderLight->Use();
+	shaderLight->SetVec4f("lightColor", Colors::White.toVec4f());
+	shaderLight->SetVec3f("lightPos", lightPos);
+
+	shader->Use();
+	shader->SetVec4f("lightColor", Colors::White.toVec4f());
+	shader->SetVec3f("lightPos", lightPos);
+
+	// cube->Draw(*shader, *camera, cubeModel, cubePos);
+	grindstone->Draw(*shader, *camera, grindstoneModel, grindstonePos);
+	// lantern->Draw(*shader, *camera, lanternModel, lanterPos);
+	light->Draw(*shaderLight, *camera, lightModel, lightPos);
+
+
 }
 
 void MyGame::Update(f32 dt)
 {	
+
 	Input(dt);
 	if (state == 1)
 	{
@@ -208,14 +195,12 @@ void MyGame::Update(f32 dt)
 			camera->SetOrientation(camera->Yaw, camera->Pitch);
 		});
 	}
-
-
 }
 
 void MyGame::Input(f32 dt)
 {
 	speed *= dt;
-
+	// lightPos.x -= .001f * dt;
 	glm::vec3 targetPos = camera->Position;
 
 	if (Input::IsKeyDown(Key::Keys::Z))

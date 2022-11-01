@@ -8,7 +8,7 @@ namespace Sea
 {
 
     class File;
-	class Shader;
+	class IShader;
 	struct Color;
 
     class Renderer

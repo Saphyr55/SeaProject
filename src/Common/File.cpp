@@ -16,9 +16,14 @@ namespace Sea
 		return file.Read();
 	}
 
-	const std::string File::GetFileContent(const std::string filepath, bool _internal)
+	const std::string File::GetFileContent(const std::string_view filepath, bool _internal)
 	{
 		return GetFileContent(File(filepath, _internal));
+	}
+
+	bool File::Exist()
+	{
+		return fs::exists(fs::path(m_filepath));
 	}
 
 	const std::string File::Read()
@@ -51,10 +56,10 @@ namespace Sea
 		return m_ext;
 	}
 
-	File::File(const std::string filepath, bool _internal) :
+	File::File(const std::string_view filepath, bool _internal) :
 		m_ext(fs::path(filepath).extension().string())
 	{
-		if (_internal) m_filepath = FROM_SOURCE + filepath;
+		if (_internal) m_filepath = FROM_SOURCE + filepath.data();
 		else m_filepath = filepath;
 	}
 }

@@ -16,9 +16,13 @@
 #include <Sea/Core/Input/Input.hpp>
 #include <Sea/Core/Loader/GLTFLoader.hpp>
 
+#include <Sea/Graphic/Lights/PointLight.hpp>
+
 #include <Sea/Graphic/Model.hpp>
 #include <Sea/Core/Loader/AssimpModelLoader.hpp>
 #include <Sea/Graphic/Models/CubeModel.hpp>
+#include <Sea/Graphic/Lights/SpotLight.hpp>
+#include <Sea/Graphic/Lights/DirectionalLight.hpp>
 
 using namespace Sea;
 using mcl::Log;
@@ -58,9 +62,7 @@ private:
 	glm::vec3 cubePos = glm::vec3(-1.0f, 1.0f, 0.0f);
 	glm::mat4 cubeModel = glm::mat4(1.0f);
 
-	Ref<Mesh> light;
-	glm::vec3 lightPos = glm::vec3(1.0f, 1.0f, 0.0f);
-	glm::mat4 lightModel = glm::mat4(1.0f);
+	Ref<PointLight> light;
 
 	Ref<IModelLoader> modelLoader;
 	Ref<Model> grindstone;
@@ -72,39 +74,17 @@ private:
 	s32 state = 1;
 };
 
-Vertex MyGame::lightVertices[] =
-{
-	Vertex{glm::vec3(-0.1f, -0.1f,  0.1f) },
-	Vertex{glm::vec3(-0.1f, -0.1f, -0.1f) },
-	Vertex{glm::vec3(0.1f, -0.1f, -0.1f)  },
-	Vertex{glm::vec3(0.1f, -0.1f,  0.1f)  },
-	Vertex{glm::vec3(-0.1f,  0.1f,  0.1f) },
-	Vertex{glm::vec3(-0.1f,  0.1f, -0.1f) },
-	Vertex{glm::vec3(0.1f,  0.1f, -0.1f)  },
-	Vertex{glm::vec3(0.1f,  0.1f,  0.1f)  }
-};
 
-u32 MyGame::lightIndices[] =
-{
-	0, 1, 2,
-	0, 2, 3,
-	0, 4, 7,
-	0, 7, 3,
-	3, 7, 6,
-	3, 6, 2,
-	2, 6, 5,
-	2, 5, 1,
-	1, 5, 4,
-	1, 4, 0,
-	4, 5, 6,
-	4, 6, 7
-};
 
 void MyGame::Before()
 {
-
+	// Default shader
+	shader = Mould<Shader>(File("./examples/shaders/shader.vert"), File("./examples/shaders/shader.frag"));
+	// Light shader
+	shaderLight = Mould<Shader>(File("./examples/shaders/light.vert"), File("./examples/shaders/light.frag"));
+	// Camera
 	camera = CreateRef<Camera>(GetWindow().GetProperties().Width, GetWindow().GetProperties().Height, glm::vec3(0.0f, 0.5f, 2.0f));
-
+		
 	switch (state)
 	{
 	case 0:
@@ -118,38 +98,12 @@ void MyGame::Before()
 	}
 
 	// Grindstone
-	
 	grindstone = AssimpModelLoader("examples/res/md/grindstone/scene.gltf").Load();
-	// Cube
-	// cube = CreateRef<CubeModel>(Mould<Texture>(File("examples/res/container.png"), Texture::Type::Diffuse, 0));
-	// cube = CreateRef<CubeModel>(Colors::Strawberry);
-	// Lantern
-	// lantern = AssimpModelLoader("examples/res/md/lantern/Lantern.gltf").Load();
-
-	// Default shader
-	shader = Mould<Shader>(File("./examples/shaders/shader.vert"), File("./examples/shaders/shader.frag"));
-	// Light shader
-	shaderLight = Mould<Shader>(File("./examples/shaders/light.vert"), File("./examples/shaders/light.frag"));
-	
-	// Store mesh data in vectors for the mesh
-	std::vector<Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
-	std::vector<u32> lightInd(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(u32));
-	
-	// Create light mesh
-	light =	Mould<Mesh>(lightVerts, lightInd, grindstone->GetTextures());
-	glm::vec4 lightColor = Colors::White.toVec4f();
+	light = CreateRef<PointLight>();
+	light->Position = glm::vec3(0.0f, 2.f, 0.0f);
 
 	shader->Use();
-	shader->SetFloat("material.shininess", 8.0f);
-	shader->SetVec3f("light.ambient", 0.2f, 0.2f, 0.2f);
-	shader->SetVec3f("light.diffuse", 0.5f, 0.5f, 0.5f); // darken diffuse light a bit
-	shader->SetVec3f("light.specular", 1.0f, 1.0f, 1.0f);
-	shader->SetVec3f("light.direction", 0.0f, 1.0f, 0.0f);
-	shader->SetFloat("light.constant", 1.0f);
-	shader->SetFloat("light.linear", 0.09f);
-	shader->SetFloat("light.quadratic", 0.032f);
-	shader->SetFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
-	shader->SetFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
+	shader->SetFloat("material.shininess", 1.f); 
 }
 
 void MyGame::After()
@@ -166,15 +120,11 @@ void MyGame::Render()
 
 	camera->SetViewProjection(45.0f, 0.1f, 100.0f);
 
-	shaderLight->Use();
-	shaderLight->SetVec4f("lightColor", Colors::White.toVec4f());
-
-	shader->Use();
-	shader->SetVec3f("light.position", lightPos);
+	light->Draw(*shader);
+	light->DrawMesh(*shaderLight, *camera);
 
 	grindstone->Draw(*shader, *camera, grindstoneModel, grindstonePos);
-	light->Draw(*shaderLight, *camera, lightModel, lightPos);
-
+	
 }
 
 void MyGame::Update(f32 dt)
@@ -200,7 +150,7 @@ void MyGame::Update(f32 dt)
 void MyGame::Input(f32 dt)
 {
 	speed *= dt;
-	// lightPos.x -= .001f * dt;
+	
 	glm::vec3 targetPos = camera->Position;
 
 	if (Input::IsKeyDown(Key::Keys::Z))

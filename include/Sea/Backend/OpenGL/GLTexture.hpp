@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Sea/Backend/OpenGL/GL.hpp>
-#include <Sea/Graphic/Shader.hpp>
-#include <Sea/Graphic/Texture.hpp>
-#include <Sea/Common/File.hpp>
+#include "Sea/Backend/OpenGL/GL.hpp"
+#include "Sea/Graphic/Shader.hpp"
+#include "Sea/Graphic/Texture.hpp"
+#include "Sea/Common/File.hpp"
 
 namespace Sea::Backend::OpenGL
 {	

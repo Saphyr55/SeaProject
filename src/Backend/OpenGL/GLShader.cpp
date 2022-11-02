@@ -32,7 +32,12 @@ namespace Sea::Backend::OpenGL
 		glUniform3fv(GetUniformLocation(uniform), 1, glm::value_ptr(value));
 	}
 
-	void GLShader::Set4Float(std::string uniform, f32 x, f32 y, f32 z, f32 w)
+	void GLShader::SetVec3f(std::string uniform, f32 x, f32 y, f32 z)
+	{
+		glUniform3f(GetUniformLocation(uniform), x, y, z);
+	}
+
+	void GLShader::SetVec4f(std::string uniform, f32 x, f32 y, f32 z, f32 w)
 	{
 		glUniform4f(GetUniformLocation(uniform), x, y, z ,w);
 	}
@@ -42,12 +47,17 @@ namespace Sea::Backend::OpenGL
 		glUniformMatrix4fv(GetUniformLocation(uniform), 1, GL_FALSE, glm::value_ptr(value));
 	}
 
-	void GLShader::Set1Int(std::string uniform, s32 value)
+	void GLShader::SetInt(std::string uniform, s32 value)
 	{
 		glUniform1i(GetUniformLocation(uniform), value);
 	}
 
-	void GLShader::Set1Float(std::string uniform, f32 value)
+	void GLShader::SetBool(std::string uniform, bool value)
+	{
+		glUniform1i(GetUniformLocation(uniform), (s32)value);
+	}
+
+	void GLShader::SetFloat(std::string uniform, f32 value)
 	{
 		glUniform1f(GetUniformLocation(uniform), value);
 	}
@@ -66,6 +76,7 @@ namespace Sea::Backend::OpenGL
 		: m_vertexShaderSource((char*)vertexShader.c_str()), m_fragmentShaderSource((char*)fragmentShader.c_str())
 	{
 		CreateProgram();
+		Use();
 	}
 	
 	u32 GLShader::CreateShader(u32 type, char* source)

@@ -17,9 +17,7 @@ namespace Sea
 	class GLTFLoader : public AbstractModelLoader
 	{
 	public:
-		Ref<Model> Load(); // TODO : deprecated
-		std::vector<Mold<Mesh>> GetMeshes() { return meshes; }
-		std::vector<glm::mat4> GetMatricesMeshes() { return matricesMeshes; }
+		Ref<Model> Load(); // TODO: deprecated
 
 	public:
 		GLTFLoader(File file);

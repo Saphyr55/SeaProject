@@ -24,6 +24,7 @@ namespace Sea::Backend::OpenGL
 			// Also request a depth buffer
 			SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 			SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+
 		}
 	};
 

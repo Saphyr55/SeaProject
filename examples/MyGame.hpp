@@ -14,9 +14,13 @@
 
 #include <Sea/Core/Game.hpp>
 #include <Sea/Core/Input/Input.hpp>
-#include <Sea/Core/Loader/GLTFLoader.hpp>
+
+#include <Sea/Graphic/Lights/PointLight.hpp>
 
 #include <Sea/Graphic/Model.hpp>
+#include <Sea/Core/Loader/AssimpModelLoader.hpp>
+#include <Sea/Graphic/Lights/SpotLight.hpp>
+#include <Sea/Graphic/Lights/DirectionalLight.hpp>
 
 using namespace Sea;
 using mcl::Log;
@@ -40,74 +44,43 @@ public:
 	~MyGame() = default;
 
 private:
+	static Vertex vertices[], lightVertices[];
+	static u32 indices[], lightIndices[];
+
 	Ref<Camera> camera;
 
 	Ref<Shader> shader;
 	Ref<Shader> shaderLight;
 
-	Ref<Mesh> floor;
-	Ref<Mesh> light;
+	Ref<Model> generi;
+	glm::vec3 generiPos = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::mat4 generiModel = glm::mat4(1.0f);
 
-	Ref<IModelLoader> modelLoader;
-	Ref<Model> model;
+	Ref<PointLight> light;
 
-	static Vertex vertices[], lightVertices[];
-	static u32 indices[], lightIndices[];
-	
+	Ref<Model> grindstone;
+	glm::mat4 grindstoneModel = glm::mat4(1.0f);
+	glm::vec3 grindstonePos = glm::vec3(0.0f, 5.0f, 0.0f);
+
+	f32 ambientWorld = 1.9f; 
 	f32 initSpeed = .025f;
 	f32 speed = initSpeed;
 	s32 state = 1;
-	f32 ambientWorld = 0.19f;
-	u32 specularAmountPow = 16;
 };
 
-Vertex MyGame::vertices[] =
-{
-	Vertex{ glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f) },
-	Vertex{ glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f) },
-	Vertex{ glm::vec3( 1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f) },
-	Vertex{ glm::vec3( 1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f) }
-};
 
-u32 MyGame::indices[] =
-{
-	0, 1, 2,
-	0, 2, 3
-};
-
-Vertex MyGame::lightVertices[] =
-{
-	Vertex{glm::vec3(-0.1f, -0.1f,  0.1f) },
-	Vertex{glm::vec3(-0.1f, -0.1f, -0.1f) },
-	Vertex{glm::vec3(0.1f, -0.1f, -0.1f)  },
-	Vertex{glm::vec3(0.1f, -0.1f,  0.1f)  },
-	Vertex{glm::vec3(-0.1f,  0.1f,  0.1f) },
-	Vertex{glm::vec3(-0.1f,  0.1f, -0.1f) },
-	Vertex{glm::vec3(0.1f,  0.1f, -0.1f)  },
-	Vertex{glm::vec3(0.1f,  0.1f,  0.1f)  }
-};
-
-u32 MyGame::lightIndices[] =
-{
-	0, 1, 2,
-	0, 2, 3,
-	0, 4, 7,
-	0, 7, 3,
-	3, 7, 6,
-	3, 6, 2,
-	2, 6, 5,
-	2, 5, 1,
-	1, 5, 4,
-	1, 4, 0,
-	4, 5, 6,
-	4, 6, 7
-};
 
 void MyGame::Before()
 {
+	// Default shader
+	shader = Mould<Shader>(File("./examples/shaders/shader.vert"), File("./examples/shaders/shader.frag"));
+	shader->SetFloat(std::string("material.shininess0"), 8);
 
-	camera = CreateRef<Camera>(GetWindow().GetProperties().Width, GetWindow().GetProperties().Height, glm::vec3(0.0f, 0.5f, 2.0f));
-
+	// Light shader
+	shaderLight = Mould<Shader>(File("./examples/shaders/light.vert"), File("./examples/shaders/light.frag"));
+	// Camera
+	camera = CreateRef<Camera>(GetWindow().GetProperties().Width, GetWindow().GetProperties().Height, glm::vec3(0.0f, 0.0f, 2.0f));
+		
 	switch (state)
 	{
 	case 0:
@@ -120,62 +93,24 @@ void MyGame::Before()
 		break;
 	}
 
-	
-	Mold<Texture> textures[] =
-	{
-		Mould<Texture>(File("./examples/res/planks.png"), Texture::Type::DIFFUSE, 0),
-		Mould<Texture>(File("./examples/res/planksSpec.png"), Texture::Type::SPECULAR, 1)
-	};
+	// Grindstone
+	AssimpModelLoader grindstoneLoader("examples/res/md/grindstone/scene.gltf");
+	grindstone = grindstoneLoader.Load();
 
-	// Default shader
-	shader = Mould<Shader>(File("./examples/shaders/shader.vert"), File("./examples/shaders/shader.frag"));
-	// Light shader
-	shaderLight = Mould<Shader>(File("./examples/shaders/light.vert"), File("./examples/shaders/light.frag"));
-	
-	// Store mesh data in vectors for the mesh
-	std::vector<Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
-	std::vector<u32> ind(indices, indices + sizeof(indices) / sizeof(u32));
-	std::vector<Mold<Texture>> texs;
-	texs.push_back(textures[0]);
-	texs.push_back(textures[1]);
+ 	// generi
+// 	AssimpModelLoader generiLoader("examples/res/md/backpack/backpack.obj");
+// 	generiLoader.FlipUV();
+// 	generi = generiLoader.Load();
 
-	// Create floor mesh
-	floor = Mould<Mesh>(verts, ind, texs);
-
-	// Store mesh data in vectors for the mesh
-	std::vector<Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
-	std::vector<u32> lightInd(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(u32));
-
-	// Create light mesh
-	light =	Mould<Mesh>(lightVerts, lightInd, texs);
-
-	auto lightColor = Colors::White.toVec4f();
-	auto lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
-	auto lightModel = glm::mat4(1.0f);
-	lightModel = glm::translate(lightModel, lightPos);
-
-	auto floorPos = glm::vec3(0.0f, 0.0f, 0.0f);
-	auto floorModel = glm::mat4(1.0f);
-	floorModel = glm::translate(floorModel, floorPos);
-
-	shaderLight->Use();
-	shaderLight->SetMatrix4fv("model", lightModel);
-	shaderLight->SetVec4f("lightColor", lightColor);
-
-	shader->Use();
-	shader->SetMatrix4fv("model", floorModel);
-	shader->SetVec4f("lightColor", lightColor);
-	shader->SetVec3f("lightPos", lightPos);
-	shader->Set1Float("ambient", ambientWorld);
-	shader->Set1UInt("specAmountPow", specularAmountPow);
-
-	modelLoader = CreateRef<GLTFLoader>("examples/res/md/bunny/scene.gltf");
- 	model = CreateRef<Model>(modelLoader);
+	light = CreateRef<PointLight>();
+	light->Position= glm::vec3(0.0f, 30.0f, 30.0f);
+	light->Quadratic = 0.000007;
+	light->Linear = 0.0014;
 }
 
 void MyGame::After()
 {	
-	shaderLight->Delete();
+ 	shaderLight->Delete();
 	shader->Delete();
 }
 
@@ -186,13 +121,18 @@ void MyGame::Render()
 	GetWindow().Viewport();
 
 	camera->SetViewProjection(45.0f, 0.1f, 100.0f);
- 	model->Draw(*shader, *camera, glm::vec3(0.0f, 0.0f, 0.0f));
- 	floor->Draw(*shader, *camera);
- 	light->Draw(*shaderLight, *camera);
+
+// 	generi->Draw(*shader, *camera, generiModel, generiPos);
+	grindstone->Draw(*shader, *camera, grindstoneModel, grindstonePos);
+
+	light->Draw(*shader);
+	light->DrawMesh(*shaderLight, *camera);
+
 }
 
 void MyGame::Update(f32 dt)
 {	
+
 	Input(dt);
 	if (state == 1)
 	{
@@ -208,14 +148,12 @@ void MyGame::Update(f32 dt)
 			camera->SetOrientation(camera->Yaw, camera->Pitch);
 		});
 	}
-
-
 }
 
 void MyGame::Input(f32 dt)
 {
 	speed *= dt;
-
+	
 	glm::vec3 targetPos = camera->Position;
 
 	if (Input::IsKeyDown(Key::Keys::Z))

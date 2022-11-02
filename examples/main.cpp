@@ -20,6 +20,7 @@ int main(int argc, char const **argv)
 			propeties.Width = 880;
 			propeties.Height = 620;
 			propeties.Resizable = true;
+			propeties.Maximazed = true;
 		}
 
 		sea.CreateGameWindow(std::make_shared<MyGame>(), propeties);

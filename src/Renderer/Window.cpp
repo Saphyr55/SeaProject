@@ -25,6 +25,12 @@ namespace Sea
 		: m_properties(proterties), m_handle(nullptr)
 	{
 		Molder::context = m_properties.Context;
+		Log::Info() << 
+			"Window create with {" << 
+			"width=" << m_properties.Width << 
+			", height=" <<m_properties.Height << 
+			", title="  <<m_properties.Title << "}";
+		Log::Info() << "Setup context with " << Context::contextType_tostring(m_properties.Context);
 	}
 
 	Window::~Window()
@@ -115,17 +121,23 @@ namespace Sea
 	}
 
 	void Window::SetupIcon()
-	{	
+	{				
 		if (!m_properties.FileIcon.empty())
 		{
-			SDL_Surface* icon = IMG_Load(File(m_properties.FileIcon).GetPath().c_str());
-			if (!icon)
+			auto file = File(m_properties.FileIcon);
+			if (file.Exist())
 			{
-				Log::Warning() << "Icon was not loading : " + m_properties.FileIcon;
-				return;
+				SDL_Surface* icon = IMG_Load(file.GetPath().c_str());
+				if (!icon)
+				{
+					Log::Warning() << "Icon was not loading : " << file.GetPath();
+					return;
+				}
+				Log::Info() << "Image Load : " << file.GetPath();
+				SDL_SetWindowIcon(m_handle, icon);
+				SDL_FreeSurface(icon);
 			}
-			SDL_SetWindowIcon(m_handle, icon);
-			SDL_FreeSurface(icon);
+			else Log::Warning() << file.GetPath() << " not exist impossible to setup an icon";
 		}
 	}
 

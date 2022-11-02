@@ -262,7 +262,7 @@ namespace Sea
 				// Load diffuse texture
 				if (texPath.find("baseColor") != std::string::npos)
 				{	
-					Mold<Texture> diffuse = Mould<Texture>(File(fileDirectory + texPath, false), Texture::Type::DIFFUSE, loadedTex.size());
+					Mold<Texture> diffuse = Mould<Texture>(File(fileDirectory + texPath, false), Texture::Type::Diffuse, loadedTex.size());
 					textures.push_back(diffuse);
 					loadedTex.push_back(diffuse);
 					loadedTexName.push_back(texPath);
@@ -270,7 +270,7 @@ namespace Sea
 				// Load specular texture
 				else if (texPath.find("metallicRoughness") != std::string::npos)
 				{
-					Mold<Texture> specular = Mould<Texture>(File(fileDirectory + texPath, false), Texture::Type::SPECULAR, loadedTex.size());
+					Mold<Texture> specular = Mould<Texture>(File(fileDirectory + texPath, false), Texture::Type::Specular, loadedTex.size());
 					textures.push_back(specular);
 					loadedTex.push_back(specular);
 					loadedTexName.push_back(texPath);

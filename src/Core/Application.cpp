@@ -2,10 +2,12 @@
 
 #include "Sea/Core/Application.hpp"
 
+#include <mcl/Logger.hpp>
+#include <stb/stb_image.h>
 #include <SDL2/SDL.h>
+
 #include <stdexcept>
 #include <filesystem>
-#include <mcl/Logger.hpp>
 
 namespace fs = std::filesystem;
 using mcl::Log;
@@ -81,6 +83,8 @@ namespace Sea
 	{
 		if (SDL_Init(SDL_INIT_EVERYTHING) != 0) 
 			throw std::runtime_error("Init SDL fail");
+
+		stbi_set_flip_vertically_on_load(1);
 	}
 
 

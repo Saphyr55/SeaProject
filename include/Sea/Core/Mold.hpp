@@ -46,7 +46,7 @@ namespace Sea
 			break;
 		}
 
-		throw std::exception("Molder can only take contextual class");
+		throw std::exception("Mould() can only take contextual class");
 	}
 
 }

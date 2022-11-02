@@ -11,15 +11,16 @@ namespace Sea
 		static std::string FROM_SOURCE;
 
 	public:
-		static const std::string GetFileContent(File /* file */);
-		static const std::string GetFileContent(const std::string filepath, bool _internal = true);
+		static const std::string GetFileContent(File file);
+		static const std::string GetFileContent(const std::string_view filepath, bool _internal = true);
 
+		bool Exist();
 		const std::string Read();
 		const std::string GetContent();
 		const std::string GetPath();
 		const std::string GetExtenstion();
 
-		File(const std::string filepath, bool _internal = true);
+		File(const std::string_view filepath, bool _internal = true);
 		File(const File&) = default;
 		File(File&&) = default;
 		~File() = default;

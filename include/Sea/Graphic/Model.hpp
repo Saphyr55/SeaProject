@@ -24,7 +24,7 @@ namespace Sea
 		);
 
         std::vector<Mold<Texture>> GetTextures(u32 index);
-		std::vector<Mold<Texture>>& GetTextures();
+		std::vector<Mold<Texture>> GetTextures();
 
     protected:
         std::vector<Mold<Mesh>> meshes;

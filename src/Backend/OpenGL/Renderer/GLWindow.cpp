@@ -22,11 +22,13 @@ namespace Sea::Backend::OpenGL
 
 		if (m_handle == nullptr) throw(std::string("Failed to create window: ") + SDL_GetError());
 		
-		m_contextPtr= std::make_shared<GLContext>(*this);
+		m_contextPtr= CreateRef<GLContext>(*this);
 
 		gladLoadGLLoader(SDL_GL_GetProcAddress); // Check OpenGL properties
 
 		if (GL_VERSION == NULL) throw("Enable to init OpenGL");
+		
+
 	}
 
 	void GLWindow::Swap()

@@ -28,7 +28,7 @@ namespace Sea
         return meshes[index]->GetTextures();
     }
 
-	std::vector<Mold<Texture>>& Model::GetTextures()
+	std::vector<Mold<Texture>> Model::GetTextures()
 	{
         std::vector<Mold<Texture>> return_textures;
         for (auto& mesh : meshes)

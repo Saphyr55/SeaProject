@@ -9,8 +9,8 @@ namespace Sea
 	{
 	public:
 		f32 Constant = 1.0f;
-		f32 Linear = 0.35f;
-		f32 Quadratic = 0.44f;
+		f32 Linear = 0.22f;
+		f32 Quadratic = 0.20f;
 
 		void Draw(Shader& shader);
 
@@ -32,7 +32,7 @@ namespace Sea
 	void PointLight::Draw(Shader& shader)
 	{	
 		shader.Use();
-		shader.Set1Int("sizePointLight", ids.size());
+		shader.SetInt("sizePointLight", ids.size());
 		shader.SetVec3f(light + ".diffuse", Diffuse);
 		shader.SetVec3f(light + ".specular", Specular);
 		shader.SetVec3f(light + ".position", Position);

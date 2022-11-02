@@ -10,7 +10,12 @@ namespace Sea
 	public:
 		enum class Type
 		{
-			Diffuse = 1, Specular = 2
+			None = 0,
+			Diffuse = 1,
+			Specular = 2,
+			Ambient = 3,
+			Shininess = 4,
+			Normal = 5
 		};
 
 		virtual void Bind()=0;

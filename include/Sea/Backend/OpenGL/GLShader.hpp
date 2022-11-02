@@ -16,7 +16,8 @@ namespace Sea::Backend::OpenGL
 		void SetVec3f(std::string uniform, glm::vec3 value);
 		void SetVec3f(std::string uniform, f32 x, f32 y, f32 z);
 		void SetMatrix4fv(std::string uniform, glm::mat4 value);
-		void Set1Int(std::string uniform, s32 value);
+		void SetInt(std::string uniform, s32 value);
+		void SetBool(std::string uniform, bool value);
 		void SetFloat(std::string uniform, f32 value);
 		u32 GetId();
 

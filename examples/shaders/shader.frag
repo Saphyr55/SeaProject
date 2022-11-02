@@ -11,8 +11,8 @@ struct Material
 {
     sampler2D diffuse0;
     sampler2D specular0;
-    float shininess;
-    vec3 ambient;
+    sampler2D ambient0;
+    float shininess0;
 };
 
 struct DirectionalLight
@@ -49,6 +49,7 @@ struct SpotLight
 };
 
 uniform Material material;
+uniform float ambientWorld;
 
 #define MAX_SPOT_LIGHTS 32
 #define MAX_POINT_LIGHTS 32
@@ -65,12 +66,14 @@ uniform DirectionalLight directionalLights[MAX_DIREC_LIGHTS];
 uniform vec4 lightColor;
 uniform vec3 cameraPos;
 
+uniform bool useFlog;
+
 vec3 get_ambient(vec3 light_ambient)
 {
-    return light_ambient * texture(material.diffuse0, texCoords).rgb + material.ambient;
+    return light_ambient * texture(material.ambient0, texCoords).rgb;
 }
 
-vec3 get_diffuse(vec3 light_diffuse,vec3 _normal, vec3 light_direc)
+vec3 get_diffuse(vec3 light_diffuse, vec3 _normal, vec3 light_direc)
 {
     return light_diffuse * max(dot(_normal, light_direc), 0) * texture(material.diffuse0, texCoords).rgb;
 }
@@ -78,7 +81,7 @@ vec3 get_diffuse(vec3 light_diffuse,vec3 _normal, vec3 light_direc)
 vec3 get_specular(vec3 light_specular, vec3 _normal, vec3 light_direc, vec3 view_dir)
 {
     vec3 reflectionDirec = reflect(-light_direc, normal);
-    float specAmount = pow(max(dot(view_dir, reflectionDirec), 0), material.shininess);
+    float specAmount = pow(max(dot(view_dir, reflectionDirec), 0), material.shininess0);
     return light_specular * specAmount * texture(material.specular0, texCoords).rgb;
 }
 
@@ -133,9 +136,21 @@ vec3 create_spot_light(SpotLight light, vec3 _normal, vec3 fragPos, vec3 view_di
     return (ambient + diffuse + specular) ;
 }
 
+float linearize_depth(float _depth, float far, float near)
+{
+    return (2.0 * near * far) / (far + near - (_depth * 2.0 - 1.0) * (far - near));
+}
+
+float logistic_depth(float _depth, float far, float near, float steepness = 0.5, float offset = 5.0)
+{
+    float zVal = linearize_depth(_depth, far, near);
+    return (1 / (1 + exp(-steepness * (zVal - offset))));
+}
+
 void main()
 {   
-    vec3 view_dir = normalize(cameraPos - fragPos);
+    vec4 _result = vec4(0.0);
+    vec3 view_dir = normalize(fragPos);
     vec3 _normal =  normalize(normal);
 
     vec3 _output_light = vec3(0.0);
@@ -143,11 +158,18 @@ void main()
     for (int i = 0 ; i < sizePointLight ; i++)
         _output_light += create_point_light(pointLights[i], _normal, fragPos, view_dir);
 
-    for (int i = 0 ; i < sizeDirectionalLight ; i++)
-        _output_light += create_direc_light(directionalLights[i], _normal, fragPos, view_dir);
+    // for (int i = 0 ; i < sizeDirectionalLight ; i++)
+    //     _output_light += create_direc_light(directionalLights[i], _normal, fragPos, view_dir);
 
-    for (int i = 0 ; i < sizeSpotLight ; i++)
-        _output_light += create_spot_light(spotLights[i], _normal, fragPos, view_dir);
+    // for (int i = 0 ; i < sizeSpotLight ; i++)
+    //     _output_light += create_spot_light(spotLights[i], _normal, fragPos, view_dir);
     
-    FragColor = vec4(_output_light, 1.0);
+    _result += vec4(_output_light, 1.0);
+
+    // float depth = logistic_depth(gl_FragCoord.z, near, far); 
+    
+    // vec4 v_depth = (1.0f - depth) + vec4(depth * vec3(0.11f, 0.11f, 0.11f), 1.0);
+    // if(useFlog) _result *= v_depth;
+
+    FragColor = _result; 
 }

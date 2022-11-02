@@ -19,8 +19,9 @@ namespace Sea
 		virtual void SetVec3f(std::string uniform, glm::vec3 value) = 0;
 		virtual void SetVec3f(std::string uniform, f32 x, f32 y, f32 z) = 0;
 		virtual void SetVec4f(std::string uniform, f32 x, f32 y, f32 z, f32 w) = 0;
-		virtual void Set1Int(std::string uniform, s32 value) = 0;
+		virtual void SetInt(std::string uniform, s32 value) = 0;
 		virtual void SetFloat(std::string uniform, f32 value) = 0;
+		virtual void SetBool(std::string uniform, bool value) = 0;
 		virtual u32 GetId() = 0;
 	};
 

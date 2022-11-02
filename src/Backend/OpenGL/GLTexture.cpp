@@ -2,9 +2,7 @@
 
 #include <string>
 #include <mcl/Logger.hpp>
-
 #include <stb/stb_image.h>
-
 
 using mcl::Log;
 
@@ -14,13 +12,12 @@ namespace Sea::Backend::OpenGL
 		: Texture(image, texType, slot)
 	{	
 		if (!image.Exist())
-		{
-			Log::Error() << imageFile.GetPath().c_str() << " not exist";
+		{	
+			Log::Error() << "Cannot load texture, reason :" << imageFile.GetPath().c_str() << " not exist";
 			throw std::exception("");
 		}
 
 		s32 channel;
-		// stbi_set_flip_vertically_on_load(true);
 		u8* bytes = stbi_load(imageFile.GetPath().c_str(), &width, &height, &channel, 0);
 		if (bytes)
 		{

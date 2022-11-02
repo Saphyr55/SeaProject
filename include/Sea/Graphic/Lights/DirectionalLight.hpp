@@ -8,7 +8,7 @@ namespace Sea
 	class DirectionalLight : public Light
 	{
 	public:
-		glm::vec3 Direction = glm::vec3(0.0f, -1.0f, 0.0f);
+		glm::vec3 Direction = glm::vec3(0.0f, 0.0f, 0.0f);
 
 		void Draw(Shader& shader);
 
@@ -31,7 +31,7 @@ namespace Sea
 	{	
 		Position = -Direction;
 		shader.Use();
-		shader.Set1Int("sizeDirectionalLight", ids.size());
+		shader.SetInt("sizeDirectionalLight", ids.size());
 		shader.SetVec3f(light + ".ambient", Ambient);
 		shader.SetVec3f(light + ".diffuse", Diffuse);
 		shader.SetVec3f(light + ".specular", Specular);

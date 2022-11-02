@@ -14,13 +14,11 @@
 
 #include <Sea/Core/Game.hpp>
 #include <Sea/Core/Input/Input.hpp>
-#include <Sea/Core/Loader/GLTFLoader.hpp>
 
 #include <Sea/Graphic/Lights/PointLight.hpp>
 
 #include <Sea/Graphic/Model.hpp>
 #include <Sea/Core/Loader/AssimpModelLoader.hpp>
-#include <Sea/Graphic/Models/CubeModel.hpp>
 #include <Sea/Graphic/Lights/SpotLight.hpp>
 #include <Sea/Graphic/Lights/DirectionalLight.hpp>
 
@@ -54,21 +52,17 @@ private:
 	Ref<Shader> shader;
 	Ref<Shader> shaderLight;
 
-	Ref<Model> lantern;
-	glm::vec3 lanterPos = glm::vec3(0.0f, -1.0f, 0.0f);
-	glm::mat4 lanternModel = glm::mat4(1.0f);
-
-	Ref<CubeModel> cube;
-	glm::vec3 cubePos = glm::vec3(-1.0f, 1.0f, 0.0f);
-	glm::mat4 cubeModel = glm::mat4(1.0f);
+	Ref<Model> generi;
+	glm::vec3 generiPos = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::mat4 generiModel = glm::mat4(1.0f);
 
 	Ref<PointLight> light;
 
-	Ref<IModelLoader> modelLoader;
 	Ref<Model> grindstone;
 	glm::mat4 grindstoneModel = glm::mat4(1.0f);
-	glm::vec3 grindstonePos = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 grindstonePos = glm::vec3(0.0f, 5.0f, 0.0f);
 
+	f32 ambientWorld = 1.9f; 
 	f32 initSpeed = .025f;
 	f32 speed = initSpeed;
 	s32 state = 1;
@@ -80,10 +74,12 @@ void MyGame::Before()
 {
 	// Default shader
 	shader = Mould<Shader>(File("./examples/shaders/shader.vert"), File("./examples/shaders/shader.frag"));
+	shader->SetFloat(std::string("material.shininess0"), 8);
+
 	// Light shader
 	shaderLight = Mould<Shader>(File("./examples/shaders/light.vert"), File("./examples/shaders/light.frag"));
 	// Camera
-	camera = CreateRef<Camera>(GetWindow().GetProperties().Width, GetWindow().GetProperties().Height, glm::vec3(0.0f, 0.5f, 2.0f));
+	camera = CreateRef<Camera>(GetWindow().GetProperties().Width, GetWindow().GetProperties().Height, glm::vec3(0.0f, 0.0f, 2.0f));
 		
 	switch (state)
 	{
@@ -98,12 +94,18 @@ void MyGame::Before()
 	}
 
 	// Grindstone
-	grindstone = AssimpModelLoader("examples/res/md/grindstone/scene.gltf").Load();
-	light = CreateRef<PointLight>();
-	light->Position = glm::vec3(0.0f, 2.f, 0.0f);
+	AssimpModelLoader grindstoneLoader("examples/res/md/grindstone/scene.gltf");
+	grindstone = grindstoneLoader.Load();
 
-	shader->Use();
-	shader->SetFloat("material.shininess", 1.f); 
+ 	// generi
+// 	AssimpModelLoader generiLoader("examples/res/md/backpack/backpack.obj");
+// 	generiLoader.FlipUV();
+// 	generi = generiLoader.Load();
+
+	light = CreateRef<PointLight>();
+	light->Position= glm::vec3(0.0f, 30.0f, 30.0f);
+	light->Quadratic = 0.000007;
+	light->Linear = 0.0014;
 }
 
 void MyGame::After()
@@ -120,11 +122,12 @@ void MyGame::Render()
 
 	camera->SetViewProjection(45.0f, 0.1f, 100.0f);
 
+// 	generi->Draw(*shader, *camera, generiModel, generiPos);
+	grindstone->Draw(*shader, *camera, grindstoneModel, grindstonePos);
+
 	light->Draw(*shader);
 	light->DrawMesh(*shaderLight, *camera);
 
-	grindstone->Draw(*shader, *camera, grindstoneModel, grindstonePos);
-	
 }
 
 void MyGame::Update(f32 dt)

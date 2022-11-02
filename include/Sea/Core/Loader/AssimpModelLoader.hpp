@@ -14,48 +14,49 @@ namespace fs = std::filesystem;
 
 namespace Sea
 {
+
 	class AssimpModelLoader : public AbstractModelLoader
 	{
 	public:
-		AssimpModelLoader(File file);
-		AssimpModelLoader(std::string_view filePath);
-
 		Ref<Model> Load();
+		inline void FlipUV() { FlagsProperties |= aiProcess_FlipUVs; };
+		AssimpModelLoader(std::string_view filepath);
+		AssimpModelLoader(const AssimpModelLoader&) = default;
+		AssimpModelLoader(AssimpModelLoader&&) = default;
+		~AssimpModelLoader() = default;
 
 	private:
 		void ProcessNode(aiNode* node, const aiScene* scene);
 		Mold<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
-		std::vector<Mold<Texture>> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string_view typeName);
+		std::vector<Mold<Texture>> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, Texture::Type _type);
 		void SetVertexPos(Vertex& vertex, aiMesh* mesh, u32 i);
 		void SetVertexNormal(Vertex& vertex, aiMesh* mesh, u32 i);
-		void SetVertexTexUV(Vertex& vertex, aiMesh* mesh, u32 i);
+		void SetVertexTexCoords(Vertex& vertex, aiMesh* mesh, u32 i);
 
+	public:
+		u32 FlagsProperties;
 	private:
-		const aiScene* scene;
-		Assimp::Importer importer;
-		std::string directory;
-		std::vector<Mold<Texture>> textures_loaded;
+		const aiScene* m_scene;
+		Assimp::Importer m_importer;
+		std::string m_directory;
+		std::vector<Mold<Texture>> m_texturesLoaded;
 	};
 
-	Ref<Model> AssimpModelLoader::Load()
-	{
-		return CreateRef<Model>(meshes);
-	}
+	AssimpModelLoader::AssimpModelLoader(std::string_view filepath) : AbstractModelLoader(filepath) { }
 
-	AssimpModelLoader::AssimpModelLoader(File file) : AbstractModelLoader(file) 
-	{ 
-		scene = importer.ReadFile(file.GetPath(), aiProcess_Triangulate | aiProcess_FlipUVs);
-		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+	Ref<Model> AssimpModelLoader::Load()
+	{	
+		m_scene = m_importer.ReadFile(m_file->GetPath(), aiProcess_Triangulate | aiProcess_GenUVCoords | FlagsProperties );
+		if (!m_scene || m_scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !m_scene->mRootNode)
 		{
-			Log::Error() << "Assimp -> " << importer.GetErrorString();
+			Log::Error() << "Assimp -> " << m_importer.GetErrorString();
 			throw std::exception("AssimpLoaderExpection");
 		}
-		directory = file.GetPath().substr(0, file.GetPath().find_last_of('/'));
+		m_directory = m_file->GetPath().substr(0, m_file->GetPath().find_last_of('/'));
 
-		ProcessNode(scene->mRootNode, scene);
+		ProcessNode(m_scene->mRootNode, m_scene);
+		return CreateRef<Model>(meshes);
 	}
-	
-	AssimpModelLoader::AssimpModelLoader(std::string_view filePath) : AssimpModelLoader(File(filePath)) { }
 
 	void AssimpModelLoader::ProcessNode(aiNode* node, const aiScene* scene)
 	{
@@ -86,9 +87,9 @@ namespace Sea
 
 			// texture coordinates
 			if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
-				SetVertexTexUV(vertex, mesh, i);
+				SetVertexTexCoords(vertex, mesh, i);
 			else
-				vertex.TexUV = glm::vec2(0.0f, 0.0f);
+				vertex.TexCoords = glm::vec2(0.0f, 0.0f);
 
 			vertices.push_back(vertex);
 		}
@@ -102,22 +103,27 @@ namespace Sea
 			for (u32 j = 0; j < face.mNumIndices; j++) indices.push_back(face.mIndices[j]);
 		}
 
-		// process material
-		if (mesh->mMaterialIndex >= 0)
-		{
-			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-			std::vector<Mold<Texture>> diffuseMaps = LoadMaterialTextures(material,
-				aiTextureType_DIFFUSE, "texture_diffuse");
-			textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-			std::vector<Mold<Texture>> specularMaps = LoadMaterialTextures(material,
-				aiTextureType_SPECULAR, "texture_specular");
-			textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-		}
+		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+		
+		std::vector<Mold<Texture>> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, Texture::Type::Diffuse);
+		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+
+		std::vector<Mold<Texture>> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, Texture::Type::Specular);
+		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+
+		std::vector<Mold<Texture>> ambiantMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, Texture::Type::Ambient);
+		textures.insert(textures.end(), ambiantMaps.begin(), ambiantMaps.end());
+
+		std::vector<Mold<Texture>> shininessMaps = LoadMaterialTextures(material, aiTextureType_SHININESS, Texture::Type::Shininess);
+		textures.insert(textures.end(), shininessMaps.begin(), shininessMaps.end());
+
+// 		std::vector<Mold<Texture>> normalMaps = LoadMaterialTextures(material, aiTextureType_NORMALS, Texture::Type::Normal);
+// 		textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 
 		return Mould<Mesh>(vertices, indices, textures);
 	}
 
-	std::vector<Mold<Texture>> AssimpModelLoader::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string_view typeName)
+	std::vector<Mold<Texture>> AssimpModelLoader::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, Texture::Type _type)
 	{
 		std::vector<Mold<Texture>> textures;
 		for (u32 i = 0; i < mat->GetTextureCount(type); i++)
@@ -126,11 +132,11 @@ namespace Sea
 			mat->GetTexture(type, i, &str);
 			bool skip = false;
 
-			for (u32 j = 0; j < textures_loaded.size(); j++)
-			{	
-				auto& current_texture = textures_loaded[j];
-				if (fs::path(current_texture->GetFile().GetPath()).compare(fs::path(str.C_Str())))
-				{
+			for (u32 j = 0; j < m_texturesLoaded.size(); j++)
+			{
+				auto& current_texture = m_texturesLoaded[j];
+				if (fs::path(current_texture->GetFile().GetPath()).filename() == fs::path(str.C_Str()).filename())
+				{	
 					textures.push_back(current_texture);
 					skip = true;
 					break;
@@ -139,17 +145,8 @@ namespace Sea
 
 			if (!skip) // if texture hasn't been loaded already, load it
 			{   
-				Texture::Type _type = Texture::Type::Diffuse;
-				switch (type)
-				{
-				case aiTextureType::aiTextureType_SPECULAR:
-					_type = Texture::Type::Specular;
-					break;
-				default:
-					break;
-				}
-				textures_loaded.push_back(Mould<Texture>(
-					File(directory + "/" + str.C_Str(), false), _type, i)
+				m_texturesLoaded.push_back(Mould<Texture>(
+					File(m_directory + "/" + str.C_Str(), false), _type, i)
 				); // add to loaded textures
 			}
 		}
@@ -174,27 +171,25 @@ namespace Sea
 		vertex.Normal = vector;
 	}
 
-	void AssimpModelLoader::SetVertexTexUV(Vertex& vertex, aiMesh* mesh, u32 i)
+	void AssimpModelLoader::SetVertexTexCoords(Vertex& vertex, aiMesh* mesh, u32 i)
 	{
-		glm::vec2 vec;
+		glm::vec2 vecTex;
 		glm::vec3 vector;
 		// a vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't 
 		// use models where a vertex can have multiple texture coordinates so we always take the first set (0).
-		vec.x = mesh->mTextureCoords[0][i].x;
-		vec.y = mesh->mTextureCoords[0][i].y;
-		vertex.TexUV = vec;
-		/*
-		vector.x = mesh->mTangents[i].x;
-		vector.y = mesh->mTangents[i].y;
-		vector.z = mesh->mTangents[i].z;
-		vertex.Tangent = vector;
-		vector.x = mesh->mBitangents[i].x;
-		vector.y = mesh->mBitangents[i].y;
-		vector.z = mesh->mBitangents[i].z;
-		vertex.Bitangent = vector;
-		*/
+		vecTex.x = mesh->mTextureCoords[0][i].x;
+		vecTex.y = mesh->mTextureCoords[0][i].y;
+		vertex.TexCoords = vecTex;
+		
+// 		vector.x = mesh->mTangents[i].x;
+// 		vector.y = mesh->mTangents[i].y;
+// 		vector.z = mesh->mTangents[i].z;
+		// vertex.Tangent = vector;
+// 		vector.x = mesh->mBitangents[i].x;
+// 		vector.y = mesh->mBitangents[i].y;
+// 		vector.z = mesh->mBitangents[i].z;
+		// vertex.Bitangent = vector;
+		
 	}
-
-
 
 }

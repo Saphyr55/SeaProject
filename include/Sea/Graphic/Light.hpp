@@ -15,7 +15,7 @@ namespace Sea
 	public:
 		Color _Color = Colors::White;
 		glm::vec3 Position = glm::vec3();
-		glm::vec3 Ambient = glm::vec3(0.7f, 0.7f, 0.7f);
+		glm::vec3 Ambient = glm::vec3(0.2f, 0.2f, 0.2f);
 		glm::vec3 Diffuse = glm::vec3(0.5f, 0.5f, 0.5f);
 		glm::vec3 Specular = glm::vec3(1.0f, 1.0f, 1.0f);
 

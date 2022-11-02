@@ -37,7 +37,7 @@ namespace Sea
 	void SpotLight::Draw(Shader& shader)
 	{	
 		shader.Use();
-		shader.Set1Int("sizeSpotLight", ids.size());
+		shader.SetInt("sizeSpotLight", ids.size());
 		shader.SetVec3f(light + ".ambient", Ambient);
 		shader.SetVec3f(light + ".diffuse", Diffuse);
 		shader.SetVec3f(light + ".specular", Specular);

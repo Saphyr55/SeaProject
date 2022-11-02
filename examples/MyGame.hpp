@@ -97,11 +97,6 @@ void MyGame::Before()
 	AssimpModelLoader grindstoneLoader("examples/res/md/grindstone/scene.gltf");
 	grindstone = grindstoneLoader.Load();
 
- 	// generi
-// 	AssimpModelLoader generiLoader("examples/res/md/backpack/backpack.obj");
-// 	generiLoader.FlipUV();
-// 	generi = generiLoader.Load();
-
 	light = CreateRef<PointLight>();
 	light->Position= glm::vec3(0.0f, 30.0f, 30.0f);
 	light->Quadratic = 0.000007;
@@ -122,7 +117,6 @@ void MyGame::Render()
 
 	camera->SetViewProjection(45.0f, 0.1f, 100.0f);
 
-// 	generi->Draw(*shader, *camera, generiModel, generiPos);
 	grindstone->Draw(*shader, *camera, grindstoneModel, grindstonePos);
 
 	light->Draw(*shader);

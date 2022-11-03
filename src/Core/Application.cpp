@@ -1,13 +1,11 @@
 
 
 #include "Sea/Core/Application.hpp"
-
-#include <mcl/Logger.hpp>
-#include <stb/stb_image.h>
-#include <SDL2/SDL.h>
-
-#include <stdexcept>
-#include <filesystem>
+#include "Sea/Backend/OpenGL/Renderer/GLWindow.hpp"
+#include "Sea/Common/CommonType.hpp"
+#include "Sea/Core/Mold.hpp"
+#include "Sea/Core/Clock.hpp"
+#include "Sea/Backend/OpenGL/GL.hpp"
 
 namespace fs = std::filesystem;
 using mcl::Log;
@@ -22,67 +20,47 @@ namespace Sea
 
 	Application::~Application()
 	{ 
-		SDL_Quit(); 
+		SDL_Quit();
 	}
 
-	void Application::Run()
+	bool Application::Active()
 	{
-		Before();
-		Running();
-		After();
+		if (!m_isRunning)
+		{
+			m_isRunning = true;
+			m_window->Run();
+		}
+		m_window->Update();
+		return m_isRunning && m_window->IsOpen();
 	}
 
-	void Application::CreateGameWindow(std::shared_ptr<Game> game, Window::Properties& properties)
+	Window& Application::CreateWindow(std::string_view title, VideoMode& videoMode)
 	{	
-		m_game = game;
-		m_game->m_window = Window::Of(properties);
-	}
-
-	void Application::Before()
-	{
-		if (m_game)
+		Molder::api = GraphicAPI;
+		switch (GraphicAPI)
 		{
-			m_game->Run();
-			m_game->Before();
-			m_game->GetRenderer().Enable();
-		}
-	}
 
-	void Application::After()
-	{
-		if (m_game)
-		{
-			m_game->After();
-		}
-	}
+		case GraphicsAPI::OpenGL:
+			Backend::OpenGL::OpenGL::Init();
+			m_window = CreateRef<Backend::OpenGL::GLWindow>(title, videoMode);
+			break;
 
-	void Application::Running()
-	{	
-		while (m_game->IsRunning())
-		{
-			m_game->GetWindow().CreateEvent();
-			m_clock.Last = m_clock.GetTicks();
-			while (m_game->GetWindow().IsOpen())
-			{
-				m_clock.StartTick(*m_game);
-				m_game->StartFPS();
-				m_game->GetWindow().m_event->ClearEvent();
-				m_game->GetWindow().Update();
-				m_game->Render();
-				m_game->Update(m_clock.Delta);
-				m_game->GetWindow().m_event->HandleEvent(*m_game);
-				m_game->EndFPS();
-				m_game->GetWindow().Swap();
-				m_clock.EndTick();
-			}
-
+		default:
+			Backend::OpenGL::OpenGL::Init();
+			m_window = CreateRef<Backend::OpenGL::GLWindow>(title, videoMode);
+			break;
 		}
+		Log::Info() << "Setup context with " << Context::contextType_tostring(GraphicAPI);
+		return *m_window;
 	}
 
 	void Application::Init()
 	{
-		if (SDL_Init(SDL_INIT_EVERYTHING) != 0) 
-			throw std::runtime_error("Init SDL fail");
+		if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
+		{
+			Log::Error() << "Init SDL fail";
+			throw std::exception();
+		}
 
 		stbi_set_flip_vertically_on_load(1);
 	}

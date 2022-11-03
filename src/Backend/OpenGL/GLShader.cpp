@@ -72,14 +72,15 @@ namespace Sea::Backend::OpenGL
 	{
 	}
 
-	GLShader::GLShader(std::string vertexShader, std::string fragmentShader)
-		: m_vertexShaderSource((char*)vertexShader.c_str()), m_fragmentShaderSource((char*)fragmentShader.c_str())
+	GLShader::GLShader(std::string vertexShader, std::string fragmentShader) : 
+		m_vertexShaderSource(vertexShader.c_str()),
+		m_fragmentShaderSource(fragmentShader.c_str())
 	{
 		CreateProgram();
 		Use();
 	}
 	
-	u32 GLShader::CreateShader(u32 type, char* source)
+	u32 GLShader::CreateShader(u32 type, const char* source)
 	{
 		u32 shader;
 		shader = glCreateShader(type);
@@ -90,26 +91,28 @@ namespace Sea::Backend::OpenGL
 
 	bool GLShader::CheckInfoShader(u32 shader, u32 status)
 	{
+		const u16 size = 512;
 		s32  success;
-		char infoLog[512];
+		char infoLog[size];
 		glGetShaderiv(shader, status, &success);
 		if (!success)
 		{
-			glGetShaderInfoLog(shader, 512, NULL, infoLog);
-			Log::Error() << "OpengGL Shader : " << infoLog;
+			glGetShaderInfoLog(shader, size, NULL, infoLog);
+			throw std::exception(std::string("OpengGL Shader : " + std::string(infoLog)).c_str());
 		}
 		return success;
 	}
 	
 	bool GLShader::CheckIngoProgram(u32 status) 
 	{
+		const u16 size = 512;
 		s32 success;
-		char infoLog[512];
+		char infoLog[size];
 		glGetProgramiv(programId, GL_LINK_STATUS, &success);
 		if (!success)
 		{
-			glGetProgramInfoLog(programId, 512, NULL, infoLog);
-			Log::Error() << "OpengGL Shader : " << infoLog;
+			glGetProgramInfoLog(programId, size, NULL, infoLog);
+			throw std::exception(std::string("OpengGL Shader : " + std::string(infoLog)).c_str());
 		}
 		return success;
 	}

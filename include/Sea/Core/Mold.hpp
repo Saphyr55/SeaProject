@@ -17,7 +17,7 @@ namespace Sea
 
 	struct Molder
 	{
-		static ContextType context;
+		static GraphicsAPI api;
 
 		template<typename Base, typename T>
 		inline static constexpr bool is_same()
@@ -29,9 +29,9 @@ namespace Sea
 	template<typename T, typename ...Args>
 	Mold<T> Mould(Args&& ...args)
 	{
-		switch (Molder::context)
+		switch (Molder::api)
 		{
-		case ContextType::OpenGL:
+		case GraphicsAPI::OpenGL:
 
 			if constexpr (std::is_same_v<T, Texture>)
 				return std::make_shared<Backend::OpenGL::GLTexture>(std::forward<Args>(args)...);

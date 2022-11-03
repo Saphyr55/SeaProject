@@ -6,29 +6,35 @@
 
 namespace Sea::Backend::OpenGL
 {
-	void GLWindow::Run()
-	{
-		OpenGL::Init();
+	void GLWindow::Init()
+	{	
 		SetupIcon();
 		SetupFlags();
-
+		
 		flags |= SDL_WINDOW_OPENGL;
 
-		m_handle = SDL_CreateWindow(
-			m_properties.Title.c_str(),
-			SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-			m_properties.Width, m_properties.Height, flags
+		m_handle = SDL_CreateWindow
+		(
+			m_title.c_str(),
+			SDL_WINDOWPOS_CENTERED,
+			SDL_WINDOWPOS_CENTERED,
+			m_videoMode.Width,
+			m_videoMode.Height,
+			flags
 		);
 
-		if (m_handle == nullptr) throw(std::string("Failed to create window: ") + SDL_GetError());
-		
-		m_contextPtr= CreateRef<GLContext>(*this);
+		if (!m_handle) throw std::exception(std::string("Failed to create window" + std::string(SDL_GetError())).c_str());
+
+		m_contextPtr = CreateRef<GLContext>(*this); // Create gl context
 
 		gladLoadGLLoader(SDL_GL_GetProcAddress); // Check OpenGL properties
 
-		if (GL_VERSION == NULL) throw("Enable to init OpenGL");
-		
+		if (GL_VERSION == NULL) throw std::exception("Enable to init OpenGL");
+	}
 
+	void GLWindow::Run()
+	{
+		m_isOpen = true;
 	}
 
 	void GLWindow::Swap()
@@ -43,12 +49,12 @@ namespace Sea::Backend::OpenGL
 
 	void GLWindow::Viewport()
 	{
-		Viewport(m_properties.Width, m_properties.Height);
+		Viewport(m_videoMode.Width, m_videoMode.Height);
 	}
 
 	void GLWindow::Viewport(u32 h, u32 w)
 	{
-		Viewport(0, 0, m_properties.Width, m_properties.Height);
+		Viewport(0, 0, m_videoMode.Width, m_videoMode.Height);
 	}
 
 	void GLWindow::Viewport(u32 x, u32 y, u32 h, u32 w)
@@ -56,10 +62,11 @@ namespace Sea::Backend::OpenGL
 		glViewport(x, y, h, w);
 	}
 
-	GLWindow::GLWindow(Window::Properties& properties) :
-		Window(properties)
+	GLWindow::GLWindow(std::string_view title, VideoMode& videoMode) : Window(title, videoMode)
 	{
-		m_renderer = std::make_shared<GLRenderer>();
+		m_renderer = CreateRef<GLRenderer>();
+		Init();
+		m_renderer->Enable();
 	}
 
 

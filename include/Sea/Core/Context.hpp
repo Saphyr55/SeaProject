@@ -6,24 +6,19 @@
 
 #include <string>
 #include <SDL2/SDL.h>
-#include <Sea/Common/CommonType.hpp>
+#include "Sea/Common/CommonType.hpp"
+#include "Sea/Core/VideoMode.hpp"
 
 namespace Sea
 {
 
-	enum class ContextType
+	struct Context
 	{
-		OpenGL
-	};
-
-	class Context
-	{
-	public:
-		static std::string contextType_tostring(ContextType context)
+		static std::string contextType_tostring(GraphicsAPI api)
 		{
-			switch (context)
+			switch (api)
 			{
-			case ContextType::OpenGL:
+			case GraphicsAPI::OpenGL:
 				return "OpenGL";
 			default:
 				break;
@@ -31,11 +26,7 @@ namespace Sea
 			return "unknown graphic API";
 		}
 
-	public:
-		Context() = default;
-		~Context() = default;
+		Context()=default;
+		~Context()=default;
 	};
-
-
-
 }

@@ -2,6 +2,9 @@
 
 #include <memory>
 #include <cstdint>
+#include <mcl/Logger.hpp>
+
+using mcl::Log;
 
 namespace Sea 
 {

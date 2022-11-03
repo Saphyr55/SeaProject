@@ -1,25 +1,34 @@
 #pragma once
 
-#include "Sea/Core/Context.hpp"
-#include "Sea/Core/Game.hpp"
+#include <string>
+#include <stdexcept>
+#include <filesystem>
+#include <functional>
+
+#include <mcl/Logger.hpp>
+#include <stb/stb_image.h>
+#include <SDL2/SDL.h>
+
 #include "Sea/Core/Clock.hpp"
+#include "Sea/Core/VideoMode.hpp"
 
 namespace Sea
 {	
+	class Window;
 
 	class Application final
 	{
-	friend class Event;
+		friend class EventHandler;
 
 	public:
-		void Run();
-		void CreateGameWindow(std::shared_ptr<Game> game, Window::Properties& properties);
+		GraphicsAPI GraphicAPI = GraphicsAPI::OpenGL;
+
+	public:
+		bool Active();
+		Window& CreateWindow(std::string_view title, VideoMode& videoMode);
 
 	private:
 		void Init();
-		void Before();
-		void After();
-		void Running();
 
 	public:
 		Application();
@@ -28,7 +37,7 @@ namespace Sea
 		~Application();
 
 	private:
-		Clock m_clock;
-		std::shared_ptr<Game> m_game;
+		Ref<Window> m_window;
+		bool m_isRunning = false;
 	};
 }

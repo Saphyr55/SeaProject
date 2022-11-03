@@ -158,11 +158,11 @@ void main()
     for (int i = 0 ; i < sizePointLight ; i++)
         _output_light += create_point_light(pointLights[i], _normal, fragPos, view_dir);
 
-    // for (int i = 0 ; i < sizeDirectionalLight ; i++)
-    //     _output_light += create_direc_light(directionalLights[i], _normal, fragPos, view_dir);
+    for (int i = 0 ; i < sizeDirectionalLight ; i++)
+        _output_light += create_direc_light(directionalLights[i], _normal, fragPos, view_dir);
 
-    // for (int i = 0 ; i < sizeSpotLight ; i++)
-    //     _output_light += create_spot_light(spotLights[i], _normal, fragPos, view_dir);
+    for (int i = 0 ; i < sizeSpotLight ; i++)
+        _output_light += create_spot_light(spotLights[i], _normal, fragPos, view_dir);
     
     _result += vec4(_output_light, 1.0);
 

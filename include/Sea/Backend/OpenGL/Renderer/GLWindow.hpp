@@ -7,6 +7,7 @@ namespace Sea::Backend::OpenGL
 	class GLWindow final : public Window
 	{
 	public:
+		void Init();
 		void Run();
 		void Swap();
 		void UseVSync(bool use);
@@ -15,7 +16,7 @@ namespace Sea::Backend::OpenGL
 		void Viewport(u32 x, u32 y, u32 h, u32 w);
 
 	public:
-		GLWindow(Window::Properties& properties);
+		GLWindow(std::string_view title, VideoMode& proterties);
 
 	};
 

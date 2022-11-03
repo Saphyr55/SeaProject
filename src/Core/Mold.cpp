@@ -3,6 +3,6 @@
 namespace Sea
 {   
 
-	ContextType Molder::context;
+	GraphicsAPI Molder::api;
 
 }

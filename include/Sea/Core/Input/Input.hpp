@@ -12,11 +12,11 @@
 
 namespace Sea
 {
-	class Event;
+	class EventHandler;
 
 	class Input final
 	{
-	friend class Event;
+	friend class EventHandler;
 
 	public:
 		static bool IsKeyDown(Key::Scancode code);

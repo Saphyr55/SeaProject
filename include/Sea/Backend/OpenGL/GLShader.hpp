@@ -29,14 +29,14 @@ namespace Sea::Backend::OpenGL
 
 	private:
 		s32 GetUniformLocation(std::string uniform);
-		u32 CreateShader(u32 type, char *source);
+		u32 CreateShader(u32 type, const char *source);
 		bool CheckInfoShader(u32 shader, u32 status);
 		bool CheckIngoProgram(u32 status);
 		void CreateProgram();
 
 	private:
-		char *m_vertexShaderSource;
-		char *m_fragmentShaderSource;
+		const char *m_vertexShaderSource;
+		const char *m_fragmentShaderSource;
 		u32 programId;
 	};
 

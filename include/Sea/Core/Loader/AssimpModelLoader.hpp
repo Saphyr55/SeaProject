@@ -19,7 +19,7 @@ namespace Sea
 	{
 	public:
 		Ref<Model> Load();
-		inline void FlipUV() { FlagsProperties |= aiProcess_FlipUVs; };
+		inline void FlipUVs() { FlagsProperties |= aiProcess_FlipUVs; };
 		AssimpModelLoader(std::string_view filepath);
 		AssimpModelLoader(const AssimpModelLoader&) = default;
 		AssimpModelLoader(AssimpModelLoader&&) = default;
@@ -34,7 +34,7 @@ namespace Sea
 		void SetVertexTexCoords(Vertex& vertex, aiMesh* mesh, u32 i);
 
 	public:
-		u32 FlagsProperties;
+		u32 FlagsProperties{};
 	private:
 		const aiScene* m_scene;
 		Assimp::Importer m_importer;
@@ -46,15 +46,17 @@ namespace Sea
 
 	Ref<Model> AssimpModelLoader::Load()
 	{	
-		m_scene = m_importer.ReadFile(m_file->GetPath(), aiProcess_Triangulate | aiProcess_GenUVCoords | FlagsProperties );
+		Log::Info() << "Model Load with assimp START :  " << m_file->GetPath();
+		m_scene = m_importer.ReadFile(m_file->GetPath(), aiProcess_Triangulate | FlagsProperties );
 		if (!m_scene || m_scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !m_scene->mRootNode)
 		{
-			Log::Error() << "Assimp -> " << m_importer.GetErrorString();
-			throw std::exception("AssimpLoaderExpection");
+			std::string e("AssimpLoaderExpection : " + std::string(m_importer.GetErrorString()));
+			throw std::exception(e.c_str());
 		}
 		m_directory = m_file->GetPath().substr(0, m_file->GetPath().find_last_of('/'));
 
 		ProcessNode(m_scene->mRootNode, m_scene);
+		Log::Info() << "Model Load with assimp END : " << m_file->GetPath();
 		return CreateRef<Model>(meshes);
 	}
 
@@ -104,7 +106,7 @@ namespace Sea
 		}
 
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-		
+
 		std::vector<Mold<Texture>> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, Texture::Type::Diffuse);
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 

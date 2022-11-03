@@ -3,7 +3,8 @@
 #include <SDL2/SDL.h>
 
 #include "Sea/Common/CommonType.hpp"
-#include "Sea/Core/Game.hpp"
+#include "Sea/Core/FrameRate.hpp"
+
 #include <mcl/Logger.hpp>
 
 using mcl::Log;
@@ -12,22 +13,28 @@ namespace Sea
 {
     struct Clock
     {
-        const f32 TargetDelta = 1.5f;
         f32 Now = 0;
         f32 Last = 0;
         f32 Delta = 0;
+          
+        Clock() { Last = GetTicks(); }
+        ~Clock()=default;
 
-        void StartTick(Game& game)
+        void Start(FrameRate& frameRate)
         {
+			frameRate.Start();
             Now = SDL_GetTicks();
-            Delta = (Now - Last) * (game.GetFPS()/1000);
+            Delta = (Now - Last) * (frameRate.GetFPS() / 1000);
         }
 
-        void EndTick()
+        void End(FrameRate& frameRate)
         {
-			Last = Now;
+			frameRate.End();
+            frameRate.Calculate();
+            Last = Now;
         }
 
+    private:
         f32 GetTicks()
         {
             return SDL_GetTicks();

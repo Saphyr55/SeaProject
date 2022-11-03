@@ -13,8 +13,7 @@ namespace Sea::Backend::OpenGL
 	void GLRenderer::Enable() const
 	{
 		glEnable(GL_DEPTH_TEST);
-		// glEnable(GL_DEPTH_CLAMP);
-		glDepthFunc(GL_LESS);
+		glEnable(GL_DEPTH_CLAMP);
 	}
 
 	void GLRenderer::ClearColor(Color color) const

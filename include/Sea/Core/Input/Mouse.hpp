@@ -15,7 +15,7 @@ namespace Sea
 
 	class Mouse final
 	{
-	friend class Event;
+	friend class EventHandler;
 
 	public:
 		static f32 RelativePosX;

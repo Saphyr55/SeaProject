@@ -10,27 +10,15 @@ using mcl::Log;
 
 namespace Sea
 {
-	Ref<Window> Window::Of(Window::Properties &properties)
-	{	
-		switch (properties.Context)
-		{
-		case ContextType::OpenGL: 
-			return CreateRef<Backend::OpenGL::GLWindow>(properties);
-		default: 
-			return CreateRef<Backend::OpenGL::GLWindow>(properties);
-		}
-	}
 
-	Window::Window(Window::Properties &proterties) 
-		: m_properties(proterties), m_handle(nullptr)
+	Window::Window(std::string_view title, VideoMode& videoMode)
+		: m_videoMode(videoMode), m_handle(nullptr), m_title(title), m_event(CreateRef<EventHandler>(*this))
 	{
-		Molder::context = m_properties.Context;
 		Log::Info() << 
 			"Window create with {" << 
-			"width=" << m_properties.Width << 
-			", height=" <<m_properties.Height << 
-			", title="  <<m_properties.Title << "}";
-		Log::Info() << "Setup context with " << Context::contextType_tostring(m_properties.Context);
+			"width=" << m_videoMode.Width <<
+			", height=" << m_videoMode.Height <<
+			", title="  << m_title << "}";
 	}
 
 	Window::~Window()
@@ -43,12 +31,12 @@ namespace Sea
 		return m_isOpen;
 	}
 
-	void Window::Hide() 
+	void Window::Hide()
 	{
 		SDL_HideWindow(m_handle);
 	}
 
-	void Window::Show() 
+	void Window::Show()
 	{
 		SDL_ShowWindow(m_handle);
 	}
@@ -65,21 +53,21 @@ namespace Sea
 
 	void Window::SetSize(f32 w, f32 h)
 	{
-		m_properties.Width = w;
-		m_properties.Height = h;
-		SDL_SetWindowSize(m_handle, m_properties.Width, m_properties.Height);
+		m_videoMode.Width = w;
+		m_videoMode.Height = h;
+		SDL_SetWindowSize(m_handle, m_videoMode.Width, m_videoMode.Height);
 	}
 
 	void Window::SetResizable(bool resizable)
 	{
-		m_properties.Resizable = resizable;
-		SDL_SetWindowResizable(m_handle, (SDL_bool) m_properties.Resizable);
+		m_videoMode.Resizable = resizable;
+		SDL_SetWindowResizable(m_handle, (SDL_bool)m_videoMode.Resizable);
 	}
 
-	void Window::SetTitle(std::string title)
-	{
-		m_properties.Title = title;
-		SDL_SetWindowTitle(m_handle, title.c_str());
+	void Window::SetTitle(std::string_view title)
+	{	
+		m_title = title;
+		SDL_SetWindowTitle(m_handle, title.data());
 	}
 
 	void Window::SetMousePostion(f32 x, f32 y)
@@ -89,7 +77,7 @@ namespace Sea
 
 	void Window::SetMouseOnMiddlePosistion()
 	{
-		SetMousePostion(m_properties.Width / 2, m_properties.Height / 2);
+		SetMousePostion(m_videoMode.Width / 2, m_videoMode.Height / 2);
 	}
 
 	void Window::GrapMouse()
@@ -105,24 +93,23 @@ namespace Sea
 	void Window::SetupFlags()
 	{	
 		flags = SDL_WINDOW_SHOWN;
-		if (m_properties.Resizable) flags |= SDL_WINDOW_RESIZABLE;
-		if (m_properties.Fullscreen) flags |= SDL_WINDOW_FULLSCREEN;
-		if (m_properties.Maximazed) flags |= SDL_WINDOW_MAXIMIZED;
-	}
-
-	void Window::CreateEvent()
-	{	
-		m_event = std::make_shared<Event>();
+		if (m_videoMode.Resizable) flags |= SDL_WINDOW_RESIZABLE;
+		if (m_videoMode.Fullscreen) flags |= SDL_WINDOW_FULLSCREEN;
+		if (m_videoMode.Maximazed) flags |= SDL_WINDOW_MAXIMIZED;
 	}
 
 	void Window::Update()
 	{	
-		SDL_GetWindowSize(m_handle, (s32*)&m_properties.Width, (s32*)&m_properties.Height);
+		SDL_GetWindowSize(m_handle, (s32*)&m_videoMode.Width, (s32*)&m_videoMode.Height);
 	}
 
+	/**
+	 * Deprecated
+	 */
 	void Window::SetupIcon()
-	{				
-		if (!m_properties.FileIcon.empty())
+	{	
+		/*
+		if (!m_videoMode.FileIcon.empty())
 		{
 			auto file = File(m_properties.FileIcon);
 			if (file.Exist())
@@ -139,6 +126,7 @@ namespace Sea
 			}
 			else Log::Warning() << file.GetPath() << " not exist impossible to setup an icon";
 		}
+		*/
 	}
 
 }

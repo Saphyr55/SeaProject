@@ -10,7 +10,7 @@
 namespace Sea::Backend::OpenGL
 {	
 
-	class GLContext final : public Context
+	struct GLContext final : Context
 	{
 
 	public:

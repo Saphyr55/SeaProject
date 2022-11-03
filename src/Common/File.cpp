@@ -9,7 +9,7 @@ namespace fs = std::filesystem;
 
 namespace Sea
 {
-	std::string File::FROM_SOURCE = "";
+	std::string File::FromSource = "";
 
 	const std::string File::GetFileContent(File file)
 	{
@@ -59,7 +59,7 @@ namespace Sea
 	File::File(const std::string_view filepath, bool _internal) :
 		m_ext(fs::path(filepath).extension().string())
 	{
-		if (_internal) m_filepath = FROM_SOURCE + filepath.data();
+		if (_internal) m_filepath = FromSource + filepath.data();
 		else m_filepath = filepath;
 	}
 }

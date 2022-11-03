@@ -8,7 +8,7 @@ namespace Sea
 	class File final
 	{
 	public:
-		static std::string FROM_SOURCE;
+		static std::string FromSource;
 
 	public:
 		static const std::string GetFileContent(File file);

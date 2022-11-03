@@ -13,7 +13,8 @@ namespace Sea::Backend::OpenGL
 		void Bind();
 		void Unbind();
 		void Delete();
-
+		
+		GLTexture(std::string_view path, Type texType, u32 slot);
 		GLTexture(File image, Type texType, u32 slot);
 		~GLTexture() = default;
 

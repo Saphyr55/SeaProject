@@ -11,6 +11,8 @@ namespace Sea::Backend::OpenGL
         void Enable() const;
         void ClearColor(Color color) const;
         void Clear() const;
+	    void DisableBlending() const;
+		void EnableBlending() const;
 
     public:
         GLRenderer()=default;

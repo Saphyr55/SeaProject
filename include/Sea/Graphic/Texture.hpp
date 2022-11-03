@@ -21,12 +21,14 @@ namespace Sea
 		virtual void Bind()=0;
 		virtual void Unbind()=0;
 		virtual void Delete()=0;
+		void Draw();
 		inline File GetFile() { return imageFile; }
 		inline u32 GetId() { return id; };
 		inline s32 GetWidth() { return width; };
 		inline s32 GetHeight() { return height; };
 		
 		Texture(File image, Type texType, u32 slot);
+		Texture(std::string_view path, Type texType, u32 slot);
 		virtual ~Texture() = default;
 
 	protected:
@@ -41,4 +43,5 @@ namespace Sea
 	public:
 		const Type TextureType;
 	};
+
 }

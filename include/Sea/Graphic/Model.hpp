@@ -30,4 +30,7 @@ namespace Sea
         std::vector<Mold<Mesh>> meshes;
         std::vector<glm::mat4> matricesMeshes;
     };
+
+    using ModelRef = Ref<Model>;
+
 }

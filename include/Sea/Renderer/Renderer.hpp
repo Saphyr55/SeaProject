@@ -14,6 +14,8 @@ namespace Sea
     class Renderer
     {
     public:
+		virtual void DisableBlending() const = 0;
+        virtual void EnableBlending() const = 0;
         virtual void Enable() const = 0;
         virtual void ClearColor(Color color) const = 0;
         virtual void Clear() const = 0;

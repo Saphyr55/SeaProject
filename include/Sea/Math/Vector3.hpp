@@ -16,13 +16,12 @@ namespace Sea
 		Vector3(T x, T y, T z);
 		~Vector3() = default;
 
-		T Length();
-		T Dot(Vector3<T> vec);
+		float Length();
+		float Dot(Vector3<T> vec);
 		Vector3<T>& Normalize();
 		const Vector3<T> Cross(const Vector3 vec) const;
 		Vector3<T> Cross(Vector3 vec);
 
-		const Vector3<T>& operator+() const;
 		Vector3<T> operator-() const;
 		Vector3<T> operator-(const Vector3& vec) const;
 		Vector3<T> operator*(const Vector3<T>& vec) const;

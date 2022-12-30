@@ -16,9 +16,9 @@ namespace Sea
 		Vector2(T x, T y);
 		~Vector2()=default;
 		
-		T Length();
-		T Dot(Vector2<T> vec);
-		Vector2<T>& Normalize();
+		float Length() const;
+		float Dot(Vector2<T> vec) const;
+		Vector2<T>& Normalize() const;
 
 		Vector2<T> operator-() const;
 		Vector2<T> operator-(const Vector2& vec) const;

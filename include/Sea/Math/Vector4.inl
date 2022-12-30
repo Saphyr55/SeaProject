@@ -13,19 +13,22 @@ namespace Sea
 	inline Vector4<T>::Vector4() : Vector4(0,0,0,0) { }
 
 	template<typename T>
+	inline Vector4<T>::Vector4(Vector3<T> vec, T w) : Vector4(vec.x, vec.y, vec.z, w) { }
+
+	template<typename T>
 	inline Vector4<T>::Vector4(Vector4<T>& vec) : Vector4(vec.x, vec.y, vec.z, vec.w) { }
 
 	template<typename T>
 	inline Vector4<T>::Vector4(const Vector4<T>& vec) : Vector4(vec.x, vec.y, vec.z, vec.w) { }
 
 	template<typename T>
-	inline T Vector4<T>::Length()
+	inline float Vector4<T>::Length()
 	{
-		return sqrt(x * x + y * y + z * z + w * w);
+		return Sqrt(Abs(x * x + y * y + z * z + w * w));
 	}
 
 	template<typename T>
-	inline T Vector4<T>::Dot(Vector4<T> vec)
+	inline float Vector4<T>::Dot(Vector4<T> vec)
 	{
 		return x * vec.x + y * vec.y + z * vec.z + w * vec.w;
 	}

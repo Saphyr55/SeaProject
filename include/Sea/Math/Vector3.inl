@@ -10,13 +10,13 @@ namespace Sea
 	inline Vector3<T>::Vector3(T x, T y, T z) : x(x), y(y), z(z) { }
 
 	template<typename T>
-	inline T Vector3<T>::Length()
+	inline float Vector3<T>::Length()
 	{
 		return Sqrt(Abs(x * x + y * y + z * z));
 	}
 
 	template<typename T>
-	inline T Vector3<T>::Dot(Vector3<T> vec)
+	inline float Vector3<T>::Dot(Vector3<T> vec)
 	{
 		return x * vec.x + y * vec.y + z * vec.z;
 	}
@@ -55,12 +55,6 @@ namespace Sea
 	}
 
 	template<typename T>
-	const Vector3<T>& Vector3<T>::operator+() const
-	{
-		return *this;
-	}
-
-	template<typename T>
 	Vector3<T> Vector3<T>::operator-() const
 	{
 		return Vector3<T>(-x, -y, -z);
@@ -87,16 +81,7 @@ namespace Sea
 	template<typename T>
 	Vector3<T> Vector3<T>::operator/(T scale) const
 	{
-		return Vector3(x / scale, y / scale, , z / scale);
-	}
-
-	template<typename T>
-	Vector3<T>& Vector3<T>::operator+=(const Vector3& vec)
-	{
-		x += vec.x;
-		y += vec.y;
-		z += vec.z;
-		return *this;
+		return Vector3(x / scale, y / scale, z / scale);
 	}
 
 	template<typename T>
@@ -140,7 +125,7 @@ namespace Sea
 	{
 		x /= scale;
 		y /= scale;
-		z /= vec.z;
+		z /= scale;
 		return *this;
 	}
 

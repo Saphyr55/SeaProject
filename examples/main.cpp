@@ -24,13 +24,11 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
-
-void Before(Sea::Window& window);
-void Input(Sea::Window& window, Sea::Camera& camera, Sea::f32 dt);
+void HandleInput(Sea::Window& window, Sea::Camera& camera, Sea::f32 dt);
 void DefaultCursor(Sea::Window& window);
 void CameraCursor(Sea::Window& window);
 glm::vec3 DampedString(const glm::vec3 currentPos, const glm::vec3 targetPos, Sea::f32 frametime, Sea::f32 springStrength);
-
+std::string title = "Sample";
 Sea::Mold<Sea::Shader> shader;
 Sea::Mold<Sea::Shader> shaderLight;
 
@@ -67,23 +65,10 @@ int main(int argc, const char** argv)
 		};
 
 		// Creating the window from the application with video mode
-		Sea::Window& window = sea.CreateWindow("Demo", videoMode);
+		Sea::Window& window = sea.CreateWindow(title, videoMode);
 				
 		// Creating event handler from the window
 		Sea::EventHandler& eventHandler = window.GetEventHandler();
-		
-		Sea::Matrix4f matrix;
-		matrix.SetIdentity();
-		Sea::Matrix4f matrix2
-		(
-			Sea::Vector4f(1.0f, 2.0f, 3.0f, 0.1f),
-			Sea::Vector4f(1.0f, 2.0f, 3.0f, 0.1f),
-			Sea::Vector4f(1.0f, 2.0f, 3.0f, 0.1f),
-			Sea::Vector4f(1.0f, 2.0f, 3.0f, 0.1f)
-		);
-
-		Log::Debug() << matrix2 * matrix;
-		
 
 		// Camera
 		Sea::Camera camera
@@ -142,7 +127,7 @@ int main(int argc, const char** argv)
 			window.GetRenderer().ClearColor(Sea::Colors::EerieBlack);
 			window.GetRenderer().Clear();
 			window.Viewport();
-			window.SetTitle("Game - fps=" + std::to_string(frameRate.GetFPS()));
+			window.SetTitle(title + " - fps = " + std::to_string(frameRate.GetFPS()));
 		
 			// Setup Perspective Camera
 			camera.SetViewProjection(45.0f, 0.1f, 500.0f);
@@ -159,7 +144,7 @@ int main(int argc, const char** argv)
 			light->DrawMesh(*shaderLight, camera); 
 
 			// Handle input camera
-			Input(window, camera, clock.Delta);
+			HandleInput(window, camera, clock.Delta);
 
 			// Handle mouse camera if we are in relative mode
 			if (state == 1)
@@ -194,11 +179,7 @@ int main(int argc, const char** argv)
 	return EXIT_SUCCESS;
 }
 
-void Before(Sea::Window& window)
-{
-}
-
-void Input(Sea::Window& window, Sea::Camera& camera, Sea::f32 dt)
+void HandleInput(Sea::Window& window, Sea::Camera& camera, Sea::f32 dt)
 {
 	// speed *= dt;
 
@@ -284,10 +265,10 @@ glm::vec3 DampedString(const glm::vec3 currentPos, const glm::vec3 targetPos, Se
 {
 	glm::vec3 displacement = targetPos - currentPos;
 	if (displacement.length() == 0.f) return currentPos;
-	Sea::f32 invDisplacementLength = 1.f / displacement.length();
-	const Sea::f32 dampConstant = 0.000065f;
-	Sea::f32 springMagitude = springStrength * displacement.length() + dampConstant * invDisplacementLength;
-	Sea::f32 scalar = std::min(invDisplacementLength * springMagitude * frametime, 1.f);
+	float invDisplacementLength = 1.f / displacement.length();
+	const float dampConstant = 0.000065f;
+	float springMagitude = springStrength * displacement.length() + dampConstant * invDisplacementLength;
+	float scalar = std::min(invDisplacementLength * springMagitude * frametime, 1.f);
 	displacement *= scalar;
 	return currentPos + displacement;
 }

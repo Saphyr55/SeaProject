@@ -1,5 +1,7 @@
 #include "Sea/Math/Matrix4.hpp"
 
+#include <iostream>
+
 namespace Sea
 {
 	template<typename T>
@@ -93,15 +95,26 @@ namespace Sea
 	}
 
 	template<typename T>
+	inline Matrix4<T> Matrix4<T>::Identity()
+	{
+		return Matrix4<T>().SetIdentity();
+	}
+
+	template<typename T>
+	inline Matrix4<T> Matrix4<T>::Zero()
+	{
+		return Matrix4<T>().SetZero();
+	}
+
+	template<typename T>
 	std::ostream& operator<<(std::ostream& out, Matrix4<T>& mat)
 	{
-		Log::Info() << "Matrix4";
-		Log::Info() << "(";
-		Log::Info() << mat.GetCol(0).x << " " << mat.GetCol(1).x << " " << mat.GetCol(2).x << " " << mat.GetCol(3).x;
-		Log::Info() << mat.GetCol(0).y << " " << mat.GetCol(1).y << " " << mat.GetCol(2).y << " " << mat.GetCol(3).y;
-		Log::Info() << mat.GetCol(0).z << " " << mat.GetCol(1).z << " " << mat.GetCol(2).z << " " << mat.GetCol(3).z;
-		Log::Info() << mat.GetCol(0).w << " " << mat.GetCol(1).w << " " << mat.GetCol(2).w << " " << mat.GetCol(3).w;
-		Log::Info() << ")";
+		out << "Matrix4(" << "\n";
+		out << mat.GetCol(0).x << " " << mat.GetCol(1).x << " " << mat.GetCol(2).x << " " << mat.GetCol(3).x << "\n";
+		out << mat.GetCol(0).y << " " << mat.GetCol(1).y << " " << mat.GetCol(2).y << " " << mat.GetCol(3).y << "\n";
+		out << mat.GetCol(0).z << " " << mat.GetCol(1).z << " " << mat.GetCol(2).z << " " << mat.GetCol(3).z << "\n";
+		out << mat.GetCol(0).w << " " << mat.GetCol(1).w << " " << mat.GetCol(2).w << " " << mat.GetCol(3).w << "\n";
+		out << ")" << "\n";
 	}
 
 

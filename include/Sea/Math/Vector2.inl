@@ -3,25 +3,27 @@
 #include <cmath>
 #include <ostream>
 
+#include "Sea/Math/Math.hpp"
+
 namespace Sea
 {
 	template<typename T>
 	inline Vector2<T>::Vector2(T x, T y) : x(x) , y(y) { }
 
 	template<typename T>
-	inline T Vector2<T>::Length()
+	inline float Vector2<T>::Length() const
 	{
-		return sqrt(x * x + y * y);
+		return Sqrt(x * x + y * y);
 	}
 
 	template<typename T>
-	inline T Vector2<T>::Dot(Vector2<T> vec)
+	inline float Vector2<T>::Dot(Vector2<T> vec) const
 	{
 		return x * vec.x + y * vec.y;
 	}
 
 	template<typename T>
-	inline Vector2<T>& Vector2<T>::Normalize()
+	inline Vector2<T>& Vector2<T>::Normalize() const
 	{
 		T norm = Length();
 		x /= norm;
@@ -63,14 +65,6 @@ namespace Sea
 	Vector2<T> Vector2<T>::operator/(T scale) const
 	{
 		return Vector2(x / scale, y / scale);
-	}
-
-	template<typename T>
-	Vector2<T>& Vector2<T>::operator+=(const Vector2& vec)
-	{
-		x += vec.x;
-		y += vec.y;
-		return *this;
 	}
 
 	template<typename T>

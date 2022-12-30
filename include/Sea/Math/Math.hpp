@@ -2,6 +2,11 @@
 
 #include <cmath>
 
+#include "Sea/Math/Matrix4.hpp"
+#include "Sea/Math/Vector2.hpp"
+#include "Sea/Math/Vector3.hpp"
+#include "Sea/Math/Vector4.hpp"
+
 namespace Sea
 {
     template<typename T>
@@ -12,7 +17,7 @@ namespace Sea
     }
 
     template<typename T>
-    T Sqrt(T n)
+    float Sqrt(T n)
     {
         return std::sqrt(n);
     }

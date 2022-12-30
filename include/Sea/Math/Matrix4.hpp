@@ -19,6 +19,9 @@ namespace Sea
 		Matrix4<T>& operator*(Matrix4& matrix);
 		Array<T, 4>& operator[](std::size_t i);
 
+		static Matrix4<T> Identity();
+		static Matrix4<T> Zero();
+		
 	private:
 		Vector4<T> m_col_1;
 		Vector4<T> m_col_2;

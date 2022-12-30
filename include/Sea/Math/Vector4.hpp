@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Sea/Common/CommonType.hpp"
+#include "Sea/Math/Vector3.hpp"
 
 namespace Sea
 {
@@ -18,10 +19,11 @@ namespace Sea
 		Vector4(Vector4<T>& vec);
 		Vector4(const Vector4<T>& vec);
 		Vector4(T x, T y, T z, T w);
+		Vector4(Vector3<T> vec, T w);
 		~Vector4() = default;
 
-		T Length();
-		T Dot(Vector4<T> vec);
+		float Length();
+		float Dot(Vector4<T> vec);
 		Vector4<T>& Normalize();
 		const Vector4<T> Cross(const Vector4 vec) const;
 		Vector4<T> Cross(Vector4 vec);
@@ -48,13 +50,13 @@ namespace Sea
 
 	};
 
-	using Vector4b = Vector4<bool>;
-	using Vector4f = Vector4<f32>;
-    using Vector4d = Vector4<f64>;
-	using Vector4i = Vector4<std::int32_t>;
-	using Vector4ui = Vector4<std::uint32_t>;
-	using Vector4ll = Vector4<std::int64_t>;
-	using Vector4ull = Vector4<std::uint64_t>;
+	typedef Vector4<bool> Vector4b;
+	typedef Vector4<f32> Vector4f;
+	typedef Vector4<f64> Vector4d;
+	typedef Vector4<std::int32_t> Vector4i;
+	typedef Vector4<std::uint32_t> Vector4ui;
+	typedef Vector4<std::int64_t> Vector4ll;
+	typedef Vector4<std::uint64_t> Vector4ull;
 
 	template<typename T> std::ostream& operator<<(std::ostream& out, const Vector4<T>&vec);
 

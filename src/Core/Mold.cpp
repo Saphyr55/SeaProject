@@ -3,6 +3,6 @@
 namespace Sea
 {   
 
-	GraphicsAPI Molder::api;
+	GraphicsAPI Molder::API;
 
 }

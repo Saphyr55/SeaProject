@@ -20,6 +20,7 @@ target("SeaFramework")
     add_files("externals/**.cpp")
     add_headerfiles("externals/mcl/Logger.hpp", { public = true } )
     add_headerfiles("include/**.hpp")
+    add_headerfiles("include/**.inl")
     add_headerfiles("externals/**.hpp")
     add_headerfiles("externals/**.h")
 

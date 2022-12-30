@@ -37,7 +37,7 @@ namespace Sea
 		void UngrapMouse() ;
 		inline SDL_Window* GetHandle() { return m_handle; }
 		inline const Renderer& GetRenderer() { return *m_renderer; }
-		inline EventHandler& GetEvent() { return *m_event; }
+		inline EventHandler& GetEventHandler() { return *m_event; }
 		inline VideoMode& GetVideoMode() { return m_videoMode; }
 		void Update();
 

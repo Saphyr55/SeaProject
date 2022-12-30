@@ -13,10 +13,11 @@ namespace Sea::Backend::OpenGL
 	void GLRenderer::Enable() const
 	{
 		glEnable(GL_DEPTH_TEST);
-		EnableBlending();
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-		glFrontFace(GL_CCW); 
+		// glEnable(GL_CULL_FACE);
+		// glCullFace(GL_FRONT);
+		// glFrontFace(GL_CCW); 
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	void GLRenderer::ClearColor(Color color) const
@@ -37,7 +38,6 @@ namespace Sea::Backend::OpenGL
 	void GLRenderer::EnableBlending() const
 	{
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 }

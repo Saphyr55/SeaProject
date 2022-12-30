@@ -2,7 +2,7 @@
 #include "Sea/Backend/OpenGL/GL.hpp"
 #include "Sea/Graphic/Vertex.hpp"
 #include "Sea/Graphic/Shader.hpp"
-#include "Sea/Graphic/Texture.hpp"
+#include "Sea/Graphic/Texture2D.hpp"
 #include "Sea/Backend/OpenGL/GLElementBuffer.hpp"
 #include "Sea/Backend/OpenGL/GLVertexBuffer.hpp"
 
@@ -46,7 +46,7 @@ namespace Sea::Backend::OpenGL
 		ebo.Unbind();
 	}
 
-	GLMesh::GLMesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Mold<Texture>>& textures) :
+	GLMesh::GLMesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Mold<Texture2D>>& textures) :
 		Mesh(vertices, indices, textures)
 	{
 		vao.Bind();

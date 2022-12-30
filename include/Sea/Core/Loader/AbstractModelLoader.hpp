@@ -8,7 +8,7 @@ namespace Sea
 	class AbstractModelLoader : public IModelLoader
 	{
 	public:
-		AbstractModelLoader(std::string_view filepath) : m_file(CreateRef<File>(filepath)) { }
+		AbstractModelLoader(std::string_view filepath) : m_file(MakeRef<File>(filepath)) { }
 		AbstractModelLoader(const AbstractModelLoader&) = default;
 		AbstractModelLoader(AbstractModelLoader&&) = default;
 		~AbstractModelLoader() = default;

@@ -12,7 +12,7 @@ namespace Sea
 {
 
 	Window::Window(std::string_view title, VideoMode& videoMode)
-		: m_videoMode(videoMode), m_handle(nullptr), m_title(title), m_event(CreateRef<EventHandler>(*this))
+		: m_videoMode(videoMode), m_handle(nullptr), m_title(title), m_event(MakeRef<EventHandler>(*this))
 	{
 		Log::Info() << 
 			"Window create with {" << 

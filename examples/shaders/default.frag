@@ -150,8 +150,8 @@ float logistic_depth(float _depth, float far, float near, float steepness = 0.5,
 void main()
 {   
     vec4 _result = vec4(0.0);
-    vec3 view_dir = normalize(cameraPos - fragPos);
     vec3 _normal =  normalize(normal);
+    vec3 view_dir = normalize(_normal - fragPos);
 
     vec3 _output_light = vec3(0.0);
 
@@ -166,9 +166,11 @@ void main()
     
     _result += vec4(_output_light, 1.0);
 
-    // float depth = logistic_depth(gl_FragCoord.z, near, far); 
+    float near = 0.1;
+    float far = 0.2;
+    float depth = logistic_depth(gl_FragCoord.z, near, far); 
     
-    // vec4 v_depth = (1.0f - depth) + vec4(depth * vec3(0.11f, 0.11f, 0.11f), 1.0);
+    vec4 v_depth = (1.0f - depth) + vec4(depth * vec3(0.11f, 0.11f, 0.11f), 1.0);
     // if(useFlog) _result *= v_depth
 
     FragColor = _result; 

@@ -23,7 +23,7 @@ namespace Sea
 				break;
 			case SDL_KEYUP:
 				Input::ResetScancodePressed((Key::Scancode)((u32)m_handle.key.keysym.scancode));
-				Input::ResetKeyPressed((Key::Keys)((s32)m_handle.key.keysym.sym));
+				Input::ResetKeyPressed((Keys)((s32)m_handle.key.keysym.sym));
 				break;
 			case SDL_MOUSEBUTTONDOWN:
 				Mouse::buttonsDown.push_back((Mouse::Button)m_handle.button.button);

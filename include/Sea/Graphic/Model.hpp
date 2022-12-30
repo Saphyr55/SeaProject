@@ -23,8 +23,8 @@ namespace Sea
 			glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f)
 		);
 
-        std::vector<Mold<Texture>> GetTextures(u32 index);
-		std::vector<Mold<Texture>> GetTextures();
+        std::vector<Mold<Texture2D>> GetTextures(u32 index);
+		std::vector<Mold<Texture2D>> GetTextures();
 
     protected:
         std::vector<Mold<Mesh>> meshes;

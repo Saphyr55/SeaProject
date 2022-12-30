@@ -36,20 +36,8 @@ namespace Sea
 
 	Window& Application::CreateWindow(std::string_view title, VideoMode& videoMode)
 	{	
-		Molder::api = GraphicAPI;
-		switch (GraphicAPI)
-		{
-
-		case GraphicsAPI::OpenGL:
-			Backend::OpenGL::OpenGL::Init();
-			m_window = CreateRef<Backend::OpenGL::GLWindow>(title, videoMode);
-			break;
-
-		default:
-			Backend::OpenGL::OpenGL::Init();
-			m_window = CreateRef<Backend::OpenGL::GLWindow>(title, videoMode);
-			break;
-		}
+		Molder::API = GraphicAPI;
+		m_window = Mould<Window>(title, videoMode);
 		Log::Info() << "Setup context with " << Context::contextType_tostring(GraphicAPI);
 		return *m_window;
 	}

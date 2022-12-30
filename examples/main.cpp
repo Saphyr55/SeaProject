@@ -1,4 +1,5 @@
 #include <iostream>
+#include <filesystem>
 
 #include <Sea/Common/CommonType.hpp>
 #include <Sea/Common/File.hpp>
@@ -6,10 +7,15 @@
 #include <Sea/Core/VideoMode.hpp>
 #include <Sea/Core/Input/EventHandler.hpp>
 #include <Sea/Core/FrameRate.hpp>
-
-#include <utility>
-#include <iostream>
-#include <filesystem>
+#include <Sea/Common/Color.hpp>
+#include <Sea/Common/Utils.hpp>
+#include <Sea/Core/Input/Input.hpp>
+#include <Sea/Graphic/Lights/PointLight.hpp>
+#include <Sea/Graphic/Model.hpp>
+#include <Sea/Core/Loader/AssimpModelLoader.hpp>
+#include <Sea/Graphic/Lights/SpotLight.hpp>
+#include <Sea/Graphic/Lights/DirectionalLight.hpp>
+#include <Sea/Math/Matrix4.hpp>
 
 #include <mcl/Logger.hpp>
 #include <stb/stb_image.h>
@@ -17,16 +23,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <Sea/Common/Color.hpp>
-#include <Sea/Common/Utils.hpp>
-#include <Sea/Core/Input/Input.hpp>
 
-#include <Sea/Graphic/Lights/PointLight.hpp>
-
-#include <Sea/Graphic/Model.hpp>
-#include <Sea/Core/Loader/AssimpModelLoader.hpp>
-#include <Sea/Graphic/Lights/SpotLight.hpp>
-#include <Sea/Graphic/Lights/DirectionalLight.hpp>
 
 void Before(Sea::Window& window);
 void Input(Sea::Window& window, Sea::Camera& camera, Sea::f32 dt);
@@ -64,17 +61,30 @@ int main(int argc, const char** argv)
 
 		// Setup video mode
 		Sea::VideoMode videoMode;
-		videoMode.Resizable = true;
-		videoMode.Maximazed = true;
+		{
+			videoMode.Resizable = true;
+			videoMode.Maximazed = true;
+		};
 
-		// Window title
-		std::string title = "Demo";
 		// Creating the window from the application with video mode
-		Sea::Window& window = sea.CreateWindow(title, videoMode);
-		
+		Sea::Window& window = sea.CreateWindow("Demo", videoMode);
+				
 		// Creating event handler from the window
-		Sea::EventHandler& eventHandler = window.GetEvent();
+		Sea::EventHandler& eventHandler = window.GetEventHandler();
 		
+		Sea::Matrix4f matrix;
+		matrix.SetIdentity();
+		Sea::Matrix4f matrix2
+		(
+			Sea::Vector4f(1.0f, 2.0f, 3.0f, 0.1f),
+			Sea::Vector4f(1.0f, 2.0f, 3.0f, 0.1f),
+			Sea::Vector4f(1.0f, 2.0f, 3.0f, 0.1f),
+			Sea::Vector4f(1.0f, 2.0f, 3.0f, 0.1f)
+		);
+
+		Log::Debug() << matrix2 * matrix;
+		
+
 		// Camera
 		Sea::Camera camera
 		(
@@ -121,29 +131,30 @@ int main(int argc, const char** argv)
 		}
 		
 		// Create a point light
-		light = Sea::CreateRef<Sea::PointLight>();
-		light->Position = glm::vec3(0.0f, 30.0f, 30.0f);
+		light = Sea::MakeRef<Sea::PointLight>();
+		light->Position = glm::vec3(0.0f, 10.0f, 0.0f);
 		light->Quadratic = 0.000007;
 		light->Linear = 0.0014;
 
 		while (sea.Active())
 		{
 			clock.Start(frameRate);
-			window.GetRenderer().EnableBlending();
 			window.GetRenderer().ClearColor(Sea::Colors::EerieBlack);
 			window.GetRenderer().Clear();
 			window.Viewport();
-			window.SetTitle("Game - " + std::to_string(frameRate.GetFPS()) + " fps");
+			window.SetTitle("Game - fps=" + std::to_string(frameRate.GetFPS()));
 		
 			// Setup Perspective Camera
 			camera.SetViewProjection(45.0f, 0.1f, 500.0f);
 
+			// Draw the environment
 			ground->Draw(*shader, camera);
 			grass->Draw(*shader, camera);
 			grindstone->Draw(*shader, camera, grindstoneModel, grindstonePos);
 
 			// Lightning the scene
 			light->Draw(*shader); 
+
 			// Draw a cube representing where the light from
 			light->DrawMesh(*shaderLight, camera); 
 
@@ -183,43 +194,47 @@ int main(int argc, const char** argv)
 	return EXIT_SUCCESS;
 }
 
+void Before(Sea::Window& window)
+{
+}
+
 void Input(Sea::Window& window, Sea::Camera& camera, Sea::f32 dt)
 {
 	// speed *= dt;
 
 	glm::vec3 targetPos = camera.Position;
 
-	if (Sea::Input::IsKeyDown(Sea::Key::Keys::Z))
+	if (Sea::Input::IsKeyDown(Sea::Keys::Z))
 	{
 		targetPos += speed * camera.Orientation;
 	}
 
-	if (Sea::Input::IsKeyDown(Sea::Key::Keys::S))
+	if (Sea::Input::IsKeyDown(Sea::Keys::S))
 	{
 		targetPos += speed * -camera.Orientation;
 	}
 
-	if (Sea::Input::IsKeyDown(Sea::Key::Keys::Q))
+	if (Sea::Input::IsKeyDown(Sea::Keys::Q))
 	{
 		targetPos += speed * - glm::normalize(glm::cross(camera.Orientation, camera.Up));
 	}
 
-	if (Sea::Input::IsKeyDown(Sea::Key::Keys::D))
+	if (Sea::Input::IsKeyDown(Sea::Keys::D))
 	{
 		targetPos += speed * glm::normalize(glm::cross(camera.Orientation, camera.Up));
 	}
 
-	if (Sea::Input::IsKeyDown(Sea::Key::Keys::LSHIFT))
+	if (Sea::Input::IsKeyDown(Sea::Keys::LSHIFT))
 	{
 		targetPos += speed * -camera.Up;
 	}
 
-	if (Sea::Input::IsKeyDown(Sea::Key::Keys::SPACE))
+	if (Sea::Input::IsKeyDown(Sea::Keys::SPACE))
 	{
 		targetPos += speed * camera.Up;
 	}
 
-	if (Sea::Input::IsKeyDown(Sea::Key::Keys::LCTRL))
+	if (Sea::Input::IsKeyDown(Sea::Keys::LCTRL))
 	{
 		speed = initSpeed * 2;
 	}
@@ -230,7 +245,7 @@ void Input(Sea::Window& window, Sea::Camera& camera, Sea::f32 dt)
 
 	camera.Position = DampedString(camera.Position, targetPos, dt, 1);
 
-	if (Sea::Input::IsKeyPressed(Sea::Key::Keys::ESCAPE))
+	if (Sea::Input::IsKeyPressed(Sea::Keys::ESCAPE))
 	{
 		switch (state)
 		{

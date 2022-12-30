@@ -5,7 +5,7 @@
 namespace Sea
 {
 	List<Key::Scancode> Input::scancodesPressed;
-	List<Key::Keys> Input::keysPressed;
+	List<Keys> Input::keysPressed;
 
 	bool Input::IsKeyDown(Key::Scancode code)
 	{	
@@ -22,12 +22,12 @@ namespace Sea
 		return false;
 	}
 
-	bool Input::IsKeyDown(Key::Keys key)
+	bool Input::IsKeyDown(Keys key)
 	{
 		return IsKeyDown((Key::Scancode)(u32)SDL_GetScancodeFromKey((SDL_KeyCode)(s32)key));
 	}
 
-	bool Input::IsKeyPressed(Key::Keys key)
+	bool Input::IsKeyPressed(Keys key)
 	{
 		if (!Lists::Contains(keysPressed, key) && IsKeyDown(key))
 		{
@@ -47,7 +47,7 @@ namespace Sea
 		return Mouse::IsButtonDown(button);
 	}
 
-	void Input::ResetKeyPressed(Key::Keys key)
+	void Input::ResetKeyPressed(Keys key)
 	{
 		if (Lists::Contains(keysPressed, key)) Input::keysPressed.remove(key);
 	}

@@ -18,19 +18,21 @@ namespace Sea
 	}
 
     void Model::Draw(Shader& shader, Camera& camera, glm::mat4 model, glm::vec3 translation, glm::quat rotation, glm::vec3 scale)
-    {
-        for (u32 i = 0; i < meshes.size(); i++)
-            meshes[i]->Draw(shader, camera, model, translation, rotation, scale);
+    {   
+        for (u32 i = meshes.size(); i --> 0;)
+        {
+			meshes[i]->Draw(shader, camera, model, translation, rotation, scale);
+        }
     }
 
-    std::vector<Mold<Texture>> Model::GetTextures(u32 index)
+    std::vector<Mold<Texture2D>> Model::GetTextures(u32 index)
     {
         return meshes[index]->GetTextures();
     }
 
-	std::vector<Mold<Texture>> Model::GetTextures()
+	std::vector<Mold<Texture2D>> Model::GetTextures()
 	{
-        std::vector<Mold<Texture>> return_textures;
+        std::vector<Mold<Texture2D>> return_textures;
         for (auto& mesh : meshes)
         {
             for (auto& texture : mesh->GetTextures())

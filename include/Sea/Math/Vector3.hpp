@@ -6,13 +6,14 @@ namespace Sea
 {
 
 	template<typename T>
-	struct Vector3
+	class Vector3
 	{
 
 	public:
 		T x, y, z;
 
 	public:
+		Vector3() = default;
 		Vector3(T x, T y, T z);
 		~Vector3() = default;
 
@@ -23,15 +24,20 @@ namespace Sea
 		Vector3<T> Cross(Vector3 vec);
 
 		Vector3<T> operator-() const;
+		Vector3<T> operator+(const Vector3& vec) const;
 		Vector3<T> operator-(const Vector3& vec) const;
+		Vector3<T> operator*(T scale) const;
 		Vector3<T> operator*(const Vector3<T>& vec) const;
 		Vector3<T> operator/(const Vector3& vec) const;
 		Vector3<T> operator/(T scale) const;
+
 		Vector3<T>& operator+=(const Vector3& vec);
+		Vector3<T>& operator-=(const Vector3& vec);
 		Vector3<T>& operator*=(const Vector3& vec);
 		Vector3<T>& operator*=(T scale);
 		Vector3<T>& operator/=(const Vector3& vec);
 		Vector3<T>& operator/=(T scale);
+
 		bool operator==(const Vector3& vec) const;
 		bool operator!=(const Vector3& vec) const;
 		bool operator<(const Vector3& vec) const;

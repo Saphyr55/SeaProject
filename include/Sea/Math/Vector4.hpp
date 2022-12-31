@@ -1,13 +1,17 @@
 #pragma once
 
+#include <cmath>
+#include <ostream>
+
 #include "Sea/Common/CommonType.hpp"
-#include "Sea/Math/Vector3.hpp"
 
 namespace Sea
 {
+	template<typename T>
+	class Vector3;
 
 	template<typename T>
-	struct Vector4
+	class Vector4
 	{
 
 	public:
@@ -16,9 +20,9 @@ namespace Sea
 	public:
 
 		Vector4();
+		Vector4(T x, T y, T z, T w);
 		Vector4(Vector4<T>& vec);
 		Vector4(const Vector4<T>& vec);
-		Vector4(T x, T y, T z, T w);
 		Vector4(Vector3<T> vec, T w);
 		~Vector4() = default;
 
@@ -34,12 +38,15 @@ namespace Sea
 		Vector4<T> operator-(const Vector4& vec) const;
 		Vector4<T> operator*(const Vector4<T>& vec) const;
 		Vector4<T> operator/(const Vector4& vec) const;
+		Vector4<T> operator*(T scale) const;
 		Vector4<T> operator/(T scale) const;
+		Vector4<T>& operator-=(const Vector4& vec);
 		Vector4<T>& operator+=(const Vector4& vec);
 		Vector4<T>& operator*=(const Vector4& vec);
 		Vector4<T>& operator*=(T scale);
 		Vector4<T>& operator/=(const Vector4& vec);
 		Vector4<T>& operator/=(T scale);
+		T& operator[](std::size_t i);
 		const Vector4<T>& operator+() const;
 		bool operator==(const Vector4& vec) const;
 		bool operator!=(const Vector4& vec) const;
@@ -58,9 +65,11 @@ namespace Sea
 	typedef Vector4<std::int64_t> Vector4ll;
 	typedef Vector4<std::uint64_t> Vector4ull;
 
-	template<typename T> std::ostream& operator<<(std::ostream& out, const Vector4<T>&vec);
+	template<typename T> 
+	std::ostream& operator<<(std::ostream& out, const Vector4<T>&vec);
 
 
 }
 
 #include "Sea/Math/Vector4.inl"
+ 

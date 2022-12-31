@@ -1,12 +1,14 @@
 #pragma once
 
+#include <cmath>
+#include <ostream>
 #include "Sea/Common/CommonType.hpp"
 
 namespace Sea
 {
 
 	template<typename T>
-	struct Vector2
+	class Vector2
 	{
 
 	public:
@@ -18,14 +20,17 @@ namespace Sea
 		
 		float Length() const;
 		float Dot(Vector2<T> vec) const;
-		Vector2<T>& Normalize() const;
+		Vector2<T>& Normalize();
 
 		Vector2<T> operator-() const;
+		Vector2<T> operator+(const Vector2& vec) const;
 		Vector2<T> operator-(const Vector2& vec) const;
 		Vector2<T> operator*(const Vector2<T>& vec) const;
+		Vector2<T> operator*(T scale) const;
 		Vector2<T> operator/(const Vector2& vec) const;
 		Vector2<T> operator/(T scale) const;
 		Vector2<T>& operator+=(const Vector2& vec);
+		Vector2<T>& operator-=(const Vector2& vec);
 		Vector2<T>& operator*=(const Vector2& vec);
 		Vector2<T>& operator*=(T scale);
 		Vector2<T>& operator/=(const Vector2& vec);
@@ -50,7 +55,5 @@ namespace Sea
 
 	template<typename T> std::ostream& operator<<(std::ostream& out, const Vector2<T>& vec);
 }
-
-
 
 #include "Sea/Math/Vector2.inl"

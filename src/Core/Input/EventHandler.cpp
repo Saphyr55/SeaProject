@@ -1,6 +1,6 @@
 #include "Sea/Core/Input/EventHandler.hpp"
 #include "Sea/Core/Input/Input.hpp"
-#include "Sea/Core/Input/Key.hpp">
+#include "Sea/Core/Input/Key.hpp"
 #include <mcl/Logger.hpp>
 
 using mcl::Log;

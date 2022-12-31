@@ -1,19 +1,13 @@
-local targetdir = "bin/$(plat)_$(arch)_$(mode)"
-local version = "cxx20"
 local project_name = "SeaProject"
-
-add_requires(
-    "libsdl",
-    "libsdl_image",
-    "glm",
-    "imgui",
-    "assimp",
-    "catch2"
-)
-add_rules("mode.release", "mode.debug")
+local version = "cxx20"
+local targetdir = "bin/$(plat)_$(arch)_$(mode)"
 
 set_project(project_name)
 set_languages(version)
+
+add_rules("mode.release", "mode.debug")
+
+add_requires("libsdl","libsdl_image","glm","imgui","assimp","catch2")
 
 add_includedirs("include")
 add_includedirs("externals")
@@ -21,7 +15,7 @@ set_targetdir(targetdir)
 
 target("SeaFramework")
 
-    set_kind("static")
+    set_kind("shared")
 
     add_files("src/**.cpp")
     add_files("externals/**.c")
@@ -38,12 +32,13 @@ target("SeaFramework")
 target_end()
 
 target("SeaTest")
-
     set_kind("binary")
+
+    add_deps("SeaFramework")
+
     add_files("tests/**.cpp")
 
     add_packages("catch2")
-    add_deps("SeaFramework")
 
 target_end()
 

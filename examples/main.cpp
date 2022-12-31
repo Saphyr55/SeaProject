@@ -51,6 +51,10 @@ int main(int argc, const char** argv)
 {	
 	try
 	{	
+		Sea::Vector3<Sea::f32> vec;
+
+		vec.Length();
+
 		// Init application
 		Sea::Application sea;
 

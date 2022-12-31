@@ -1,40 +1,38 @@
 #include "Sea/Math/Vector4.hpp"
-
-#include <cmath>
-#include <ostream>
+#include "Sea/Math/Vector3.hpp"
 
 namespace Sea
 {
 
 	template<typename T>
-	inline Vector4<T>::Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) { }
+	Vector4<T>::Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) { }
 
 	template<typename T>
-	inline Vector4<T>::Vector4() : Vector4(0,0,0,0) { }
+	Vector4<T>::Vector4() : Vector4(0,0,0,0) { }
 
 	template<typename T>
-	inline Vector4<T>::Vector4(Vector3<T> vec, T w) : Vector4(vec.x, vec.y, vec.z, w) { }
+	Vector4<T>::Vector4(Vector3<T> vec, T w) : Vector4(vec.x, vec.y, vec.z, w) { }
 
 	template<typename T>
-	inline Vector4<T>::Vector4(Vector4<T>& vec) : Vector4(vec.x, vec.y, vec.z, vec.w) { }
+	Vector4<T>::Vector4(Vector4<T>& vec) : Vector4(vec.x, vec.y, vec.z, vec.w) { }
 
 	template<typename T>
-	inline Vector4<T>::Vector4(const Vector4<T>& vec) : Vector4(vec.x, vec.y, vec.z, vec.w) { }
+	Vector4<T>::Vector4(const Vector4<T>& vec) : Vector4(vec.x, vec.y, vec.z, vec.w) { }
 
 	template<typename T>
-	inline float Vector4<T>::Length()
+	float Vector4<T>::Length()
 	{
-		return Sqrt(Abs(x * x + y * y + z * z + w * w));
+		return std::sqrt(x * x + y * y + z * z + w * w);
 	}
 
 	template<typename T>
-	inline float Vector4<T>::Dot(Vector4<T> vec)
+	float Vector4<T>::Dot(Vector4<T> vec)
 	{
 		return x * vec.x + y * vec.y + z * vec.z + w * vec.w;
 	}
 
 	template<typename T>
-	inline Vector4<T>& Vector4<T>::Normalize()
+	Vector4<T>& Vector4<T>::Normalize()
 	{
 		T norm = Length();
 		x /= norm;
@@ -45,7 +43,7 @@ namespace Sea
 	}
 
 	template<typename T>
-	inline const Vector4<T> Vector4<T>::Cross(const Vector4 vec) const
+	const Vector4<T> Vector4<T>::Cross(const Vector4 vec) const
 	{
 		return Vector4<T>
 		(
@@ -57,7 +55,7 @@ namespace Sea
 	}
 
 	template<typename T>
-	inline Vector4<T> Vector4<T>::Cross(Vector4 vec)
+	Vector4<T> Vector4<T>::Cross(Vector4 vec)
 	{
 		return Vector4<T>
 		(
@@ -69,7 +67,7 @@ namespace Sea
 	}
 
 	template<typename T>
-	inline Array<T, 4>& Vector4<T>::ToArray()
+	Array<T, 4>& Vector4<T>::ToArray()
 	{
 		Array<T, 4> a{ x, y, z, w };
 		return a;
@@ -92,6 +90,25 @@ namespace Sea
 	{
 		return Vector4<T>(-x, -y, -z, -w);
 	}
+
+	template<typename T>
+	T& Vector4<T>::operator[](std::size_t i)
+	{
+		switch (i)
+		{
+		case 0:
+			return x;
+		case 1:
+			return y;
+		case 2:
+			return z;
+		case 3:
+			return w;
+		default:
+			throw std::exception("Max 4");
+		}
+	}
+
 
 	template<typename T>
 	Vector4<T> Vector4<T>::operator-(const Vector4& vec) const
@@ -118,12 +135,28 @@ namespace Sea
 	}
 
 	template<typename T>
+	Vector4<T> Vector4<T>::operator*(T scale) const
+	{
+		return Vector4(x * scale, y * scale, z * scale, w * scale);
+	}
+
+	template<typename T>
 	Vector4<T>& Vector4<T>::operator+=(const Vector4& vec) 
 	{
 		x += vec.x;
 		y += vec.y;
 		z += vec.z;
 		w += vec.w;
+		return *this;
+	}
+
+	template<typename T>
+	Vector4<T>& Vector4<T>::operator-=(const Vector4& vec)
+	{
+		x -= vec.x;
+		y -= vec.y;
+		z -= vec.z;
+		w -= vec.w;
 		return *this;
 	}
 
@@ -144,6 +177,7 @@ namespace Sea
 		y *= scale;
 		z *= scale;
 		w *= scale;
+
 		return *this;
 	}
 
@@ -225,6 +259,6 @@ namespace Sea
 	template<typename T>
 	std::ostream& operator<<(std::ostream& out, const Vector4<T>& vec)
 	{
-		return out << "Vector4(" << vec.x << ", " << vec.y << ')';
+		return out << "Vector4(" << vec.x << ", " << vec.y  << ", " << vec.z << ", " << vec.w  <<  ')';
 	}
 }

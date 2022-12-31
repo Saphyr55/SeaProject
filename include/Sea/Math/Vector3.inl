@@ -1,4 +1,3 @@
-#include "Sea/Math/Vector3.hpp"
 #include "Sea/Math/Math.hpp"
 
 #include <cmath>
@@ -7,22 +6,22 @@
 namespace Sea
 {
 	template<typename T>
-	inline Vector3<T>::Vector3(T x, T y, T z) : x(x), y(y), z(z) { }
+	Vector3<T>::Vector3(T x, T y, T z) : x(x), y(y), z(z) { }
 
 	template<typename T>
-	inline float Vector3<T>::Length()
+	float Vector3<T>::Length()
 	{
 		return Sqrt(Abs(x * x + y * y + z * z));
 	}
 
 	template<typename T>
-	inline float Vector3<T>::Dot(Vector3<T> vec)
+	float Vector3<T>::Dot(Vector3<T> vec)
 	{
 		return x * vec.x + y * vec.y + z * vec.z;
 	}
 
 	template<typename T>
-	inline Vector3<T>& Vector3<T>::Normalize()
+	Vector3<T>& Vector3<T>::Normalize()
 	{
 		T norm = Length();
 		x /= norm;
@@ -33,7 +32,7 @@ namespace Sea
 	}
 
 	template<typename T>
-	inline const Vector3<T> Vector3<T>::Cross(const Vector3 vec) const
+	const Vector3<T> Vector3<T>::Cross(const Vector3 vec) const
 	{
 		return Vector3<T>
 		(
@@ -44,7 +43,7 @@ namespace Sea
 	}
 
 	template<typename T>
-	inline Vector3<T> Vector3<T>::Cross(Vector3 vec)
+	Vector3<T> Vector3<T>::Cross(Vector3 vec)
 	{
 		return Vector3<T>
 		(
@@ -67,6 +66,12 @@ namespace Sea
 	}
 
 	template<typename T>
+	Vector3<T> Vector3<T>::operator+(const Vector3& vec) const
+	{
+		return Vector3(x + vec.x, y + vec.y, z + vec.z);
+	}
+
+	template<typename T>
 	Vector3<T> Vector3<T>::operator*(const Vector3& vec) const
 	{
 		return Vector3(x * vec.x, y * vec.y, z * vec.z);
@@ -85,11 +90,27 @@ namespace Sea
 	}
 
 	template<typename T>
+	Vector3<T> Vector3<T>::operator*(T scale) const
+	{
+		return Vector3(x * scale, y * scale, z * scale);
+	}
+
+	template<typename T>
 	Vector3<T>& Vector3<T>::operator+=(const Vector3& vec)
 	{
 		x += vec.x;
 		y += vec.y;
 		z += vec.z;
+		return *this;
+	}
+
+
+	template<typename T>
+	Vector3<T>& Vector3<T>::operator-=(const Vector3& vec)
+	{
+		x -= vec.x;
+		y -= vec.y;
+		z -= vec.z;
 		return *this;
 	}
 
@@ -181,10 +202,10 @@ namespace Sea
 		return !operator<(vec);
 	}
 
-
 	template<typename T>
 	std::ostream& operator<<(std::ostream& out, const Vector3<T>& vec)
 	{
 		return out << "Vector3(" << vec.x << ", " << vec.y << ')';
 	}
+
 }

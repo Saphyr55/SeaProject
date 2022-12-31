@@ -1,33 +1,30 @@
 #include "Sea/Math/Vector2.hpp"
-
-#include <cmath>
-#include <ostream>
-
 #include "Sea/Math/Math.hpp"
 
 namespace Sea
 {
 	template<typename T>
-	inline Vector2<T>::Vector2(T x, T y) : x(x) , y(y) { }
+	Vector2<T>::Vector2(T x, T y) : x(x) , y(y) { }
 
 	template<typename T>
-	inline float Vector2<T>::Length() const
+	float Vector2<T>::Length() const
 	{
 		return Sqrt(x * x + y * y);
 	}
 
 	template<typename T>
-	inline float Vector2<T>::Dot(Vector2<T> vec) const
+	float Vector2<T>::Dot(Vector2<T> vec) const
 	{
 		return x * vec.x + y * vec.y;
 	}
 
 	template<typename T>
-	inline Vector2<T>& Vector2<T>::Normalize() const
+	Vector2<T>& Vector2<T>::Normalize()
 	{
 		T norm = Length();
 		x /= norm;
 		y /= norm;
+
 		return *this;
 	}
 
@@ -44,6 +41,12 @@ namespace Sea
 	}
 
 	template<typename T>
+	Vector2<T> Vector2<T>::operator+(const Vector2& vec) const
+	{
+		return Vector2(x + vec.x, y + vec.y);
+	}
+
+	template<typename T>
 	Vector2<T> Vector2<T>::operator-(const Vector2& vec) const
 	{
 		return Vector2(x - vec.x, y - vec.y);
@@ -53,6 +56,12 @@ namespace Sea
 	Vector2<T> Vector2<T>::operator*(const Vector2& vec) const
 	{
 		return Vector2(x * vec.x, y * vec.y);
+	}
+
+	template<typename T>
+	Vector2<T> Vector2<T>::operator*(T scale) const
+	{
+		return Vector2(x * scale, y * scale);
 	}
 
 	template<typename T>
@@ -72,6 +81,14 @@ namespace Sea
 	{
 		x += vec.x;
 		y += vec.y;
+		return *this;
+	}
+
+	template<typename T>
+	Vector2<T>& Vector2<T>::operator-=(const Vector2& vec)
+	{
+		x -= vec.x;
+		y -= vec.y;
 		return *this;
 	}
 

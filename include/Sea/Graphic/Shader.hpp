@@ -23,6 +23,11 @@ namespace Sea
 		virtual void SetFloat(std::string uniform, f32 value) = 0;
 		virtual void SetBool(std::string uniform, bool value) = 0;
 		virtual u32 GetId() = 0;
+
+		static Ref<Shader> New(std::string_view vertexShaderSource, std::string_view fragmentShaderSource);
+
 	};
 
+	using ShaderRef = Ref<Shader>;
+	
 }

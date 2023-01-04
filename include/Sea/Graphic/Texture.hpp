@@ -5,7 +5,8 @@
 
 namespace Sea
 {
-	class Texture2D
+
+	class Texture
 	{
 	public:
 		enum class Type
@@ -27,9 +28,9 @@ namespace Sea
 		inline s32 GetWidth() { return width; };
 		inline s32 GetHeight() { return height; };
 		
-		Texture2D(File image, Type texType, u32 slot);
-		Texture2D(std::string_view path, Type texType, u32 slot);
-		virtual ~Texture2D() = default;
+		Texture(File image, Type texType, u32 slot);
+		Texture(std::string_view path, Type texType, u32 slot);
+		virtual ~Texture() = default;
 
 	protected:
 		File imageFile;
@@ -43,5 +44,7 @@ namespace Sea
 	public:
 		const Type TextureType;
 	};
+
+	using RTexture = Ref<Texture>;
 
 }

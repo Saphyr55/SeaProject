@@ -5,7 +5,7 @@
 
 namespace Sea
 {
-	class Texture2D;
+	class Texture;
 	class Shader;
 	class Camera;
 	struct Vertex;
@@ -24,7 +24,7 @@ namespace Sea::Backend::OpenGL
 			glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f)
 		) override;
 
-		GLMesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Mold<Texture2D>>& textures);
+		GLMesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Mold<Texture>>& textures);
 		GLMesh(std::vector<Vertex>& vertices, std::vector<u32>& indices);
 
 	private:

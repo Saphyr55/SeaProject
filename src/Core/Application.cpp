@@ -1,11 +1,10 @@
-
-
 #include "Sea/Core/Application.hpp"
-#include "Sea/Backend/OpenGL/Renderer/GLWindow.hpp"
 #include "Sea/Common/CommonType.hpp"
 #include "Sea/Core/Mold.hpp"
 #include "Sea/Core/Clock.hpp"
 #include "Sea/Backend/OpenGL/GL.hpp"
+#include "Sea/Core/Factory.hpp"
+#include "Sea/Renderer/Window.hpp"
 
 namespace fs = std::filesystem;
 using mcl::Log;
@@ -37,8 +36,8 @@ namespace Sea
 	Window& Application::CreateWindow(std::string_view title, VideoMode& videoMode)
 	{	
 		Molder::API = GraphicAPI;
-		m_window = Mould<Window>(title, videoMode);
 		Log::Info() << "Setup context with " << Context::contextType_tostring(GraphicAPI);
+		m_window = Factory::CreateWindow(title, videoMode);
 		return *m_window;
 	}
 

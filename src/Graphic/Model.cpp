@@ -25,19 +25,23 @@ namespace Sea
         }
     }
 
-    std::vector<Mold<Texture2D>> Model::GetTextures(u32 index)
+    std::vector<Mold<Texture>> Model::GetTextures(u32 index)
     {
         return meshes[index]->GetTextures();
     }
 
-	std::vector<Mold<Texture2D>> Model::GetTextures()
+	std::vector<Mold<Texture>> Model::GetTextures()
 	{
-        std::vector<Mold<Texture2D>> return_textures;
+        std::vector<Mold<Texture>> return_textures;
+
         for (auto& mesh : meshes)
         {
             for (auto& texture : mesh->GetTextures())
-                return_textures.push_back(texture);
+            {
+				return_textures.push_back(texture);
+            }
         }
+
         return return_textures;
 	}
 

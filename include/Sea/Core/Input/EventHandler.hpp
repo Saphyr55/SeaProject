@@ -1,8 +1,10 @@
 #pragma once
 
-#include <SDL2/SDL.h>
 #include <memory>
 #include <vector>
+
+#include <SDL2/SDL.h>
+
 #include "Sea/Core/Application.hpp"
 #include "Sea/Renderer/Window.hpp"
 
@@ -10,7 +12,7 @@ namespace Sea
 {	
 	class EventHandler final
 	{
-		friend class Input;
+	friend class Input;
 
 	public:
 		EventHandler(Window& window) : m_window(&window) { }

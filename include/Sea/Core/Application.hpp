@@ -1,5 +1,7 @@
 #pragma once
 
+#define OPENGL
+
 #include <string>
 #include <stdexcept>
 #include <filesystem>
@@ -14,6 +16,7 @@
 
 namespace Sea
 {	
+	class Factory;
 	class Window;
 
 	class Application final

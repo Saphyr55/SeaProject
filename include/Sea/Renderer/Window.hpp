@@ -36,7 +36,7 @@ namespace Sea
 		void GrapMouse();
 		void UngrapMouse() ;
 		inline SDL_Window* GetHandle() { return m_handle; }
-		inline const Renderer& GetRenderer() { return *m_renderer; }
+		inline Renderer& GetRenderer() { return *m_renderer; }
 		inline EventHandler& GetEventHandler() { return *m_event; }
 		inline VideoMode& GetVideoMode() { return m_videoMode; }
 		void Update();
@@ -58,7 +58,7 @@ namespace Sea
 		SDL_Window* m_handle;
 		VideoMode m_videoMode;
 		Ref<EventHandler> m_event;
-		Ref<const Renderer> m_renderer;
+		Ref<Renderer> m_renderer;
 		Ref<Context> m_contextPtr;
 		
 	};

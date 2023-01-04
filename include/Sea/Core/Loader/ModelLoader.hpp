@@ -5,13 +5,13 @@
 
 namespace Sea
 {
-	class AbstractModelLoader : public IModelLoader
+	class ModelLoader : public IModelLoader
 	{
 	public:
-		AbstractModelLoader(std::string_view filepath) : m_file(MakeRef<File>(filepath)) { }
-		AbstractModelLoader(const AbstractModelLoader&) = default;
-		AbstractModelLoader(AbstractModelLoader&&) = default;
-		~AbstractModelLoader() = default;
+		ModelLoader(std::string_view filepath) : m_file(MakeRef<File>(filepath)) { }
+		ModelLoader(const ModelLoader&) = default;
+		ModelLoader(ModelLoader&&) = default;
+		~ModelLoader() = default;
 
 		virtual Ref<Model> Load() = 0;
 		std::vector<Mold<Mesh>> GetMeshes() { return meshes; }

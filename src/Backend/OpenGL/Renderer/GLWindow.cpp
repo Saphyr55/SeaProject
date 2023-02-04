@@ -25,7 +25,7 @@ namespace Sea::Backend::OpenGL
 
 		if (!m_handle) throw std::exception(std::string("Failed to create window" + std::string(SDL_GetError())).c_str());
 
-		m_contextPtr = CreateRef<GLContext>(*this); // Create gl context
+		m_contextPtr = MakeRef<GLContext>(*this); // Create gl context
 
 		gladLoadGLLoader(SDL_GL_GetProcAddress); // Check OpenGL properties
 
@@ -64,9 +64,10 @@ namespace Sea::Backend::OpenGL
 
 	GLWindow::GLWindow(std::string_view title, VideoMode& videoMode) : Window(title, videoMode)
 	{
-		m_renderer = CreateRef<GLRenderer>();
+		m_renderer = MakeRef<GLRenderer>();
 		Init();
 		m_renderer->Enable();
+		RenderService::Set(m_renderer);
 	}
 
 

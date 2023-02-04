@@ -33,6 +33,7 @@ namespace Sea::Backend::OpenGL
 		Mesh(vertices, indices)
 	{
 		vao.Bind(); 
+
 		GLVertexBuffer vbo(vertices);
 		GLElementBuffer ebo(indices);
 

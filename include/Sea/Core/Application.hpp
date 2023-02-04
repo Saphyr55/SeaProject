@@ -5,26 +5,27 @@
 #include <filesystem>
 #include <functional>
 
+#include "Sea/Core/Clock.hpp"
+#include "Sea/Core/VideoMode.hpp"
+#include "Sea/Renderer/Window.hpp"
+
 #include <mcl/Logger.hpp>
 #include <stb/stb_image.h>
 #include <SDL2/SDL.h>
 
-#include "Sea/Core/Clock.hpp"
-#include "Sea/Core/VideoMode.hpp"
 
 namespace Sea
 {	
-	class Window;
-
 	class Application final
 	{
 		friend class EventHandler;
 
 	public:
-		GraphicsAPI GraphicAPI = GraphicsAPI::OpenGL;
+		GraphicAPI GraphicAPI = GraphicAPI::OpenGL;
 
 	public:
 		bool Active();
+		void Active(std::function<void()> run);
 		Window& CreateWindow(std::string_view title, VideoMode& videoMode);
 
 	private:

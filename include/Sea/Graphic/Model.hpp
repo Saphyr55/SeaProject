@@ -2,7 +2,7 @@
 
 #include <Sea/Graphic/Shader.hpp>
 #include <Sea/Renderer/Camera.hpp>
-#include <Sea/Core/Loader/IModelLoader.hpp>
+#include <Sea/Core/Loader/ModelLoader.hpp>
 
 namespace Sea
 {
@@ -11,9 +11,9 @@ namespace Sea
 
     public:
         Model() = default;
-		Model(Ref<IModelLoader> loader);
-		Model(std::vector<Mold<Mesh>> meshes);
-        Model(std::vector<Mold<Mesh>> meshes, std::vector<glm::mat4> matricesMeshes);
+		Model(Ref<ModelLoader> loader);
+		Model(std::vector<Ref<Mesh>> meshes);
+        Model(std::vector<Ref<Mesh>> meshes, std::vector<glm::mat4> matricesMeshes);
         ~Model() = default;
 
         void Draw(Shader& shader, Camera& camera,
@@ -23,11 +23,14 @@ namespace Sea
 			glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f)
 		);
 
-        std::vector<Mold<Texture>> GetTextures(u32 index);
-		std::vector<Mold<Texture>> GetTextures();
+        std::vector<Ref<Texture>> GetTextures(u32 index);
+		std::vector<Ref<Texture>> GetTextures();
 
     protected:
-        std::vector<Mold<Mesh>> meshes;
+        std::vector<Ref<Mesh>> meshes;
         std::vector<glm::mat4> matricesMeshes;
     };
+
+    using RModel = Ref<Model>;
+
 }

@@ -11,4 +11,9 @@ namespace Sea
     {
     }
 
+	Texture::Texture(std::string_view path, Type texType, u32 slot) :
+		Texture(File(path), texType, slot)
+	{
+	}
+
 }

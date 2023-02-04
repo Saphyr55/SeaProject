@@ -79,6 +79,11 @@ namespace Sea::Backend::OpenGL
 		CreateProgram();
 		Use();
 	}
+
+	GLShader::~GLShader()
+	{
+		Delete();
+	}
 	
 	u32 GLShader::CreateShader(u32 type, const char* source)
 	{

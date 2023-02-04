@@ -8,8 +8,10 @@ using mcl::Log;
 
 namespace Sea::Backend::OpenGL
 {
-	GLTexture::GLTexture(File image, Type texType, u32 slot)
-		: Texture(image, texType, slot)
+
+	GLTexture::GLTexture(std::string_view path, Type texType, u32 slot) : GLTexture(File(path), texType, slot) { }
+
+	GLTexture::GLTexture(File image, Type texType, u32 slot) : Texture(image, texType, slot)
 	{	
 		if (!image.Exist())
 		{	
@@ -28,12 +30,13 @@ namespace Sea::Backend::OpenGL
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, GL_UNSIGNED_BYTE, bytes);
 			glGenerateMipmap(GL_TEXTURE_2D);
 			Unbind();
+
 			Log::Info() << "Loading texture success: " << imageFile.GetPath();
 		}
 		else
 		{
 			Log::Error() << imageFile.GetPath().c_str() << " cannot read bytes";
-			throw std::exception("");
+			throw std::exception();
 		}
 		stbi_image_free(bytes);
 	}
@@ -80,5 +83,7 @@ namespace Sea::Backend::OpenGL
 	{
 		glDeleteTextures(1, &id);
 	}
+
+	
 
 }

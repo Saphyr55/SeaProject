@@ -14,11 +14,11 @@ namespace Sea
 
 	struct Context
 	{
-		static std::string contextType_tostring(GraphicsAPI api)
+		static std::string contextType_tostring(GraphicAPI api)
 		{
 			switch (api)
 			{
-			case GraphicsAPI::OpenGL:
+			case GraphicAPI::OpenGL:
 				return "OpenGL";
 			default:
 				break;

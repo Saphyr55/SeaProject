@@ -1,7 +1,6 @@
 #include "Sea/Renderer/Window.hpp"
 #include "Sea/Backend/OpenGL/Renderer/GLWindow.hpp"
 #include "Sea/Backend/OpenGL/GL.hpp"
-#include "Sea/Core/Mold.hpp"
 #include "Sea/Common/File.hpp"
 #include <SDL2/SDL_image.h>
 #include <mcl/Logger.hpp>
@@ -12,7 +11,7 @@ namespace Sea
 {
 
 	Window::Window(std::string_view title, VideoMode& videoMode)
-		: m_videoMode(videoMode), m_handle(nullptr), m_title(title), m_event(CreateRef<EventHandler>(*this))
+		: m_videoMode(videoMode), m_handle(nullptr), m_title(title)
 	{
 		Log::Info() << 
 			"Window create with {" << 

@@ -1,14 +1,16 @@
 #include "Sea/Core/Input/EventHandler.hpp"
 #include "Sea/Core/Input/Input.hpp"
 #include "Sea/Core/Input/Key.hpp"
+#include "Sea/Renderer/Window.hpp"
 #include <mcl/Logger.hpp>
 
 using mcl::Log;
 
 namespace Sea
 {
+	EventHandler::EventHandler() { }
 
-	void EventHandler::HandleEvent()
+	void EventHandler::HandleEvent(Window& window)
 	{
 		while (SDL_PollEvent(&m_handle))
 		{
@@ -17,7 +19,7 @@ namespace Sea
 			switch (m_handle.type)
 			{
 			case SDL_QUIT:
-				m_window->Close();
+				window.Close();
 				break;
 			case SDL_KEYDOWN:
 				break;

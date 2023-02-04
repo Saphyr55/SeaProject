@@ -3,27 +3,28 @@
 #include <memory>
 #include <vector>
 
+#include "Sea/Core/Input/Input.hpp"
+
 #include <SDL2/SDL.h>
 
-#include "Sea/Core/Application.hpp"
-#include "Sea/Renderer/Window.hpp"
 
 namespace Sea
 {	
+	class Window;
+
 	class EventHandler final
 	{
 	friend class Input;
 
 	public:
-		EventHandler(Window& window) : m_window(&window) { }
-		void HandleEvent();
+		EventHandler();
+		void HandleEvent(Window& widow);
 		void ClearEvent();
 
 	private:
 		bool mousefirst = true;
 		bool mouseMotion = false;
 		SDL_Event m_handle;
-		Window* m_window;
 	};
 
 

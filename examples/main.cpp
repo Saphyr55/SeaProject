@@ -7,8 +7,6 @@
 #include <Sea/Common/File.hpp>
 
 #include <Sea/Core/Application.hpp>
-#include <Sea/Core/VideoMode.hpp>
-#include <Sea/Core/Input/EventHandler.hpp>
 #include <Sea/Core/FrameRate.hpp>
 #include <Sea/Core/Input/Input.hpp>
 #include <Sea/Core/Loader/AssimpModelLoader.hpp>
@@ -47,7 +45,6 @@ int main(int argc, const char** argv)
 {	
 	try
 	{	
-
 		// Init application
 		Sea::Application sea;
 
@@ -60,13 +57,13 @@ int main(int argc, const char** argv)
 			videoMode.Resizable = true;
 			videoMode.Maximazed = true;
 		};
-
+		
 		// Creating the window from the application with video mode
 		Sea::Window& window = sea.CreateWindow(title, videoMode);
 		Sea::Renderer& renderer = window.GetRenderer();
-
+		
 		// Creating event handler from the window
-		Sea::EventHandler& eventHandler = window.GetEventHandler();
+		Sea::EventHandler eventHandler;
 
 		// Set up Camera
 		Sea::Camera camera
@@ -89,11 +86,11 @@ int main(int argc, const char** argv)
 		Sea::Model grass = *grassModelLoader.Load();
 
 		// Default shader
-		Sea::ShaderRef shader = Sea::Shader::New("examples/shaders/default.vert","examples/shaders/default.frag");
+		Sea::ShaderRef shader = renderer.CreateShader("examples/shaders/default.vert", "examples/shaders/default.frag");
 		shader->SetFloat("material.shininess0", 8);
 
 		// Light shader
-		Sea::ShaderRef shaderLight = Sea::Shader::New("examples/shaders/light.vert","examples/shaders/light.frag");
+		Sea::ShaderRef shaderLight = renderer.CreateShader("examples/shaders/light.vert","examples/shaders/light.frag");
 
 		// Setup a point light
 		Sea::PointLight light;
@@ -116,11 +113,9 @@ int main(int argc, const char** argv)
 			break;
 		}
 
-		// Setup Frame rate
-		Sea::FrameRate frameRate;
-
-		// Setup Clock for calculate dt through the frame rate
+		// Setup Frame rate and setup Clock for calculate dt through the frame rate
 		Sea::Clock clock;
+		Sea::FrameRate frameRate;
 
 		while (sea.Active())
 		{
@@ -140,7 +135,6 @@ int main(int argc, const char** argv)
 
 			// Lightning the scene
 			light.Draw(*shader); 
-
 			// Draw a cube representing where the light from
 			light.DrawMesh(*shaderLight, camera); 
 
@@ -159,18 +153,17 @@ int main(int argc, const char** argv)
 				});
 			}
 
-			eventHandler.HandleEvent(); 
+			eventHandler.HandleEvent(window); 
 
 			// CRITICAL LINE, free the memory
 			window.Swap();
 
 			// Calculate the frame rate and dt
 			clock.End(frameRate); 
-
 		}
 
 	}
-	catch (const std::exception &e)
+	catch (const std::exception& e)
 	{
 		Log::Error() << e.what();
 		return EXIT_FAILURE;
@@ -181,8 +174,6 @@ int main(int argc, const char** argv)
 
 void HandleInput(Sea::Window& window, Sea::Camera& camera, Sea::f32 dt)
 {
-	// speed *= dt;
-
 	glm::vec3 targetPos = camera.Position;
 
 	if (Sea::Input::IsKeyDown(Sea::Keys::Z))
@@ -265,10 +256,10 @@ glm::vec3 DampedString(const glm::vec3 currentPos, const glm::vec3 targetPos, Se
 {
 	glm::vec3 displacement = targetPos - currentPos;
 	if (displacement.length() == 0.f) return currentPos;
-	float invDisplacementLength = 1.f / displacement.length();
-	const float dampConstant = 0.000065f;
-	float springMagitude = springStrength * displacement.length() + dampConstant * invDisplacementLength;
-	float scalar = std::min(invDisplacementLength * springMagitude * frametime, 1.f);
+	Sea::f32 invDisplacementLength = 1.f / displacement.length();
+	const Sea::f32 dampConstant = 0.000065f;
+	Sea::f32 springMagitude = springStrength * displacement.length() + dampConstant * invDisplacementLength;
+	Sea::f32 scalar = std::min(invDisplacementLength * springMagitude * frametime, 1.f);
 	displacement *= scalar;
 	return currentPos + displacement;
 }

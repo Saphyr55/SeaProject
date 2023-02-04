@@ -1,7 +1,9 @@
-#include "Sea/Common/File.hpp"
-
+#include <memory>
 #include <fstream>
 #include <filesystem>
+
+#include "Sea/Common/File.hpp"
+
 #include <mcl/Logger.hpp>
 
 using mcl::Log;
@@ -9,7 +11,7 @@ namespace fs = std::filesystem;
 
 namespace Sea
 {
-	std::string File::FromResources = "";
+	std::string File::FromResources;
 
 	const std::string File::GetFileContent(File file)
 	{

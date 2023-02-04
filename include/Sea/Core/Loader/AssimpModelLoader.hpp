@@ -3,7 +3,7 @@
 #include <filesystem>
 
 #include "Sea/Core/Loader/ModelLoader.hpp"
-#include "Sea/Core/Factory.hpp"
+#include "Sea/Renderer/Renderer.hpp"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -29,8 +29,8 @@ namespace Sea
 		static Texture::Type AssimpTextureTypeToSeaTextureType(aiTextureType type);
 	private:
 		void ProcessNode(aiNode* node, const aiScene* scene);
-		Mold<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
-		std::vector<Mold<Texture>> LoadMaterialTextures(aiMaterial* mat, aiTextureType type);
+		Ref<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
+		std::vector<RTexture>LoadMaterialTextures(aiMaterial* mat, aiTextureType type);
 		void SetVertexPos(Vertex& vertex, aiMesh* mesh, u32 i);
 		void SetVertexNormal(Vertex& vertex, aiMesh* mesh, u32 i);
 		void SetVertexTexCoords(Vertex& vertex, aiMesh* mesh, u32 i);
@@ -38,6 +38,7 @@ namespace Sea
 	public:
 		u32 FlagsProperties{};
 	private:
+		Ref<Renderer> renderer;
 		const aiScene* m_scene;
 		Assimp::Importer m_importer;
 		std::string m_directory;
@@ -84,7 +85,7 @@ namespace Sea
 		}
 	}
 
-	Mold<Mesh> AssimpModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+	Ref<Mesh> AssimpModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	{
 		std::vector<Vertex> vertices;
 		std::vector<u32> indices;
@@ -139,7 +140,7 @@ namespace Sea
 	 	std::vector<RTexture> normalMaps = LoadMaterialTextures(material, aiTextureType_NORMALS);
 	 	textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 
-		return Factory::CreateMesh(vertices, indices, textures);
+		return RenderService::Get().CreateMesh(vertices, indices, textures);
 	}
 
 	std::vector<RTexture> AssimpModelLoader::LoadMaterialTextures(aiMaterial* mat, aiTextureType type)
@@ -164,7 +165,7 @@ namespace Sea
 
 			if (!skip) // if texture hasn't been loaded already, load it
 			{   
-				m_texturesLoaded.push_back(Factory::CreateTexture(
+				m_texturesLoaded.push_back(RenderService::Get().CreateTexture(
 					File(m_directory + "/" + str.C_Str(), false),
 					AssimpTextureTypeToSeaTextureType(type), i)
 				); // add to loaded textures

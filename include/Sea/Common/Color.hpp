@@ -6,23 +6,23 @@
 
 namespace Sea
 {
-    struct Color;
+	struct Color;
 
-    struct Colors final
-    {
-        static const Color Red;
-        static const Color Green;
-        static const Color Blue;
-        static const Color Black;
-        static const Color White;
-        static const Color Nothing;
-        static const Color Aqua;
-        static const Color Azure;
-        static const Color AliceBlue;
-        static const Color Emerald;
+	struct Colors
+	{
+		static const Color Red;
+		static const Color Green;
+		static const Color Blue;
+		static const Color Black;
+		static const Color White;
+		static const Color Nothing;
+		static const Color Aqua;
+		static const Color Azure;
+		static const Color AliceBlue;
+		static const Color Emerald;
 		static const Color Pink;
 		static const Color Crimson;
-		static const Color Yellow; 
+		static const Color Yellow;
 		static const Color CarolinaBlue;
 		static const Color GraniteGray;
 		static const Color Gray;
@@ -32,11 +32,13 @@ namespace Sea
 		static const Color Silver;
 		static const Color Wheat;
 		static const Color Violet;
-        static const Color EerieBlack;
-    };
+		static const Color EerieBlack;
+	};
 
     struct Color final
     {
+		
+
         Color(f32 r, f32 g, f32 b, f32 a) : r(r), g(g), b(b), a(a) {}
         ~Color() = default;
 

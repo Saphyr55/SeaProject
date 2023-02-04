@@ -37,5 +37,8 @@ namespace Sea
 		std::vector<u32> m_indices;
 		std::vector<Mold<Texture>> m_textures;
 	};
+
+	using RMesh = Ref<Mesh>;
+
 }
 

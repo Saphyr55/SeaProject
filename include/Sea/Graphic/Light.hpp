@@ -1,11 +1,10 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "Sea/Core/Mold.hpp"
-#include "Sea/Core/Factory.hpp"
 #include "Sea/Common/CommonType.hpp"
 #include "Sea/Graphic/Mesh.hpp"
 #include "Sea/Common/Color.hpp"
+#include <Sea/Renderer/Renderer.hpp>
 
 namespace Sea
 {	
@@ -75,11 +74,9 @@ namespace Sea
 		}
 		else
 		{
-			m_mesh = Factory::CreateMesh(lightVertices, lightIndices);
+			m_mesh = RenderService::Get().CreateMesh(lightVertices, lightIndices);
 			DrawMesh(shader, camera);
 		}
 	}
 
-	
-
-} // namespace Sea
+}

@@ -1,11 +1,9 @@
-
-
 #include "Sea/Core/Application.hpp"
-#include "Sea/Backend/OpenGL/Renderer/GLWindow.hpp"
 #include "Sea/Common/CommonType.hpp"
-#include "Sea/Core/Mold.hpp"
 #include "Sea/Core/Clock.hpp"
 #include "Sea/Backend/OpenGL/GL.hpp"
+#include "Sea/Renderer/Window.hpp"
+#include "Sea/Backend/OpenGL/Renderer/GLWindow.hpp"
 
 namespace fs = std::filesystem;
 using mcl::Log;
@@ -23,6 +21,14 @@ namespace Sea
 		SDL_Quit();
 	}
 
+	void Application::Active(std::function<void()> run)
+	{
+		while (Active())
+		{
+			run();
+		}
+	}
+
 	bool Application::Active()
 	{
 		if (!m_isRunning)
@@ -36,9 +42,16 @@ namespace Sea
 
 	Window& Application::CreateWindow(std::string_view title, VideoMode& videoMode)
 	{	
-		Molder::API = GraphicAPI;
-		m_window = Mould<Window>(title, videoMode);
 		Log::Info() << "Setup context with " << Context::contextType_tostring(GraphicAPI);
+		switch (GraphicAPI)
+		{
+		case Sea::GraphicAPI::OpenGL:
+			m_window = std::make_shared<Backend::OpenGL::GLWindow>(title, videoMode);;
+			break;
+		default:
+			m_window = std::make_shared<Backend::OpenGL::GLWindow>(title, videoMode);;
+			break;
+		}
 		return *m_window;
 	}
 

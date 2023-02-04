@@ -3,7 +3,7 @@
 
 namespace Sea
 {
-	Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Ref<Texture2D>>& textures) :
+	Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Ref<Texture>>& textures) :
 		m_vertices(m_vertices),
 		m_indices(indices), 
 		m_textures(textures)
@@ -28,23 +28,23 @@ namespace Sea
 		{
 			std::string num;
 			std::string type;
-			Texture2D::Type textureType = m_textures[i]->TextureType;
+			Texture::Type textureType = m_textures[i]->TextureType;
 			switch (textureType)
 			{
 
-			case Texture2D::Type::Diffuse:
+			case Texture::Type::Diffuse:
 				type = "diffuse";
 				num = std::to_string(numDiffuse++);
 				shader.SetInt(std::string("material." + type + num), i);
 				break;
 
-			case Texture2D::Type::Specular:
+			case Texture::Type::Specular:
 				type = "specular";
 				num = std::to_string(numSpecular++);
 				shader.SetInt(std::string("material." + type + num), i);
 				break;
 
-			case Texture2D::Type::Ambient:
+			case Texture::Type::Ambient:
 				type = "ambient";
 				num = std::to_string(numAmbient++);
 				shader.SetInt(std::string("material." + type + num), i);

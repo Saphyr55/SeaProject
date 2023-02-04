@@ -1,4 +1,4 @@
-#include "Sea/Backend/OpenGL/GLTexture2D.hpp"
+#include "Sea/Backend/OpenGL/GLTexture.hpp"
 
 #include <string>
 #include <mcl/Logger.hpp>
@@ -9,9 +9,9 @@ using mcl::Log;
 namespace Sea::Backend::OpenGL
 {
 
-	GLTexture2D::GLTexture2D(std::string_view path, Type texType, u32 slot) : GLTexture2D(File(path), texType, slot) { }
+	GLTexture::GLTexture(std::string_view path, Type texType, u32 slot) : GLTexture(File(path), texType, slot) { }
 
-	GLTexture2D::GLTexture2D(File image, Type texType, u32 slot) : Texture2D(image, texType, slot)
+	GLTexture::GLTexture(File image, Type texType, u32 slot) : Texture(image, texType, slot)
 	{	
 		if (!image.Exist())
 		{	
@@ -30,17 +30,18 @@ namespace Sea::Backend::OpenGL
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, GL_UNSIGNED_BYTE, bytes);
 			glGenerateMipmap(GL_TEXTURE_2D);
 			Unbind();
+
 			Log::Info() << "Loading texture success: " << imageFile.GetPath();
 		}
 		else
 		{
 			Log::Error() << imageFile.GetPath().c_str() << " cannot read bytes";
-			throw std::exception("");
+			throw std::exception();
 		}
 		stbi_image_free(bytes);
 	}
 
-	void GLTexture2D::SetupFormatFromChannel(s32 channel)
+	void GLTexture::SetupFormatFromChannel(s32 channel)
 	{
 		switch (channel)
 		{
@@ -58,7 +59,7 @@ namespace Sea::Backend::OpenGL
 		}
 	}
 
-	void GLTexture2D::SetDefaultParameteri()
+	void GLTexture::SetDefaultParameteri()
 	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -67,20 +68,22 @@ namespace Sea::Backend::OpenGL
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	}
 
-	void GLTexture2D::Bind()
+	void GLTexture::Bind()
 	{
 		glActiveTexture(GL_TEXTURE0 + m_slot);
 		glBindTexture(GL_TEXTURE_2D, id);
 	}
 
-	void GLTexture2D::Unbind()
+	void GLTexture::Unbind()
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	void GLTexture2D::Delete()
+	void GLTexture::Delete()
 	{
 		glDeleteTextures(1, &id);
 	}
+
+	
 
 }

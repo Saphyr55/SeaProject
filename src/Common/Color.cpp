@@ -25,5 +25,4 @@ namespace Sea
 	const Color Colors::Wheat = Color(0.96f, 0.87f, 0.70f, 1.0f);
 	const Color Colors::White = Color(1.0f, 1.0f, 1.0f, 1.0f);
 	const Color Colors::Yellow = Color(1.0f, 1.0f, 0.0f, 1.0f);
-
-} // namespace Sea
+}

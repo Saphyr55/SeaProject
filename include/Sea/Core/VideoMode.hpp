@@ -5,7 +5,7 @@
 
 namespace Sea
 {   
-	enum class GraphicsAPI
+	enum class GraphicAPI 
 	{
         OpenGL
 	};

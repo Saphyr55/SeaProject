@@ -25,7 +25,7 @@ namespace Sea::Backend::OpenGL
 		GLShader(std::string vertexShaderSource, std::string fragmentShaderSource);
 		GLShader(const GLShader &) = default;
 		GLShader(GLShader &&) = default;
-		~GLShader() = default;
+		~GLShader();
 
 	private:
 		s32 GetUniformLocation(std::string uniform);

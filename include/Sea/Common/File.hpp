@@ -1,14 +1,13 @@
 #pragma once
 
 #include <string>
-#include <memory>
 
 namespace Sea
 { 
 	class File final
 	{
 	public:
-		static std::string FromSource;
+		static std::string FromResources;
 
 	public:
 		static const std::string GetFileContent(File file);

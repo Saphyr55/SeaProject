@@ -8,8 +8,9 @@ using mcl::Log;
 
 namespace Sea
 {
-	EventHandler::EventHandler() { }
 
+	EventHandler::EventHandler() : m_handle() {	}
+	
 	void EventHandler::HandleEvent(Window& window)
 	{
 		while (SDL_PollEvent(&m_handle))

@@ -15,7 +15,7 @@ set_targetdir(targetdir)
 
 target("SeaFramework")
 
-    set_kind("shared")
+    set_kind("static")
 
     add_headerfiles("externals/mcl/Logger.hpp", { public = true } )
     add_headerfiles("include/**.hpp")

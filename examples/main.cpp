@@ -1,29 +1,26 @@
 #include <iostream>
 #include <filesystem>
 
-#include <Sea/Common/Color.hpp>
-#include <Sea/Common/Utils.hpp>
-#include <Sea/Common/CommonType.hpp>
-#include <Sea/Common/File.hpp>
-
-#include <Sea/Core/Application.hpp>
-#include <Sea/Core/FrameRate.hpp>
-#include <Sea/Core/Input/Input.hpp>
-#include <Sea/Core/Loader/AssimpModelLoader.hpp>
-
-#include <Sea/Graphic/Lights/PointLight.hpp>
-#include <Sea/Graphic/Model.hpp>
-#include <Sea/Graphic/Lights/SpotLight.hpp>
-#include <Sea/Graphic/Lights/DirectionalLight.hpp>
-
-#include <Sea/Math/Matrix4.hpp>
-
 #include <mcl/Logger.hpp>
 #include <stb/stb_image.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <Sea/Math/Matrix4.hpp>
+#include <Sea/Common/Color.hpp>
+#include <Sea/Common/Utils.hpp>
+#include <Sea/Common/CommonType.hpp>
+#include <Sea/Common/File.hpp>
+#include <Sea/Core/Application.hpp>
+#include <Sea/Core/FrameRate.hpp>
+#include <Sea/Core/Input/EventHandler.hpp>
+#include <Sea/Core/Input/Input.hpp>
+#include <Sea/Core/Loader/AssimpModelLoader.hpp>
+#include <Sea/Graphic/Lights/PointLight.hpp>
+#include <Sea/Graphic/Model.hpp>
+#include <Sea/Graphic/Lights/SpotLight.hpp>
+#include <Sea/Graphic/Lights/DirectionalLight.hpp>
 
 void HandleInput(Sea::Window& window, Sea::Camera& camera, Sea::f32 dt);
 void DefaultCursor(Sea::Window& window);
@@ -66,8 +63,7 @@ int main(int argc, const char** argv)
 		Sea::EventHandler eventHandler;
 
 		// Set up Camera
-		Sea::Camera camera
-		(
+		Sea::Camera camera (
 			videoMode.Width,
 			videoMode.Height,
 			glm::vec3(0.0f, 0.0f, 2.0f)
@@ -116,7 +112,6 @@ int main(int argc, const char** argv)
 		// Setup Frame rate and setup Clock for calculate dt through the frame rate
 		Sea::Clock clock;
 		Sea::FrameRate frameRate;
-
 		while (sea.Active())
 		{
 			clock.Start(frameRate);

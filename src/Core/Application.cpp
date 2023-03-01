@@ -23,10 +23,7 @@ namespace Sea
 
 	void Application::Active(std::function<void()> run)
 	{
-		while (Active())
-		{
-			run();
-		}
+		while (Active()) run();
 	}
 
 	bool Application::Active()

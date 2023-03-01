@@ -141,7 +141,7 @@ float linearize_depth(float _depth, float far, float near)
     return (2.0 * near * far) / (far + near - (_depth * 2.0 - 1.0) * (far - near));
 }
 
-float logistic_depth(float _depth, float far, float near, float steepness = 0.5, float offset = 5.0)
+float logistic_depth(float _depth, float far, float near, float steepness /* 0.5 */, float offset /* 5.0 */)
 {
     float zVal = linearize_depth(_depth, far, near);
     return (1 / (1 + exp(-steepness * (zVal - offset))));
@@ -168,7 +168,7 @@ void main()
 
     float near = 0.1;
     float far = 0.2;
-    float depth = logistic_depth(gl_FragCoord.z, near, far); 
+    float depth = logistic_depth(gl_FragCoord.z, near, far, 0.5f, 5.0f); 
     
     vec4 v_depth = (1.0f - depth) + vec4(depth * vec3(0.11f, 0.11f, 0.11f), 1.0);
     // if(useFlog) _result *= v_depth

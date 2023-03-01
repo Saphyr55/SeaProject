@@ -12,7 +12,7 @@ namespace Sea::Backend::OpenGL
 	GLTexture::GLTexture(std::string_view path, Type texType, u32 slot) : GLTexture(File(path), texType, slot) { }
 
 	GLTexture::GLTexture(File image, Type texType, u32 slot) : Texture(image, texType, slot)
-	{	
+ 	{	
 		if (!image.Exist())
 		{	
 			Log::Error() << "Cannot load texture, reason :" << imageFile.GetPath().c_str() << " not exist";

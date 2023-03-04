@@ -3,6 +3,7 @@
 
 namespace Sea::Backend::OpenGL
 {
+
 	GLContext::GLContext(Window& window) : m_handle(SDL_GL_CreateContext(window.GetHandle()))
 	{
 		if (m_handle == nullptr) throw("Failed to create OpenGL context");

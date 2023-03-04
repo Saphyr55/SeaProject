@@ -7,7 +7,7 @@
 using mcl::Log;
 
 namespace Sea
-{
+{	
 
 	EventHandler::EventHandler() : m_handle() {	}
 	
@@ -36,7 +36,7 @@ namespace Sea
 				Mouse::buttonsDown.remove((Mouse::Button)m_handle.button.button);
 				break;
 			case SDL_MOUSEMOTION:
-				for (auto callback : Mouse::callbacks)
+				for (auto callback : Mouse::callbacks) 
 					callback();
 				Mouse::RelativePosY = m_handle.motion.yrel;
 				Mouse::RelativePosX = m_handle.motion.xrel;

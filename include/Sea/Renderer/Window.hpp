@@ -15,48 +15,45 @@ namespace Sea
 {	
 
 	class Window
-	{	
+	{
 	friend class Context;
 
 	public:
 		virtual void Run() = 0;
-		virtual void Swap() = 0;
+		virtual void Swap();
 		virtual void UseVSync(bool use) = 0;
-		virtual void Viewport() = 0;
-		virtual void Viewport(u32 h, u32 w) = 0;
-		virtual void Viewport(u32 x, u32 y, u32 h, u32 w) = 0;
-		void Update();
-		void Hide();
-		void Show();
-		void Close();
-		bool IsOpen();
-		bool IsClosed();
-		void SetSize(f32 w, f32 h);
-		void SetResizable(bool resizable);
-		void SetTitle(std::string_view title);
-		void SetMousePostion(f32 x, f32 y);
-		void SetMouseOnMiddlePosistion();
-		void GrapMouse();
-		void UngrapMouse();
-		SDL_Window* GetHandle() { return m_handle; }
+		virtual void Update() = 0;
+		virtual void Hide() = 0;
+		virtual void Show() = 0;
+		virtual void Close() = 0;
+		virtual bool IsOpen() = 0;
+		virtual bool IsClosed() = 0;
+		virtual void SetSize(f32 w, f32 h) = 0;
+		virtual void SetResizable(bool resizable) = 0;
+		virtual void SetTitle(std::string_view title) = 0;
+		virtual void SetMousePostion(f32 x, f32 y) = 0;
+		virtual void SetMouseOnMiddlePosistion() = 0;
+		virtual void GrapMouse() = 0;
+		virtual void UngrapMouse() = 0;
+		void Viewport(u32 x, u32 y, u32 h, u32 w);
+		void Viewport();
+		void Viewport(u32 h, u32 w);
 		Renderer& GetRenderer() { return *m_renderer; }
 		VideoMode& GetVideoMode() { return m_videoMode; }
 
 	protected:
-		void SetupFlags();
 		void SetupIcon();
 
 	public:
 		Window(std::string_view title, VideoMode& proterties);
 		Window(const Window&) = default;
-		Window(Window &&) = default;
-		~Window();
+		Window(Window&&) = default;
+		virtual ~Window() = 0;
 
 	protected:
 		s32 flags;
 		bool m_isOpen = false;
 		std::string m_title;
-		SDL_Window* m_handle;
 		VideoMode m_videoMode;
 		Ref<Renderer> m_renderer;
 		Ref<Context> m_contextPtr;

@@ -3,7 +3,7 @@
 #include "Sea/Core/Clock.hpp"
 #include "Sea/Backend/OpenGL/GL.hpp"
 #include "Sea/Renderer/Window.hpp"
-#include "Sea/Backend/OpenGL/Renderer/GLWindow.hpp"
+#include "Sea/Backend/SDL/Window.hpp"
 
 namespace fs = std::filesystem;
 using mcl::Log;
@@ -43,12 +43,17 @@ namespace Sea
 		switch (GraphicAPI)
 		{
 		case Sea::GraphicAPI::OpenGL:
-			m_window = std::make_shared<Backend::OpenGL::GLWindow>(title, videoMode);;
+#ifndef SeaOpenGL_Context
+#define SeaOpenGL_Context
+#endif
 			break;
 		default:
-			m_window = std::make_shared<Backend::OpenGL::GLWindow>(title, videoMode);;
+#ifndef SeaOpenGL_Context
+	#define SeaOpenGL_Context
+#endif
 			break;
 		}
+		m_window = std::make_shared<Backend::SDL::Window>(title, videoMode);
 		return *m_window;
 	}
 
@@ -62,9 +67,5 @@ namespace Sea
 
 		stbi_set_flip_vertically_on_load(1);
 	}
-
-
-
-
 
 }

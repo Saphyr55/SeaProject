@@ -10,8 +10,6 @@ namespace Sea::Backend::SDL
 	class Window : public ::Sea::Window
 	{
 	public:
-		Window(std::string_view title, VideoMode& videoMode);
-		~Window();
 		void Run();
 		void Swap();
 		void UseVSync(bool use);
@@ -30,6 +28,12 @@ namespace Sea::Backend::SDL
 		void GrapMouse();
 		void UngrapMouse();
 		SDL_Window* GetHandle() { return m_handle; }
+
+	public:
+		Window(std::string_view title, VideoMode& videoMode);
+		Window(const Window&) = default;
+		Window(Window&&) = default;
+		~Window();
 
 	private:
 		s32 m_flags;

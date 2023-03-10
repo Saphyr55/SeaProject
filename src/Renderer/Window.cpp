@@ -34,31 +34,5 @@ namespace Sea
 		m_renderer->Viewport(x, y, h, w);
 	}
 
-
-	/**
-	 * Deprecated
-	 */
-	void Window::SetupIcon()
-	{	
-		/*
-		if (!m_videoMode.FileIcon.empty())
-		{
-			auto file = File(m_properties.FileIcon);
-			if (file.Exist())
-			{
-				SDL_Surface* icon = IMG_Load(file.GetPath().c_str());
-				if (!icon)
-				{
-					Log::Warning() << "Icon was not loading : " << file.GetPath();
-					return;
-				}
-				Log::Info() << "Image Load : " << file.GetPath();
-				SDL_SetWindowIcon(m_handle, icon);
-				SDL_FreeSurface(icon);
-			}
-			else Log::Warning() << file.GetPath() << " not exist impossible to setup an icon";
-		}
-		*/
-	}
-
+	
 }

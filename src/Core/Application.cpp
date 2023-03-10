@@ -44,7 +44,7 @@ namespace Sea
 		{
 		case Sea::GraphicAPI::OpenGL:
 #ifndef SeaOpenGL_Context
-#define SeaOpenGL_Context
+	#define SeaOpenGL_Context
 #endif
 			break;
 		default:

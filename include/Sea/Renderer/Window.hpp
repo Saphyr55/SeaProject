@@ -20,7 +20,7 @@ namespace Sea
 
 	public:
 		virtual void Run() = 0;
-		virtual void Swap();
+		virtual void Swap() = 0;
 		virtual void UseVSync(bool use) = 0;
 		virtual void Update() = 0;
 		virtual void Hide() = 0;
@@ -41,14 +41,10 @@ namespace Sea
 		Renderer& GetRenderer() { return *m_renderer; }
 		VideoMode& GetVideoMode() { return m_videoMode; }
 
-	protected:
-		void SetupIcon();
-
 	public:
 		Window(std::string_view title, VideoMode& proterties);
 		Window(const Window&) = default;
 		Window(Window&&) = default;
-		virtual ~Window() = 0;
 
 	protected:
 		s32 flags;

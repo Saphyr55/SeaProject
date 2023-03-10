@@ -78,6 +78,55 @@ namespace Sea::Backend
 		return !m_isOpen;
 	}
 
+	void SDL::Window::SetSize(f32 w, f32 h)
+	{
+		m_videoMode.Width = w;
+		m_videoMode.Height = h;
+		SDL_SetWindowSize(m_handle, m_videoMode.Width, m_videoMode.Height);
+	}
+
+	void SDL::Window::SetResizable(bool resizable)
+	{
+		m_videoMode.Resizable = resizable;
+		SDL_SetWindowResizable(m_handle, (SDL_bool)m_videoMode.Resizable);
+	}
+
+	void SDL::Window::SetTitle(std::string_view title)
+	{
+		m_title = title;
+		SDL_SetWindowTitle(m_handle, title.data());
+	}
+
+	void SDL::Window::SetMousePostion(f32 x, f32 y)
+	{
+		SDL_WarpMouseInWindow(nullptr, x, y);
+	}
+
+	void SDL::Window::SetMouseOnMiddlePosistion()
+	{
+		SetMousePostion(m_videoMode.Width / 2, m_videoMode.Height / 2);
+	}
+
+	void SDL::Window::GrapMouse()
+	{
+		SDL_SetWindowMouseGrab(m_handle, SDL_TRUE);
+	}
+
+	void SDL::Window::UngrapMouse()
+	{
+		SDL_SetWindowMouseGrab(m_handle, SDL_FALSE);
+	}
+	
+	void SDL::Window::Update()
+	{
+		SDL_GetWindowSize(m_handle, (s32*)&m_videoMode.Width, (s32*)&m_videoMode.Height);
+	}
+
+	void SDL::Window::Run()
+	{
+		m_isOpen = true;
+	}
+
 	void SDL::Window::UseVSync(bool use)
 	{
 #ifdef SeaOpenGL_Context

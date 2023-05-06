@@ -15,7 +15,7 @@ namespace Sea
 {	
 
 	class Window
-	{	
+	{
 	friend class Context;
 
 	public:
@@ -49,14 +49,12 @@ namespace Sea
 	public:
 		Window(std::string_view title, VideoMode& proterties);
 		Window(const Window&) = default;
-		Window(Window &&) = default;
-		~Window();
+		Window(Window&&) = default;
 
 	protected:
 		s32 flags;
 		bool m_isOpen = false;
 		std::string m_title;
-		SDL_Window* m_handle;
 		VideoMode m_videoMode;
 		Ref<Renderer> m_renderer;
 		Ref<Context> m_contextPtr;

@@ -23,7 +23,7 @@ namespace Sea
 		virtual void DrawMesh(Shader& shader, Camera& camera);
 
 		Light() = default;
-		virtual ~Light()= default;
+		virtual ~Light() = default;
 
 	protected:
 		u32 id;

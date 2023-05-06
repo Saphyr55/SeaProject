@@ -5,7 +5,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <Sea/Core/Context.hpp>
-#include <Sea/Renderer/Window.hpp>
+#include <Sea/Backend/SDL/Window.hpp>
 
 namespace Sea::Backend::OpenGL
 {	
@@ -14,7 +14,7 @@ namespace Sea::Backend::OpenGL
 	{
 
 	public:
-		GLContext(Window& window);
+		GLContext(::Sea::Backend::SDL::Window& window);
 		~GLContext();
 
 	private:

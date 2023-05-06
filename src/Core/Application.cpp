@@ -91,8 +91,4 @@ namespace Sea
 		stbi_set_flip_vertically_on_load(1);
 	}
 
-
-
-
-
 }

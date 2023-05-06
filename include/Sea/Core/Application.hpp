@@ -16,8 +16,11 @@
 
 namespace Sea
 {	
+<<<<<<< HEAD
 	class Clock;
 
+=======
+>>>>>>> abstract_sdl
 	class Application final
 	{
 		friend class EventHandler;
@@ -26,9 +29,13 @@ namespace Sea
 		GraphicAPI GraphicAPI = GraphicAPI::OpenGL;
 
 	public:
+<<<<<<< HEAD
 		void Attach(Handler<Clock&> handler);
 		void Active();
 		bool IsActive();
+=======
+		bool Active();
+>>>>>>> abstract_sdl
 		void Active(std::function<void()> run);
 		Window& CreateWindow(std::string_view title, VideoMode& videoMode);
 

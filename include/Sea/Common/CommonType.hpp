@@ -33,7 +33,11 @@ namespace Sea
 	template<typename T, std::size_t size>
 	using Array = std::array<T, size>;
 
+<<<<<<< HEAD
 	template<typename T>
+=======
+	template<typename T> 
+>>>>>>> abstract_sdl
 	using Scope = std::unique_ptr<T>;
 
 	template<typename T> 

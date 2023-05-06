@@ -52,12 +52,15 @@ TEST_CASE("Test Matrix4", "[Matrix4]")
 		CHECK(rando1 == id * rando1);
 	}
 
+<<<<<<< HEAD
 	WHEN("Transform matrix")
 	{
 		CHECK(Sea::Matrix4f() 
 			== rando1.Transform(Sea::Vector3f(2.f, 1.f, 0.f)));
 	}
 
+=======
+>>>>>>> abstract_sdl
 	WHEN("Operator [][]")
 	{
 		CHECK(1.0f == rando1[0][0]);

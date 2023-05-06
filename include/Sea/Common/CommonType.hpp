@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include <utility>
 #include <array>
 #include <memory>
@@ -11,6 +13,10 @@ using mcl::Log;
 namespace Sea 
 {	
 
+	template<typename T>
+	using Handler = std::function<void(T)>;
+
+	
 	using u8 = std::uint8_t;
 	using u16 = std::uint16_t;
 	using u32 = std::uint32_t;
@@ -27,7 +33,7 @@ namespace Sea
 	template<typename T, std::size_t size>
 	using Array = std::array<T, size>;
 
-	template<typename T> 
+	template<typename T>
 	using Scope = std::unique_ptr<T>;
 
 	template<typename T> 

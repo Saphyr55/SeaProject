@@ -3,7 +3,6 @@
 #include <SDL2/SDL.h>
 
 #include "Sea/Common/CommonType.hpp"
-#include "Sea/Core/FrameRate.hpp"
 
 #include <mcl/Logger.hpp>
 
@@ -11,34 +10,29 @@ using mcl::Log;
 
 namespace Sea
 {
+
     struct Clock
     {
-        f32 Now = 0;
-        f32 Last = 0;
-        f32 Delta = 0;
-          
+
+    public:
         Clock() { Last = GetTicks(); }
-        ~Clock()=default;
+        ~Clock() = default;
 
-        void Start(FrameRate& frameRate)
-        {
-			frameRate.Start();
-            Now = SDL_GetTicks();
-            Delta = (Now - Last) * (frameRate.GetFPS() / 1000);
-        }
+    public:
+        void Start();
+        void End();
+		inline f32 GetFPS() { return m_fps; }
+		inline f32 GetTicks() { return SDL_GetTicks(); }
 
-        void End(FrameRate& frameRate)
-        {
-			frameRate.End();
-            frameRate.Calculate();
-            Last = Now;
-        }
+	public:
+		f32 Now   = 0;
+		f32 Last  = 0;
+		f32 Delta = 0;
 
-    private:
-        f32 GetTicks()
-        {
-            return SDL_GetTicks();
-        }
+	private:
+		f32 m_startFPS = 0;
+		f32 m_endFPS   = 0;
+		f32 m_fps      = 0;
 
     };
 }

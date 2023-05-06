@@ -72,6 +72,14 @@ namespace Sea
 	}
 
 	template<typename T>
+	Matrix4<T>& Matrix4<T>::Transform(const Vector3<T>& v)
+	{
+		Matrix4<T> r(Vector4f((*this)[0]), Vector4f((*this)[1]), Vector4f((*this)[2]), Vector4f((*this)[3]));
+		r[3] = Vector4f((*this)[0]) * v.x + Vector4f((*this)[1]) * v.y + Vector4f((*this)[2]) * v.z + Vector4f((*this)[3]);
+		return r;
+	}
+
+	template<typename T>
 	Matrix4<T>& Matrix4<T>::operator*(Matrix4& m)
 	{
 		auto r = MakeRef<Matrix4<T>>();
@@ -93,6 +101,12 @@ namespace Sea
 	Vector4<T>& Matrix4<T>::operator[](std::size_t i)
 	{
 		return GetCol(i);
+	}
+
+	template<typename T>
+	T& Matrix4<T>::operator()(std::size_t m, std::size_t n)
+	{
+		return GetCol(m)[n];
 	}
 
 	template<typename T>

@@ -2,7 +2,7 @@
 #include <Sea/Graphic/Shader.hpp>
 
 namespace Sea
-{
+{	
 	Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Ref<Texture>>& textures) :
 		m_vertices(m_vertices),
 		m_indices(indices), 
@@ -15,6 +15,11 @@ namespace Sea
 		m_vertices(m_vertices),
 		m_indices(indices)
 	{
+	}
+
+	void Mesh::AddHandler(Handler<Clock&> handler)
+	{
+		handlers.push_back(handler);
 	}
 
 	void Mesh::SetupTextures(Shader& shader)

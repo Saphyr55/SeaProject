@@ -14,7 +14,7 @@ namespace Sea
 
 	struct Context
 	{
-		static std::string contextType_tostring(GraphicAPI api)
+		static std::string Tostring(GraphicAPI api)
 		{
 			switch (api)
 			{

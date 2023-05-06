@@ -7,6 +7,7 @@
 #include "Sea/Backend/OpenGL/GLVertexBuffer.hpp"
 
 #include <mcl/Logger.hpp>
+#include <Sea/Math/Matrix4.hpp>
 
 using mcl::Log;
 
@@ -47,7 +48,7 @@ namespace Sea::Backend::OpenGL
 		ebo.Unbind();
 	}
 
-	GLMesh::GLMesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Mold<Texture>>& textures) :
+	GLMesh::GLMesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Ref<Texture>>& textures) :
 		Mesh(vertices, indices, textures)
 	{
 		vao.Bind();

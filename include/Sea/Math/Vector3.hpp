@@ -50,10 +50,10 @@ namespace Sea
 	using Vector3b = Vector3<bool>;
 	using Vector3f = Vector3<f32>;
 	using Vector3d = Vector3<f64>;
-	using Vector3i = Vector3<std::int32_t>;
-	using Vector3ui = Vector3<std::uint32_t>;
-	using Vector3ll = Vector3<std::int64_t>;
-	using Vector3ull = Vector3<std::uint64_t>;
+	using Vector3i = Vector3<s32>;
+	using Vector3ui = Vector3<u32>;
+	using Vector3ll = Vector3<s64>;
+	using Vector3ull = Vector3<u64>;
 
 }
 

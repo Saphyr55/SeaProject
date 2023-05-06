@@ -7,7 +7,7 @@
 #include <Sea/Common/File.hpp>
 
 #include <Sea/Core/Application.hpp>
-#include <Sea/Core/FrameRate.hpp>
+#include <Sea/Core/Clock.hpp>
 #include <Sea/Core/Input/Input.hpp>
 #include <Sea/Core/Loader/AssimpModelLoader.hpp>
 
@@ -16,6 +16,7 @@
 #include <Sea/Graphic/Lights/SpotLight.hpp>
 #include <Sea/Graphic/Lights/DirectionalLight.hpp>
 
+#include <Sea/Math/Vector3.hpp>
 #include <Sea/Math/Matrix4.hpp>
 
 #include <mcl/Logger.hpp>
@@ -23,7 +24,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
 
 void HandleInput(Sea::Window& window, Sea::Camera& camera, Sea::f32 dt);
 void DefaultCursor(Sea::Window& window);
@@ -44,7 +44,8 @@ Sea::f32 sensitivity = .1f;
 int main(int argc, const char** argv)
 {	
 	try
-	{	
+	{
+
 		// Init application
 		Sea::Application sea;
 
@@ -57,13 +58,10 @@ int main(int argc, const char** argv)
 			videoMode.Resizable = true;
 			videoMode.Maximazed = true;
 		};
-		
+
 		// Creating the window from the application with video mode
 		Sea::Window& window = sea.CreateWindow(title, videoMode);
 		Sea::Renderer& renderer = window.GetRenderer();
-		
-		// Creating event handler from the window
-		Sea::EventHandler eventHandler;
 
 		// Set up Camera
 		Sea::Camera camera
@@ -86,11 +84,13 @@ int main(int argc, const char** argv)
 		Sea::Model grass = *grassModelLoader.Load();
 
 		// Default shader
-		Sea::ShaderRef shader = renderer.CreateShader("examples/shaders/default.vert", "examples/shaders/default.frag");
+		Sea::ShaderRef shader = Sea::RenderService::Get()
+			.CreateShader("examples/shaders/default.vert", "examples/shaders/default.frag");
 		shader->SetFloat("material.shininess0", 8);
 
 		// Light shader
-		Sea::ShaderRef shaderLight = renderer.CreateShader("examples/shaders/light.vert","examples/shaders/light.frag");
+		Sea::ShaderRef shaderLight = Sea::RenderService::Get()
+			.CreateShader("examples/shaders/light.vert", "examples/shaders/light.frag");
 
 		// Setup a point light
 		Sea::PointLight light;
@@ -113,18 +113,13 @@ int main(int argc, const char** argv)
 			break;
 		}
 
-		// Setup Frame rate and setup Clock for calculate dt through the frame rate
-		Sea::Clock clock;
-		Sea::FrameRate frameRate;
+		sea.Attach([&](Sea::Clock& clock) {
 
-		while (sea.Active())
-		{
-			clock.Start(frameRate);
-			renderer.ClearColor(Sea::Colors::EerieBlack);
-			renderer.Clear();
+			Sea::RenderService::Get().ClearColor(Sea::Colors::EerieBlack);
+			Sea::RenderService::Get().Clear();
 			window.Viewport();
-			window.SetTitle(title + " - fps = " + std::to_string(frameRate.GetFPS()));
-		
+			window.SetTitle(title + " - fps = " + std::to_string(clock.GetFPS()));
+
 			// Setup Perspective Camera
 			camera.SetViewProjection(45.0f, 0.1f, 500.0f);
 
@@ -134,9 +129,9 @@ int main(int argc, const char** argv)
 			grindstone.Draw(*shader, camera, grindstoneModel, grindstonePos);
 
 			// Lightning the scene
-			light.Draw(*shader); 
+			light.Draw(*shader);
 			// Draw a cube representing where the light from
-			light.DrawMesh(*shaderLight, camera); 
+			light.DrawMesh(*shaderLight, camera);
 
 			// Handle input camera
 			HandleInput(window, camera, clock.Delta);
@@ -144,23 +139,18 @@ int main(int argc, const char** argv)
 			// Handle mouse camera if we are in relative mode
 			if (state == 1)
 			{
-				Sea::Mouse::OnMoved([&]() 
-				{
-					camera.Yaw += Sea::Mouse::RelativePosX * sensitivity;
-					camera.Pitch += Sea::Mouse::RelativePosY * sensitivity;
-					camera.Pitch = Sea::Clamp(camera.Pitch, -89.0f, 89.0f);
-					camera.SetOrientation(camera.Yaw, camera.Pitch);
-				});
+				Sea::Mouse::OnMoved([&]()
+					{
+						camera.Yaw += Sea::Mouse::RelativePosX * sensitivity;
+						camera.Pitch += Sea::Mouse::RelativePosY * sensitivity;
+						camera.Pitch = Sea::Clamp(camera.Pitch, -89.0f, 89.0f);
+						camera.SetOrientation(camera.Yaw, camera.Pitch);
+					});
 			}
 
-			eventHandler.HandleEvent(window); 
+		});
 
-			// CRITICAL LINE, free the memory
-			window.Swap();
-
-			// Calculate the frame rate and dt
-			clock.End(frameRate); 
-		}
+		sea.Active();
 
 	}
 	catch (const std::exception& e)
@@ -256,7 +246,7 @@ glm::vec3 DampedString(const glm::vec3 currentPos, const glm::vec3 targetPos, Se
 {
 	glm::vec3 displacement = targetPos - currentPos;
 	if (displacement.length() == 0.f) return currentPos;
-	Sea::f32 invDisplacementLength = 1.f / displacement.length();
+	Sea::f32 invDisplacementLength = 1 / displacement.length();
 	const Sea::f32 dampConstant = 0.000065f;
 	Sea::f32 springMagitude = springStrength * displacement.length() + dampConstant * invDisplacementLength;
 	Sea::f32 scalar = std::min(invDisplacementLength * springMagitude * frametime, 1.f);

@@ -6,6 +6,8 @@ namespace Sea
 {
 	template<typename T>
 	class Vector4;
+	template<typename T>
+	class Vector3;
 
     template<typename T>
 	class Matrix4
@@ -25,8 +27,11 @@ namespace Sea
 
 		Matrix4<T>& operator*(Matrix4& matrix);
 		Vector4<T>& operator[](std::size_t i);
+		T& operator()(std::size_t m, std::size_t n);
 		bool operator==(const Matrix4& mat) const;
 		bool operator!=(const Matrix4& mat) const;
+
+		Matrix4<T>& Transform(const Vector3<T>& v);
 
 		static Matrix4<T> Identity();
 		static Matrix4<T> Zero();

@@ -1,4 +1,5 @@
 #include <Sea/Math/Matrix4.hpp>
+#include <Sea/Math/Vector4.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <iostream>
 
@@ -49,6 +50,12 @@ TEST_CASE("Test Matrix4", "[Matrix4]")
 
 		CHECK(rando1 == rando1 * id);
 		CHECK(rando1 == id * rando1);
+	}
+
+	WHEN("Transform matrix")
+	{
+		CHECK(Sea::Matrix4f() 
+			== rando1.Transform(Sea::Vector3f(2.f, 1.f, 0.f)));
 	}
 
 	WHEN("Operator [][]")

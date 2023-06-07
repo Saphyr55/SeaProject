@@ -3,11 +3,11 @@
 #include <memory>
 #include <vector>
 
-#include "Sea/Common/CommonType.hpp"
+#include "Sea/Core/Common.hpp"
 #include "Sea/Graphic/Texture.hpp"
 #include "Sea/Graphic/Vertex.hpp"
-#include "Sea/Renderer/Camera.hpp"
-#include "Sea/Graphic/Shader.hpp"
+#include "Sea/Graphic/Shaders/Shader.hpp"
+#include "Sea/Graphic/Rendering/Camera.hpp"
 
 namespace Sea
 {

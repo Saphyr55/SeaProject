@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Sea/Common/CommonType.hpp"
-#include "Sea/Common/File.hpp"
+#include "Sea/Core/Common.hpp"
+#include "Sea/Core/File.hpp"
 
 namespace Sea
 {

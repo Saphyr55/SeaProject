@@ -2,7 +2,7 @@
 
 #include <SDL2/SDL.h>
 
-#include "Sea/Common/CommonType.hpp"
+#include "Sea/Core/Common.hpp"
 
 namespace Sea
 {

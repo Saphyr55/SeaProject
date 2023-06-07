@@ -1,9 +1,11 @@
 #include "Sea/Core/Application.hpp"
-#include "Sea/Common/CommonType.hpp"
+#include "Sea/Core/Common.hpp"
 #include "Sea/Core/Clock.hpp"
-#include "Sea/Backend/OpenGL/GL.hpp"
-#include "Sea/Renderer/Window.hpp"
-#include "Sea/Backend/OpenGL/Renderer/GLWindow.hpp"
+#include "Sea/Graphic/OpenGL/GL.hpp"
+#include "Sea/Graphic/OpenGL/Renderer/GLWindow.hpp"
+#include "Sea/Graphic/Rendering/Window.hpp"
+
+#include <SDL2/SDL.h>
 
 namespace fs = std::filesystem;
 using mcl::Log;

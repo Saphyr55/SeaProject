@@ -2,7 +2,7 @@
 
 #include <cmath>
 #include <ostream>
-#include "Sea/Common/CommonType.hpp"
+#include "Sea/Core/Common.hpp"
 
 namespace Sea
 {
@@ -15,8 +15,9 @@ namespace Sea
 		T x, y;
 
 	public:
+		Vector2() = default;
 		Vector2(T x, T y);
-		~Vector2()=default;
+		~Vector2() = default;
 		
 		float Length() const;
 		float Dot(Vector2<T> vec) const;

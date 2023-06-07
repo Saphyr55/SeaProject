@@ -3,7 +3,7 @@
 #include <cmath>
 #include <ostream>
 
-#include "Sea/Common/CommonType.hpp"
+#include "Sea/Core/Common.hpp"
 
 namespace Sea
 {

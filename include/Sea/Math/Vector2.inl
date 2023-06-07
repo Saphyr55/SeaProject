@@ -168,3 +168,4 @@ namespace Sea
 		return out << "Vector2(" << vec.x << ", " << vec.y << ')';
 	}
 }
+

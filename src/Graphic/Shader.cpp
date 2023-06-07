@@ -1,4 +1,4 @@
-#include "Sea/Graphic/Shader.hpp"
+#include "Sea/Graphic/Shaders/Shader.hpp"
 
 namespace Sea
 {

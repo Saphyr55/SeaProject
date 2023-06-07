@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Sea/Graphic/Shader.hpp>
-#include <Sea/Renderer/Camera.hpp>
-#include <Sea/Core/Loader/ModelLoader.hpp>
+#include "Sea/Graphic/Shaders/Shader.hpp"
+#include "Sea/Graphic/Rendering/Camera.hpp"
+#include "Sea/Graphic/Loader/ModelLoader.hpp"
 
 namespace Sea
 {

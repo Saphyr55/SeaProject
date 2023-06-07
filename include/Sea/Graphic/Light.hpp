@@ -1,10 +1,11 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "Sea/Common/CommonType.hpp"
+
+#include "Sea/Core/Common.hpp"
 #include "Sea/Graphic/Mesh.hpp"
-#include "Sea/Common/Color.hpp"
-#include <Sea/Renderer/Renderer.hpp>
+#include "Sea/Core/Color.hpp"
+#include "Sea/Graphic/Rendering/Renderer.hpp"
 
 namespace Sea
 {	

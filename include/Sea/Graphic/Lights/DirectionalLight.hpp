@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Sea/Graphic/Light.hpp"
-#include "Sea/Graphic/Shader.hpp"
+#include "Sea/Graphic/Shaders/Shader.hpp"
 
 namespace Sea
 {
@@ -12,13 +12,7 @@ namespace Sea
 
 		void Draw(Shader& shader);
 
-		DirectionalLight() 
-		{
-			if (!ids.empty()) id = ids.back() + 1;
-			else id = 0;
-			ids.push_back(id);
-			light = "directionalLights[" + std::to_string(id) + "]";
-		};
+		DirectionalLight();
 		~DirectionalLight() = default;
 	
 	private:
@@ -38,4 +32,12 @@ namespace Sea
 		shader.SetVec3f(light + ".direction", Direction);
 	}
 
-} // namespace Sea
+	DirectionalLight::DirectionalLight()
+	{
+		if (!ids.empty()) id = ids.back() + 1;
+		else id = 0;
+		ids.push_back(id);
+		light = "directionalLights[" + std::to_string(id) + "]";
+	}
+
+}

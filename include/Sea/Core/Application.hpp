@@ -7,12 +7,10 @@
 
 #include "Sea/Core/Clock.hpp"
 #include "Sea/Core/VideoMode.hpp"
-#include "Sea/Renderer/Window.hpp"
+#include "Sea/Graphic/Rendering/Window.hpp"
 
 #include <mcl/Logger.hpp>
 #include <stb/stb_image.h>
-#include <SDL2/SDL.h>
-
 
 namespace Sea
 {	
@@ -22,7 +20,7 @@ namespace Sea
 
 	public:
 		GraphicAPI GraphicAPI = GraphicAPI::OpenGL;
-
+		
 	public:
 		bool Active();
 		void Active(std::function<void()> run);

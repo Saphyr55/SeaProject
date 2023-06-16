@@ -21,23 +21,20 @@ local Modules = {
         Packages = { "libsdl", "glm", "fmt", { public = true } },
         Handle = function ()
             add_header_files_module("Core/**.hpp")
-            add_headerfiles("externals/mcl/Logger.hpp", { public = true })
-            add_headerfiles("externals/**.hpp")
-            add_headerfiles("externals/**.h")
+            add_headerfiles("externals/**.h|**.hpp")
             add_files_module("Core/**.cpp")
-            add_files("externals/**.c")
-            add_files("externals/**.cpp")
+            add_files("externals/**.c|**.cpp")
         end 
     },
 
     --- Graphic Module ---
-    Graphic = {
-        Name = "Sea.Graphic",
-        Packages = {"assimp", "libsdl_image", { public = true }},
+    Graphics = {
+        Name = "Sea.Graphics",
+        Packages = { "assimp", "libsdl_image", { public = true } },
         Deps = { "Sea.Core", "Sea.Math" },
         Handle = function () 
-            add_header_files_module("Graphic/**.hpp")
-            add_files_module("Graphic/**.cpp")
+            add_header_files_module("Graphics/**.hpp")
+            add_files_module("Graphics/**.cpp")
         end
     },
 
@@ -56,15 +53,14 @@ local Modules = {
         Name = "Sea.Math",
         Deps = { "Sea.Core" },
         Handle = function ()
-            add_header_files_module("Math/**.hpp")
-            add_header_files_module("Math/**.inl")
+            add_header_files_module("Math/**.hpp|**.inl")
         end
     },
 
     --- Ui Module ---
     Ui = {
         Name = "Sea.Ui",
-        Deps = {"Sea.Core", "Sea.Math", "Sea.Graphic"},
+        Deps = { "Sea.Core", "Sea.Math", "Sea.Graphics" },
         Handle = function () 
             add_header_files_module("Ui/**.hpp")
             add_files_module("Ui/**.cpp")
@@ -76,21 +72,31 @@ local Modules = {
         Name = "Sea.Tests",
         Kind = "binary",
         Packages = { "catch2" },
-        Deps = { "Sea.Core", "Sea.Ui", "Sea.Input", "Sea.Math", "Sea.Graphic" },
+        Deps = { "Sea.Core", "Sea.Ui", "Sea.Input", "Sea.Math", "Sea.Graphics" },
         Handle = function () 
             add_files("tests/**.cpp")
         end
     },
 
-    --- Sample Module ---
-    Sample = {
-        Name = "Sea.Sample",
+    --- Sample Default Module ---
+    SampleDefault = {
+        Name = "Sea.Samples.Default",
         Kind = "binary",
-        Deps = { "Sea.Core", "Sea.Ui", "Sea.Input", "Sea.Math", "Sea.Graphic" },
-        Handle = function () 
-            add_files("examples/**.cpp")
+        Deps = { "Sea.Core", "Sea.Ui", "Sea.Input", "Sea.Math", "Sea.Graphics" },
+        Handle = function ()
+            add_files("examples/sample_default/**.cpp")
         end
-    }
+    },
+
+    --- Sample Ui Module ---
+    SampleUi = {
+        Name = "Sea.Samples.Ui",
+        Kind = "binary",
+        Deps = { "Sea.Core", "Sea.Ui", "Sea.Input", "Sea.Math", "Sea.Graphics" },
+        Handle = function ()
+            add_files("examples/sample_ui/**.cpp")
+        end
+    },
 
 }
 
@@ -129,7 +135,7 @@ handle_modules(function (module)
         on_exist(module.Deps, function () 
             add_deps(unpack(module.Deps))
         end)
-
+        
         on_exist(module.Handle, function () 
             module:Handle()
         end)

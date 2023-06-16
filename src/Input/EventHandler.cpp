@@ -1,11 +1,7 @@
-#include <mcl/Logger.hpp>
-
 #include "Sea/Input/EventHandler.hpp"
 #include "Sea/Input/Input.hpp"
 #include "Sea/Input/Key.hpp"
-#include "Sea/Graphic/Rendering/Window.hpp"
-
-using mcl::Log;
+#include "Sea/Graphics/Rendering/Window.hpp"
 
 namespace Sea
 {

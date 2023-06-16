@@ -4,9 +4,25 @@
 #include <array>
 #include <memory>
 #include <cstdint>
-#include <mcl/Logger.hpp>
 
-using mcl::Log;
+#define SEA_ATTRIBUTE(TYPE, VALUE) protected: TYPE VALUE;
+
+#define SEA_ATTRIBUTE_READ(NAME, TYPE, VALUE) public: inline TYPE NAME() const { return VALUE; }
+
+#define SEA_ATTRIBUTE_WRITE(NAME, TYPE, ARG, VALUE) public: inline void NAME(TYPE ARG) { VALUE = ARG; }
+
+#define SEA_PROPERTY_READONLY(NAME, TYPE, VALUE) \
+SEA_ATTRIBUTE(TYPE, VALUE) \
+SEA_ATTRIBUTE_READ(NAME, TYPE, VALUE) \
+
+#define SEA_PROPERTY_WRITEONLY(NAME, TYPE, ARG, VALUE) \
+SEA_ATTRIBUTE(TYPE, VALUE) \
+SEA_ATTRIBUTE_WRITE(NAME, TYPE, ARG, VALUE) \
+
+#define SEA_PROPERTY(NAME, TYPE, ARG, VALUE) \
+SEA_ATTRIBUTE(TYPE, VALUE) \
+SEA_ATTRIBUTE_READ(NAME, TYPE, VALUE) \
+SEA_ATTRIBUTE_WRITE(NAME, TYPE, ARG, VALUE) \
 
 namespace Sea 
 {	

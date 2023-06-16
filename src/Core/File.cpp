@@ -2,11 +2,10 @@
 #include <fstream>
 #include <filesystem>
 
+#include <fmt/printf.h>
+
 #include "Sea/Core/File.hpp"
 
-#include <mcl/Logger.hpp>
-
-using mcl::Log;
 namespace fs = std::filesystem;
 
 namespace Sea
@@ -32,7 +31,7 @@ namespace Sea
 	{	
 		if (!fs::exists(fs::path(m_filepath)))
 		{
-			Log::Error() << m_filepath << " doesn't exist";
+			fmt::printf("{} doesn't exist.\n", m_filepath);
 			throw std::exception();
 		}
 

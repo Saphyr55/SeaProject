@@ -5,12 +5,11 @@
 #include <filesystem>
 #include <functional>
 
+#include <stb/stb_image.h>
+
 #include "Sea/Core/Clock.hpp"
 #include "Sea/Core/VideoMode.hpp"
-#include "Sea/Graphic/Rendering/Window.hpp"
-
-#include <mcl/Logger.hpp>
-#include <stb/stb_image.h>
+#include "Sea/Graphics/Rendering/Window.hpp"
 
 namespace Sea
 {	

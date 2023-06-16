@@ -5,10 +5,6 @@
 #include "Sea/Core/Common.hpp"
 #include "Sea/Core/FrameRate.hpp"
 
-#include <mcl/Logger.hpp>
-
-using mcl::Log;
-
 namespace Sea
 {
     struct Clock
@@ -18,7 +14,7 @@ namespace Sea
         f32 Delta = 0;
           
         Clock() { Last = GetTicks(); }
-        ~Clock()=default;
+        ~Clock() = default;
 
         void Start(FrameRate& frameRate)
         {

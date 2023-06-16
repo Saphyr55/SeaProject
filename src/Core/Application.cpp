@@ -1,14 +1,15 @@
 #include "Sea/Core/Application.hpp"
 #include "Sea/Core/Common.hpp"
 #include "Sea/Core/Clock.hpp"
-#include "Sea/Graphic/OpenGL/GL.hpp"
-#include "Sea/Graphic/OpenGL/Renderer/GLWindow.hpp"
-#include "Sea/Graphic/Rendering/Window.hpp"
+#include "Sea/Graphics/OpenGL/GL.hpp"
+#include "Sea/Graphics/OpenGL/Renderer/GLWindow.hpp"
+#include "Sea/Graphics/Rendering/Window.hpp"
+
+#include <fmt/printf.h>
 
 #include <SDL2/SDL.h>
 
 namespace fs = std::filesystem;
-using mcl::Log;
 
 namespace Sea
 {
@@ -41,7 +42,7 @@ namespace Sea
 
 	Window& Application::CreateWindow(std::string_view title, VideoMode& videoMode)
 	{	
-		Log::Info() << "Setup context with " << Context::contextType_tostring(GraphicAPI);
+		fmt::print("Setup context with {}.\n", Context::contextType_tostring(GraphicAPI));
 		switch (GraphicAPI)
 		{
 		case Sea::GraphicAPI::OpenGL:
@@ -58,7 +59,7 @@ namespace Sea
 	{
 		if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 		{
-			Log::Error() << "Init SDL fail";
+			fmt::print("Init SDL fail\n");
 			throw std::exception();
 		}
 

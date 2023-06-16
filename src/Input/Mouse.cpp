@@ -1,10 +1,8 @@
 #include <SDL2/SDL.h>
-#include <mcl/Logger.hpp>
+#include <fmt/printf.h>
 
 #include "Sea/Input/Mouse.hpp"
 #include "Sea/Core/List.hpp"
-
-using mcl::Log;
 
 namespace Sea
 {
@@ -17,7 +15,7 @@ namespace Sea
 	{
 		if (SDL_SetRelativeMouseMode((active) ? SDL_TRUE : SDL_FALSE) == -1)
 		{
-			Log::Warning()<<"Relative Mouse Mode not supported";
+			fmt::printf("Relative Mouse Mode not supported\n");
 		}
 	}
 

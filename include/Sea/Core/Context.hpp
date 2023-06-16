@@ -2,11 +2,11 @@
 
 #include <stdint.h>
 #include <memory>
-#pragma once
-
 #include <string>
+
 #include <SDL2/SDL.h>
-#include "Sea/Common/CommonType.hpp"
+
+#include "Sea/Core/Common.hpp"
 #include "Sea/Core/VideoMode.hpp"
 
 namespace Sea

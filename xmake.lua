@@ -1,8 +1,8 @@
 local project_name = "SeaProject"
 local version = "cxx20"
 local targetdir = "bin/$(plat)_$(arch)_$(mode)"
-local include_folder = "include/Sea/"
-local src_folder = "src/"
+local include_folder = "src/Sea/"
+local src_folder = "src/Sea/"
 local default_kind = "static"
 
 local add_header_files_module = function (file) 
@@ -119,7 +119,7 @@ add_requires("libsdl" , "libsdl_image", "glm", "fmt", "assimp", "catch2")
 
 add_rules("mode.release", "mode.debug")
 
-add_includedirs("include")
+add_includedirs("src")
 add_includedirs("externals")
 set_targetdir(targetdir)
 

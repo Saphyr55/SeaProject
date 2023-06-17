@@ -23,7 +23,6 @@ namespace Sea
 		virtual void SetFloat(std::string uniform, f32 value) = 0;
 		virtual void SetBool(std::string uniform, bool value) = 0;
 		virtual u32 GetId() = 0;
-
 	};
 
 	using ShaderRef = Ref<Shader>;

@@ -4,15 +4,11 @@
 #include "Sea/Graphics/OpenGL/GLVertexArray.hpp"
 
 namespace Sea
-{
+{	
 	class Texture;
 	class Shader;
 	class Camera;
 	struct Vertex;
-}
-
-namespace Sea::Backend::OpenGL
-{	
 
 	class GLMesh : public Mesh
 	{
@@ -25,6 +21,7 @@ namespace Sea::Backend::OpenGL
 		) override;
 		void Draw(Shader& shader) override;
 
+	public:
 		GLMesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Ref<Texture>>& textures);
 		GLMesh(std::vector<Vertex>& vertices, std::vector<u32>& indices);
 

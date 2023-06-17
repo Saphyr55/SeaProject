@@ -1,16 +1,16 @@
-#include "Sea/Graphics/OpenGL/Renderer/GLWindow.hpp"
-#include "Sea/Graphics/OpenGL/Renderer/GLRenderer.hpp"
+#include "Sea/Graphics/OpenGL/GLWindow.hpp"
+#include "Sea/Graphics/OpenGL/GLRenderer.hpp"
 #include "Sea/Graphics/OpenGL/GL.hpp"
 #include "Sea/Graphics/OpenGL/GLContext.hpp"
+#include <fmt/core.h>
 
-namespace Sea::Backend::OpenGL
+namespace Sea
 {
 	void GLWindow::Init()
 	{	
-		SetupIcon();
 		SetupFlags();
 		
-		flags |= SDL_WINDOW_OPENGL;
+		m_flags |= SDL_WINDOW_OPENGL;
 
 		m_handle = SDL_CreateWindow
 		(
@@ -19,21 +19,21 @@ namespace Sea::Backend::OpenGL
 			SDL_WINDOWPOS_CENTERED,
 			m_video_mode.Width,
 			m_video_mode.Height,
-			flags
+			m_flags
 		);
 
-		if (!m_handle) throw std::exception(std::string("Failed to create window" + std::string(SDL_GetError())).c_str());
+		if (!m_handle) 
+		{
+			auto msg = fmt::format("Failed to create window {}", SDL_GetError());
+			throw std::exception(msg.c_str());
+		}
 
-		m_context = MakeRef<GLContext>(*this); // Create gl context
+		m_context = MakeRef<GLContext>(*this);
 
-		gladLoadGLLoader(SDL_GL_GetProcAddress); // Check OpenGL properties
-
-		if (GL_VERSION == NULL) throw std::exception("Enable to init OpenGL");
-	}
-
-	void GLWindow::Run()
-	{
-		m_isOpen = true;
+		if (gladLoadGLLoader(SDL_GL_GetProcAddress) == 0 && GL_VERSION == NULL)
+		{
+			throw std::exception("Enable to init OpenGL");
+		}
 	}
 
 	void GLWindow::Swap()

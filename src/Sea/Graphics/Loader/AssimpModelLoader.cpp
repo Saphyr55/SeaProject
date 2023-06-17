@@ -17,8 +17,8 @@ namespace Sea
 
 		if (!m_scene || m_scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !m_scene->mRootNode)
 		{
-			std::string e("AssimpLoaderExpection : " + std::string(m_importer.GetErrorString()));
-			throw std::exception(e.c_str());
+			auto msg = fmt::format("AssimpLoaderExpection : {}.", m_importer.GetErrorString());
+			throw std::exception(msg.c_str());
 		}
 
 		m_directory = m_file->GetPath().substr(0, m_file->GetPath().find_last_of('/'));
@@ -116,7 +116,7 @@ namespace Sea
 			for (u32 j = 0; j < m_texturesLoaded.size(); j++)
 			{	
 				auto& current_texture = m_texturesLoaded[j];
-				if (fs::path(current_texture->TextureFile().GetPath()).filename() == fs::path(str.C_Str()).filename())
+				if (fs::path(current_texture->GetFile().GetPath()).filename() == fs::path(str.C_Str()).filename())
 				{	
 					textures.push_back(current_texture);
 					skip = true;
@@ -126,10 +126,12 @@ namespace Sea
 
 			if (!skip) // if texture hasn't been loaded already, load it
 			{   
-				m_texturesLoaded.push_back(RenderService::Get().CreateTexture(
-					File(m_directory + "/" + str.C_Str(), false),
-					AssimpTextureTypeToSeaTextureType(type), i)
-				); // add to loaded textures
+				auto msg = fmt::format("Error on loading texture for the folder '{}' model.\n", m_directory);
+				auto texture_type = AssimpTextureTypeToSeaTextureType(type);
+				auto file = File(m_directory + "/" + str.C_Str(), false);
+				auto texture = RenderService::Get().CreateTexture(file, texture_type, i);
+				texture->Load();
+				m_texturesLoaded.push_back(texture); // add to loaded textures
 			}
 		}
 		return textures;

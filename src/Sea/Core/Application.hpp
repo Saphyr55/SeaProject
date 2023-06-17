@@ -2,31 +2,23 @@
 
 #include <string>
 #include <stdexcept>
-#include <filesystem>
 #include <functional>
 
-#include <stb/stb_image.h>
-
-#include "Sea/Core/Clock.hpp"
-#include "Sea/Core/VideoMode.hpp"
-#include "Sea/Graphics/Rendering/Window.hpp"
+#include "Sea/Core/Common.hpp"
+#include "Sea/Core/Handler.hpp"
 
 namespace Sea
 {	
+
 	class Application final
 	{
-		friend class EventHandler;
+	public: 
 
 	public:
-		GraphicAPI GraphicAPI = GraphicAPI::OpenGL;
-		
-	public:
-		bool Active();
-		void Active(std::function<void()> run);
-		Window& CreateWindow(std::string_view title, VideoMode& videoMode);
-
-	private:
-		void Init();
+		inline bool IsRunning() const { return m_is_running; }
+		void Stop();
+		void Launch();
+		void Attach(Ref<Handler<Application&>> handler);
 
 	public:
 		Application();
@@ -35,7 +27,11 @@ namespace Sea
 		~Application();
 
 	private:
-		Ref<Window> m_window;
-		bool m_isRunning = false;
+		void Init();
+
+	private:
+		bool m_is_running;
+		std::vector<Ref<Handler<Application&>>> m_handlers;
+
 	};
 }

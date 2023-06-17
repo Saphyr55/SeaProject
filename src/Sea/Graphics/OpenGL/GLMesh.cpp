@@ -1,12 +1,12 @@
 #include "Sea/Graphics/OpenGL/GLMesh.hpp"
 #include "Sea/Graphics/OpenGL/GL.hpp"
+#include "Sea/Graphics/OpenGL/GLElementBuffer.hpp"
+#include "Sea/Graphics/OpenGL/GLVertexBuffer.hpp"
 #include "Sea/Graphics/Vertex.hpp"
 #include "Sea/Graphics/Shaders/Shader.hpp"
 #include "Sea/Graphics/Texture.hpp"
-#include "Sea/Graphics/OpenGL/GLElementBuffer.hpp"
-#include "Sea/Graphics/OpenGL/GLVertexBuffer.hpp"
 
-namespace Sea::Backend::OpenGL
+namespace Sea
 {
 
 	void GLMesh::Draw(Shader& shader, Camera& camera, glm::mat4 model, glm::vec3 translation, glm::quat rotation, glm::vec3 scale)
@@ -19,7 +19,7 @@ namespace Sea::Backend::OpenGL
 		SetupTextures(shader);
 
 		model = glm::translate(model, translation);
-		// model = glm::scale(model, scale);
+		model = glm::scale(model, scale);
 
 		shader.SetMatrix4fv("model", model * glm::mat4_cast(rotation));
 		glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);

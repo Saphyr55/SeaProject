@@ -6,30 +6,36 @@
 
 #include <SDL2/SDL.h>
 
-#include "Sea/Graphics/Rendering/Renderer.hpp"
+#include "Sea/Core/Clock.hpp"
 #include "Sea/Core/Common.hpp"
 #include "Sea/Core/Context.hpp"
+#include "Sea/Core/Application.hpp"
+#include "Sea/Core/Handler.hpp"
+#include "Sea/Graphics/Rendering/Renderer.hpp"
 #include "Sea/Input/EventHandler.hpp"
 
 namespace Sea
 {	
 
-	class Window
+	class Window : public Handler<Application&>
 	{	
+	using WindowHandlerRef = std::shared_ptr<Handler<Window&>>;
 	friend class Context;
 
 	public:
-		virtual void Run() = 0;
 		virtual void Swap() = 0;
 		virtual void UseVSync(bool use) = 0;
 		virtual void Viewport() = 0;
 		virtual void Viewport(u32 h, u32 w) = 0;
 		virtual void Viewport(u32 x, u32 y, u32 h, u32 w) = 0;
+	
+	public:
+		void Handle(Sea::Application& app);
+		void Attach(std::shared_ptr<Handler<Window&>> clock);
 		void Update();
 		void Hide();
 		void Show();
 		void Close();
-		bool IsOpen();
 		bool IsClosed();
 		void SetSize(f32 w, f32 h);
 		void SetResizable(bool resizable);
@@ -39,13 +45,14 @@ namespace Sea
 		void SetMouseOnMiddlePosistion();
 		void GrapMouse();
 		void UngrapMouse();
-		SDL_Window* GetHandle() { return m_handle; }
+		bool IsOpen() { return m_is_open; }
 		Renderer& GetRenderer() { return *m_renderer; }
-		VideoMode& GetVideoMode() { return m_video_mode; }
+		Clock& GetClock() { return m_clock; }
+		FrameRate& GetFrameRate() { return m_frame_rate; }
+		SDL_Window* GetHandle() { return m_handle; }
 
 	protected:
 		void SetupFlags();
-		void SetupIcon();
 
 	public:
 		Window(std::string_view title, VideoMode& proterties);
@@ -54,14 +61,16 @@ namespace Sea
 		~Window();
 
 	protected:
-		s32 flags;
-		bool m_isOpen = false;
-		std::string m_title;
-		SDL_Window* m_handle;
-		VideoMode& m_video_mode;
+		std::vector<WindowHandlerRef> m_handlers;
 		Ref<Renderer> m_renderer;
 		Ref<Context> m_context;
-		
+		SDL_Window* m_handle;
+		Clock m_clock;
+		FrameRate m_frame_rate;
+		VideoMode& m_video_mode;
+		std::string m_title;
+		s32 m_flags;
+		bool m_is_open;
 	};
 
 }

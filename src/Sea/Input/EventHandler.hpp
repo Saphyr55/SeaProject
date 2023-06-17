@@ -4,20 +4,20 @@
 #include <vector>
 
 #include "Sea/Input/Input.hpp"
+#include "Sea/Graphics/Rendering/Window.hpp"
 
 #include <SDL2/SDL.h>
 
 namespace Sea
 {	
-	class Window;
 
-	class EventHandler final
+	class EventHandler final : public Handler<Window&>
 	{
 	friend class Input;
 
 	public:
 		EventHandler();
-		void HandleEvent(Window& widow);
+		void Handle(Window& widow);
 		void ClearEvent();
 
 	private:

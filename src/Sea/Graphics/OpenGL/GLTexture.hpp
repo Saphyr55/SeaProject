@@ -7,12 +7,13 @@
 #include "Sea/Graphics/Mesh.hpp"
 #include "Sea/Graphics/Rendering/Window.hpp"
 
-namespace Sea::Backend::OpenGL
+namespace Sea
 {	
+
 	class GLTexture : public Texture
 	{
 	public:
-
+		void Load() override;
 		void Bind();
 		void Unbind();
 		void Delete();

@@ -6,7 +6,7 @@
 #include "Sea/Graphics/OpenGL/GL.hpp"
 #include "Sea/Graphics/Vertex.hpp"
 
-namespace Sea::Backend::OpenGL
+namespace Sea
 {
 
 	class GLVertexBuffer

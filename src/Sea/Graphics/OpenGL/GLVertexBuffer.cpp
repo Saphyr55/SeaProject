@@ -1,6 +1,6 @@
 #include "Sea/Graphics/OpenGL/GLVertexBuffer.hpp"
 
-namespace Sea::Backend::OpenGL
+namespace Sea
 {
 	GLVertexBuffer::GLVertexBuffer(std::vector<Vertex>& vertices)
 	{

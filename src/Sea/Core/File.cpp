@@ -10,7 +10,7 @@ namespace fs = std::filesystem;
 
 namespace Sea
 {
-	std::string File::FromResources;
+	std::string File::AssetsFolder;
 
 	const std::string File::GetFileContent(File file)
 	{
@@ -22,12 +22,12 @@ namespace Sea
 		return GetFileContent(File(filepath, _internal));
 	}
 
-	bool File::Exist()
+	bool File::Exist() const
 	{
 		return fs::exists(fs::path(m_filepath));
 	}
 
-	const std::string File::Read()
+	const std::string& File::Read()
 	{	
 		if (!fs::exists(fs::path(m_filepath)))
 		{
@@ -42,17 +42,17 @@ namespace Sea
 		return m_content;
 	}
 
-	const std::string File::GetContent()
+	const std::string& File::GetContent() const
 	{
 		return std::string(m_content);
 	}
 
-	const std::string File::GetPath()
+	const std::string& File::GetPath() const
 	{
 		return m_filepath;
 	}
 
-	const std::string File::GetExtenstion()
+	const std::string& File::GetExtenstion() const
 	{
 		return m_ext;
 	}
@@ -60,7 +60,7 @@ namespace Sea
 	File::File(const std::string_view filepath, bool _internal) :
 		m_ext(fs::path(filepath).extension().string())
 	{
-		if (_internal) m_filepath = FromResources + filepath.data();
+		if (_internal) m_filepath = AssetsFolder + filepath.data();
 		else m_filepath = filepath;
 	}
 }

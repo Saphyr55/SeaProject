@@ -12,16 +12,12 @@ namespace Sea
 		: shader(shader), window(window), color(color)
 	{
 
-		auto size = window.GetSize();
-		auto w = size.first;
-		auto h = size.second;
-
 		std::vector<Vertex> vertices
 		{
-			Vertex{ glm::vec3( 1.0f,  1.0f, -0.85f), color.toVec3f() },
-			Vertex{ glm::vec3( 1.0f, -1.0f, -0.85f), color.toVec3f() },
-			Vertex{ glm::vec3(-1.0f, -1.0f, -0.85f), color.toVec3f() },
-			Vertex{ glm::vec3(-1.0f,  1.0f, -0.85f), color.toVec3f() },
+			Vertex{ glm::vec3( 1.0f,  1.0f, -0.85f), glm::vec3(1.0f), color.ToVec3f() },
+			Vertex{ glm::vec3( 1.0f, -1.0f, -0.85f), glm::vec3(1.0f), color.ToVec3f() },
+			Vertex{ glm::vec3(-1.0f, -1.0f, -0.85f), glm::vec3(1.0f), color.ToVec3f() },
+			Vertex{ glm::vec3(-1.0f,  1.0f, -0.85f), glm::vec3(1.0f), color.ToVec3f() },
 		};
 
 		std::vector<u32> indices 

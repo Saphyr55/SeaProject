@@ -19,6 +19,7 @@ namespace Sea
 	public:
 		Ref<Model> Load();
 		inline void FlipUVs() { FlagsProperties |= aiProcess_FlipUVs; };
+		
 		AssimpModelLoader(std::string_view filepath);
 		AssimpModelLoader(const AssimpModelLoader&) = default;
 		AssimpModelLoader(AssimpModelLoader&&) = default;

@@ -57,11 +57,13 @@ void Object::OnInit()
 
 	m_default_shader = m_window.GetRenderer().CreateShader
 	(
-		"examples/shaders/default.vert",
-		"examples/shaders/default.frag"
+		"src/Sea/Resources/Shaders/default.vert",
+		"src/Sea/Resources/Shaders/default.frag"
 	);
 
-	m_rectangle = std::make_unique<Rectangle>(m_window, *m_default_shader);
+	m_rectangle = std::make_unique<Rectangle>(
+		m_window, *m_default_shader, Colors::Crimson
+	);
 	m_rectangle->SetSize(50, 50);
 	m_rectangle->SetPosition(0, 0);
 }

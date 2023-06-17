@@ -3,6 +3,7 @@
 
 namespace Sea
 {
+
 	Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Ref<Texture>>& textures) :
 		m_vertices(m_vertices),
 		m_indices(indices), 

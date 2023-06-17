@@ -41,18 +41,17 @@ namespace Sea
     struct Color final
     {
 		
-
         Color(f32 r, f32 g, f32 b, f32 a) : r(r), g(g), b(b), a(a) {}
         ~Color() = default;
 
-        const glm::vec3 toVec3f() const
+        glm::vec3 ToVec3f() const
         {
             return glm::vec3(r,g,b);
         }
 		
-        const glm::vec4 toVec4f() const
+        glm::vec4 ToVec4f() const
 		{
-			return glm::vec4(toVec3f(), a);
+			return glm::vec4(ToVec3f(), a);
 		}
 
         std::ostream& operator<<(std::ostream& outs)

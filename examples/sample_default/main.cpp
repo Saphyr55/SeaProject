@@ -22,7 +22,7 @@
 #include <Sea/Graphics/Model.hpp>
 #include <Sea/Graphics/Lights/SpotLight.hpp>
 #include <Sea/Graphics/Lights/DirectionalLight.hpp>
-#include <Sea/Graphics/Drawing/Box.hpp>
+#include <Sea/Graphics/Drawing/Rectangle.hpp>
 #include <Sea/Graphics/Rendering/WindowFactory.hpp>
 
 using namespace Sea;
@@ -105,7 +105,7 @@ private:
 	Ref<Model> m_ground;
 	Ref<Model> m_grass;
 	Ref<Model> m_grindstone;
-	std::unique_ptr<Box> m_box;
+	std::unique_ptr<Rectangle> m_box;
 };
 
 Object::Object(Application& app, Window& window, Camera& camera) :
@@ -118,13 +118,14 @@ Object::Object(Application& app, Window& window, Camera& camera) :
 		m_light.Linear = 0.0014;
 	}
 
-	m_shader = window.GetRenderer().CreateShader
-	(
-		"examples/shaders/default.vert",
-		"examples/shaders/default.frag"
-	);
+	m_shader = window
+		.GetRenderer()
+		.CreateShader(
+			"src/Sea/Resources/Shaders/default.vert",
+			"src/Sea/Resources/Shaders/default.frag"
+		);
 
-	m_box = std::make_unique<Box>(m_window, *m_shader);
+	m_box = std::make_unique<Rectangle>(m_window, *m_shader);
 
 	// Ground
 	Sea::AssimpModelLoader groundModelLoader("assets/md/ground/scene.gltf");
@@ -141,7 +142,10 @@ Object::Object(Application& app, Window& window, Camera& camera) :
 	// Light shader
 	m_light_shader = m_window
 		.GetRenderer()
-		.CreateShader("examples/shaders/light.vert", "examples/shaders/light.frag");
+		.CreateShader(
+			"src/Sea/Resources/Shaders/light.vert",
+			"src/Sea/Resources/Shaders/light.frag"
+		);
 
 }
 

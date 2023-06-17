@@ -72,7 +72,7 @@ namespace Sea
 		if (m_mesh)
 		{	
 			shader.Use();
-			shader.SetVec4f("lightColor", Colour.toVec4f());
+			shader.SetVec4f("lightColor", Colour.ToVec4f());
 			m_mesh->Draw(shader, camera, m_meshModel, Position);
 		}
 		else

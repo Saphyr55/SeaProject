@@ -7,6 +7,7 @@ namespace Sea
 	const Color Colors::Azure = Color(0.0f, 0.5f, 1.0f, 1.0f);
 	const Color Colors::Black = Color(0.0f, 0.0f, 0.0f, 1.0f);
 	const Color Colors::Blue = Color(0.0f, 0.0f, 1.0f, 1.0f);
+	const Color Colors::SkyBlue = Color(0.53f, 0.80f, 0.92f, 1.0f);
 	const Color Colors::CarolinaBlue = Color(0.34f, 0.63f, 0.83f, 1.0f);
 	const Color Colors::Crimson = Color(0.86f, 0.08f, 0.58f, 1.0f);
 	const Color Colors::EerieBlack = Color(0.11f, 0.11f, 0.11f, 1.0f);

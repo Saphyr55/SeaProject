@@ -1,12 +1,12 @@
 #include <Sea/Graphics/OpenGL/GLVertexArray.hpp>
 #include <Sea/Graphics/OpenGL/GLVertexBuffer.hpp>
 
-namespace Sea::Backend::OpenGL
+namespace Sea
 {
 
 	GLVertexArray::GLVertexArray()
 	{
-        glGenVertexArrays(1, &id);
+        glGenVertexArrays(1, &m_id);
     }
 
 	void GLVertexArray::LinkVertexBuffer(GLVertexBuffer& vertexBuffer, u32 layout, u32 numComp, u32 type, u32 stride, void* offset)
@@ -27,7 +27,7 @@ namespace Sea::Backend::OpenGL
 
     void GLVertexArray::Bind()
     {
-        glBindVertexArray(id);
+        glBindVertexArray(m_id);
     }
     
     void GLVertexArray::Unbind()
@@ -37,7 +37,7 @@ namespace Sea::Backend::OpenGL
     
     void GLVertexArray::Delete()
     {
-        glDeleteVertexArrays(1, &id);
+        glDeleteVertexArrays(1, &m_id);
     }
 
 }

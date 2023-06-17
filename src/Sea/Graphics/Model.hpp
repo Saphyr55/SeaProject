@@ -10,12 +10,6 @@ namespace Sea
     {
 
     public:
-        Model() = default;
-		Model(Ref<ModelLoader> loader);
-		Model(std::vector<Ref<Mesh>> meshes);
-        Model(std::vector<Ref<Mesh>> meshes, std::vector<glm::mat4> matricesMeshes);
-        ~Model() = default;
-
         void Draw(Shader& shader, Camera& camera,
             glm::mat4 model = glm::mat4(1.f),
 			glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f),
@@ -26,9 +20,16 @@ namespace Sea
         std::vector<Ref<Texture>> GetTextures(u32 index);
 		std::vector<Ref<Texture>> GetTextures();
 
+    public:
+		Model() = default;
+		Model(Ref<ModelLoader> loader);
+		Model(std::vector<Ref<Mesh>> meshes);
+		Model(std::vector<Ref<Mesh>> meshes, std::vector<glm::mat4> matrices_meshes);
+		~Model() = default;
+
     protected:
-        std::vector<Ref<Mesh>> meshes;
-        std::vector<glm::mat4> matricesMeshes;
+        std::vector<Ref<Mesh>> m_meshes;
+        std::vector<glm::mat4> m_matrices_meshes;
     };
 
     using RModel = Ref<Model>;

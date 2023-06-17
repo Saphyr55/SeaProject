@@ -8,7 +8,7 @@ namespace Sea
 
 	EventHandler::EventHandler() : m_handle() {	}
 	
-	void EventHandler::HandleEvent(Window& window)
+	void EventHandler::Handle(Window& window)
 	{
 		while (SDL_PollEvent(&m_handle))
 		{

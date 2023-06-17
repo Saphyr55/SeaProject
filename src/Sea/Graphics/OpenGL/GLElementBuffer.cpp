@@ -1,7 +1,7 @@
 #include <Sea/Graphics/OpenGL/GLElementBuffer.hpp>
 #include <Sea/Graphics/OpenGL/GL.hpp>
 
-namespace Sea::Backend::OpenGL
+namespace Sea
 {
 	void GLElementBuffer::Bind()
 	{

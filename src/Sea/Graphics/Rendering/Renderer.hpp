@@ -25,8 +25,6 @@ namespace Sea
 
     class Renderer
     {
-    SEA_PROPERTY_READONLY(DefaultShader, Ref<Shader>, default_shader)
-
     public:
 		virtual Ref<Shader> CreateShader(std::string_view vertexShaderSource, std::string_view fragmentShaderSource) const = 0;
 		virtual Ref<Texture> CreateTexture(std::string_view path, Texture::Type texType, u32 slot) const = 0;

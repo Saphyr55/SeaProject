@@ -5,10 +5,11 @@
 
 #include "Sea/Core/Common.hpp"
 
-namespace Sea::Backend::OpenGL
+namespace Sea
 {
-	struct OpenGL
+	class OpenGL
 	{
+	public:
 		static void Init()
 		{
 			// CONFIGURE OPENGL ATTRIBUTES USING SDL:

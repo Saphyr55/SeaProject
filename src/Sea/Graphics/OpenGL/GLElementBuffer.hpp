@@ -4,7 +4,7 @@
 #include <vector>
 #include <Sea/Core/Common.hpp>
 
-namespace Sea::Backend::OpenGL
+namespace Sea
 {
 	class GLElementBuffer
 	{

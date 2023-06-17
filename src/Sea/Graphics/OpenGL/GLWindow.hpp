@@ -2,13 +2,12 @@
 
 #include "Sea/Graphics/Rendering/Window.hpp"
 
-namespace Sea::Backend::OpenGL
+namespace Sea
 {
 	class GLWindow final : public Window
 	{
 	public:
 		void Init();
-		void Run();
 		void Swap();
 		void UseVSync(bool use);
 		void Viewport();

@@ -4,20 +4,20 @@
 
 namespace Sea
 { 
-	class File final
+	class File
 	{
 	public:
-		static std::string FromResources;
+		static std::string AssetsFolder;
 
 	public:
 		static const std::string GetFileContent(File file);
 		static const std::string GetFileContent(const std::string_view filepath, bool _internal = true);
 
-		bool Exist();
-		const std::string Read();
-		const std::string GetContent();
-		const std::string GetPath();
-		const std::string GetExtenstion();
+		bool Exist() const ;
+		const std::string& Read();
+		const std::string& GetContent() const;
+		const std::string& GetPath() const;
+		const std::string& GetExtenstion() const;
 
 		File(const std::string_view filepath, bool _internal = true);
 		File(const File&) = default;

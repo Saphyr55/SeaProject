@@ -4,24 +4,25 @@
 
 #include "Sea/Graphics/Shaders/Shader.hpp"
 
-namespace Sea::Backend::OpenGL
+namespace Sea
 {
 	class GLShader final : public Shader
 	{
 	public:
-		void Use();
-		void Delete();
-		void Set1UInt(std::string uniform, u32 value);
-		void SetVec4f(std::string uniform, glm::vec4 value);
-		void SetVec4f(std::string uniform, f32 x, f32 y, f32 z, f32 w);
-		void SetVec3f(std::string uniform, glm::vec3 value);
-		void SetVec3f(std::string uniform, f32 x, f32 y, f32 z);
-		void SetMatrix4fv(std::string uniform, glm::mat4 value);
-		void SetInt(std::string uniform, s32 value);
-		void SetBool(std::string uniform, bool value);
-		void SetFloat(std::string uniform, f32 value);
-		u32 GetId();
+		void Use() override;
+		void Delete() override;
+		void Set1UInt(std::string uniform, u32 value) override;
+		void SetVec4f(std::string uniform, glm::vec4 value) override;
+		void SetVec4f(std::string uniform, f32 x, f32 y, f32 z, f32 w) override;
+		void SetVec3f(std::string uniform, glm::vec3 value) override;
+		void SetVec3f(std::string uniform, f32 x, f32 y, f32 z) override;
+		void SetMatrix4fv(std::string uniform, glm::mat4 value) override;
+		void SetInt(std::string uniform, s32 value) override;
+		void SetBool(std::string uniform, bool value) override;
+		void SetFloat(std::string uniform, f32 value) override;
+		u32 GetId() override;
 
+	public:
 		GLShader(File vertexFragment, File fragmentShader);
 		GLShader(std::string vertexShaderSource, std::string fragmentShaderSource);
 		GLShader(const GLShader &) = default;

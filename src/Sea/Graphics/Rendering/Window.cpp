@@ -1,26 +1,23 @@
 #include <SDL2/SDL_image.h>
+#include <cassert>
 
 #include "Sea/Graphics/Rendering/Window.hpp"
-#include "Sea/Graphics/OpenGL/Renderer/GLWindow.hpp"
-#include "Sea/Graphics/OpenGL/GL.hpp"
 #include "Sea/Core/File.hpp"
+#include "Sea/Core/Clock.hpp"
 
 namespace Sea
 {
 
-	Window::Window(std::string_view title, VideoMode& videoMode)
-		: m_video_mode(videoMode), m_handle(nullptr), m_title(title)
-	{
-	}
-
+	Window::Window(std::string_view title, VideoMode& videoMode) : 
+		m_video_mode(videoMode),
+		m_handle(nullptr),
+		m_title(title),
+		m_is_open(false),
+		m_flags(SDL_WINDOW_HIDDEN) { }
+	
 	Window::~Window()
 	{
 		SDL_DestroyWindow(m_handle);
-	}
-
-	bool Window::IsOpen()
-	{
-		return m_isOpen;
 	}
 
 	void Window::Hide()
@@ -35,12 +32,12 @@ namespace Sea
 
 	void Window::Close()
 	{
-		m_isOpen = false;
+		m_is_open = false;
 	}
 
 	bool Window::IsClosed()
 	{
-		return !m_isOpen;
+		return !m_is_open;
 	}
 
 	void Window::SetSize(f32 w, f32 h)
@@ -92,41 +89,37 @@ namespace Sea
 
 	void Window::SetupFlags()
 	{	
-		flags = SDL_WINDOW_SHOWN;
-		if (m_video_mode.Resizable) flags |= SDL_WINDOW_RESIZABLE;
-		if (m_video_mode.Fullscreen) flags |= SDL_WINDOW_FULLSCREEN;
-		if (m_video_mode.Maximazed) flags |= SDL_WINDOW_MAXIMIZED;
+		if (m_video_mode.Resizable) m_flags |= SDL_WINDOW_RESIZABLE;
+		if (m_video_mode.Fullscreen) m_flags |= SDL_WINDOW_FULLSCREEN;
+		if (m_video_mode.Maximazed) m_flags |= SDL_WINDOW_MAXIMIZED;
+	}
+
+	void Window::Handle(Sea::Application& app)
+	{		
+		assert(m_handle != nullptr);
+		m_is_open = true;
+		Show();
+		while (IsOpen())
+		{
+			Update();
+			for (auto handler : m_handlers)
+			{	
+				m_clock.Start(m_frame_rate);
+				handler->Handle(*this);
+				Swap();
+				m_clock.End(m_frame_rate);
+			}
+		}
+	}
+
+	void Window::Attach(std::shared_ptr<Handler<Window&>> handler)
+	{
+		m_handlers.push_back(handler);
 	}
 
 	void Window::Update()
-	{	
+	{
 		SDL_GetWindowSize(m_handle, (s32*)&m_video_mode.Width, (s32*)&m_video_mode.Height);
-	}
-
-	/**
-	 * Deprecated
-	 */
-	void Window::SetupIcon()
-	{	
-		/*
-		if (!m_videoMode.FileIcon.empty())
-		{
-			auto file = File(m_properties.FileIcon);
-			if (file.Exist())
-			{
-				SDL_Surface* icon = IMG_Load(file.GetPath().c_str());
-				if (!icon)
-				{
-					Log::Warning() << "Icon was not loading : " << file.GetPath();
-					return;
-				}
-				Log::Info() << "Image Load : " << file.GetPath();
-				SDL_SetWindowIcon(m_handle, icon);
-				SDL_FreeSurface(icon);
-			}
-			else Log::Warning() << file.GetPath() << " not exist impossible to setup an icon";
-		}
-		*/
 	}
 
 }

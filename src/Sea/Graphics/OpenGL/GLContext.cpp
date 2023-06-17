@@ -1,7 +1,7 @@
 #include "Sea/Graphics/OpenGL/GLContext.hpp"
 #include "Sea/Graphics/Rendering/Window.hpp"
 
-namespace Sea::Backend::OpenGL
+namespace Sea
 {
 	GLContext::GLContext(Window& window) : m_handle(SDL_GL_CreateContext(window.GetHandle()))
 	{

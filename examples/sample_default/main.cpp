@@ -23,146 +23,166 @@
 #include <Sea/Graphics/Lights/SpotLight.hpp>
 #include <Sea/Graphics/Lights/DirectionalLight.hpp>
 #include <Sea/Graphics/Drawing/Box.hpp>
+#include <Sea/Graphics/Rendering/WindowFactory.hpp>
 
-void HandleInput(Sea::Window& window, Sea::Camera& camera, Sea::f32 dt);
-void DefaultCursor(Sea::Window& window);
-void CameraCursor(Sea::Window& window);
-glm::vec3 DampedString(const glm::vec3 currentPos, const glm::vec3 targetPos, Sea::f32 frametime, Sea::f32 springStrength);
+using namespace Sea;
+
+void HandleInput(Window& window, Camera& camera, f32 dt);
+void DefaultCursor(Window& window);
+void CameraCursor(Window& window);
+glm::vec3 DampedString(const glm::vec3 currentPos, const glm::vec3 targetPos, f32 frametime, f32 springStrength);
 
 std::string title = "Sample";
 glm::vec3 generiPos = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::mat4 generiModel = glm::mat4(1.0f);
 glm::mat4 grindstoneModel = glm::mat4(1.0f);
 glm::vec3 grindstonePos = glm::vec3(0.0f, 0.0f, 0.0f);
-Sea::f32 ambientWorld = 0;
-Sea::f32 initSpeed = .025f;
-Sea::f32 speed = initSpeed;
-Sea::s32 state = 1;
-Sea::f32 sensitivity = .1f;
+f32 ambientWorld = 0;
+f32 initSpeed = .025f;
+f32 speed = initSpeed;
+s32 state = 1;
+f32 sensitivity = .1f;
+
+class Object : public Handler<Window&>
+{
+
+public:
+	void Handle(Sea::Window& window)
+	{
+		auto& renderer = window.GetRenderer();
+		auto& clock = window.GetClock();
+		auto frame_rate = window.GetFrameRate();
+
+		renderer.ClearColor(Sea::Colors::EerieBlack);
+		renderer.Clear();
+		window.Viewport();
+		window.SetTitle(title + " - fps = " + std::to_string(frame_rate.GetFPS()));
+
+		// Setup Perspective Camera
+		m_camera.SetViewProjection(45.0f, 0.1f, 500.0f);
+
+		m_box->Draw();
+
+		// Draw the environment
+		m_ground->Draw(*m_shader, m_camera);
+		m_grass->Draw(*m_shader, m_camera);
+		m_grindstone->Draw(*m_shader, m_camera, grindstoneModel, grindstonePos);
+
+		// Lightning the scene
+		m_light.Draw(*m_shader);
+		// Draw a cube representing where the light from
+		m_light.DrawMesh(*m_light_shader, m_camera);
+
+		// Handle input camera
+		HandleInput(window, m_camera, clock.Delta);
+
+		// Handle mouse camera if we are in relative mode
+		if (state == 1)
+		{
+			Sea::Mouse::OnMoved([&]()
+			{
+				m_camera.Yaw += Sea::Mouse::RelativePosX * sensitivity;
+				m_camera.Pitch += Sea::Mouse::RelativePosY * sensitivity;
+				m_camera.Pitch = Sea::Clamp(m_camera.Pitch, -89.0f, 89.0f);
+				m_camera.SetOrientation(m_camera.Yaw, m_camera.Pitch);
+			});
+		}
+
+		m_event_handler.Handle(window);
+	}
+
+public:
+	Object(Application& app, Window& window, Camera& camera);
+
+private:
+	Window& m_window;
+	Camera& m_camera;
+	Application& m_application;
+	EventHandler m_event_handler;
+	PointLight m_light;
+	Ref<Shader> m_shader;
+	Ref<Shader> m_light_shader;
+	Ref<Model> m_ground;
+	Ref<Model> m_grass;
+	Ref<Model> m_grindstone;
+	std::unique_ptr<Box> m_box;
+};
+
+Object::Object(Application& app, Window& window, Camera& camera) :
+	m_window(window), m_application(app), m_camera(camera)
+{
+	// Setup a point light
+	{
+		m_light.Position = glm::vec3(0.0f, 10.0f, 0.0f);
+		m_light.Quadratic = 0.000007;
+		m_light.Linear = 0.0014;
+	}
+
+	m_shader = window.GetRenderer().CreateShader
+	(
+		"examples/shaders/default.vert",
+		"examples/shaders/default.frag"
+	);
+
+	m_box = std::make_unique<Box>(m_window, *m_shader);
+
+	// Ground
+	Sea::AssimpModelLoader groundModelLoader("assets/md/ground/scene.gltf");
+	m_ground = groundModelLoader.Load();
+
+	// Grindstone
+	Sea::AssimpModelLoader grindstoneLoader("assets/md/grindstone/scene.gltf");
+	m_grindstone = grindstoneLoader.Load();
+
+	// Model grass
+	Sea::AssimpModelLoader grassModelLoader("assets/md/grass/scene.gltf");
+	m_grass = grassModelLoader.Load();
+
+	// Light shader
+	m_light_shader = m_window
+		.GetRenderer()
+		.CreateShader("examples/shaders/light.vert", "examples/shaders/light.frag");
+
+}
+
+void InitApplication() 
+{		
+	// Init application
+	Application sea;
+
+	// Setup source directory
+	File::AssetsFolder = "../../";
+	WindowFactory windowFactory;
+
+	// Setup video mode
+	VideoMode videoMode;
+	{
+		videoMode.Resizable = true;
+		videoMode.Maximazed = true;
+	};
+
+	Camera camera
+	(
+		videoMode.Width,
+		videoMode.Height,
+		glm::vec3(0.0, 0.0, 0.0)
+	);
+
+	// Creating the window from the application with video mode
+	auto window = windowFactory.CreateOpenGLWindow(title, videoMode);
+	CameraCursor(*window);
+
+	auto o = std::make_shared<Object>(sea, *window, camera);
+	window->Attach(o);
+	sea.Attach(window);
+	sea.Launch();
+}
 
 int main(int argc, const char** argv)
 {	
 	try
 	{	
-		// Init application
-		Sea::Application sea;
-
-		// Setup source directory
-		Sea::File::FromResources = "../../";
-
-		// Setup video mode
-		Sea::VideoMode videoMode;
-		{
-			videoMode.Resizable = true;
-			videoMode.Maximazed = true;
-		};
-		
-		// Creating the window from the application with video mode
-		Sea::Window& window = sea.CreateWindow(title, videoMode);
-		Sea::Renderer& renderer = window.GetRenderer();
-		
-		// Creating event handler from the window
-		Sea::EventHandler eventHandler;
-
-		// Set up Camera
-		Sea::Camera camera (
-			videoMode.Width,
-			videoMode.Height,
-			glm::vec3(0.0f, 0.0f, 2.0f)
-		);
-
-		// Ground
-		Sea::AssimpModelLoader groundModelLoader("assets/md/ground/scene.gltf");
-		Sea::Model ground = *groundModelLoader.Load();
-
-		// Grindstone
-		Sea::AssimpModelLoader grindstoneLoader("assets/md/grindstone/scene.gltf");
-		Sea::Model grindstone = *grindstoneLoader.Load();
-
-		// Model grass
-		Sea::AssimpModelLoader grassModelLoader("assets/md/grass/scene.gltf");
-		Sea::Model grass = *grassModelLoader.Load();
-
-		// Default shader
-		Sea::ShaderRef shader = renderer.CreateShader("examples/shaders/default.vert", "examples/shaders/default.frag");
-		shader->SetFloat("material.shininess0", 8);
-
-		Sea::Box box(window, *shader);
-
-		// Light shader
-		Sea::ShaderRef shaderLight = renderer.CreateShader("examples/shaders/light.vert","examples/shaders/light.frag");
-
-		// Setup a point light
-		Sea::PointLight light;
-		{
-			light.Position = glm::vec3(0.0f, 10.0f, 0.0f);
-			light.Quadratic = 0.000007;
-			light.Linear = 0.0014;
-		}
-
-		// Setup relative or not in function of state
-		switch (state)
-		{
-		case 0:
-			DefaultCursor(window);
-			break;
-		case 1:
-			CameraCursor(window);
-			break;
-		default:
-			break;
-		}
-
-		// Setup Frame rate and setup Clock for calculate dt through the frame rate
-		Sea::Clock clock;
-		Sea::FrameRate frameRate;
-		while (sea.Active())
-		{
-			clock.Start(frameRate);
-			renderer.ClearColor(Sea::Colors::EerieBlack);
-			renderer.Clear();
-			window.Viewport();
-			window.SetTitle(title + " - fps = " + std::to_string(frameRate.GetFPS()));
-		
-			// Setup Perspective Camera
-			camera.SetViewProjection(45.0f, 0.1f, 500.0f);
-
-			box.Draw();
-
-			// Draw the environment
-			ground.Draw(*shader, camera);
-			grass.Draw(*shader, camera);
-			grindstone.Draw(*shader, camera, grindstoneModel, grindstonePos);
-
-			// Lightning the scene
-			light.Draw(*shader); 
-			// Draw a cube representing where the light from
-			light.DrawMesh(*shaderLight, camera); 
-
-			// Handle input camera
-			HandleInput(window, camera, clock.Delta);
-
-			// Handle mouse camera if we are in relative mode
-			if (state == 1)
-			{
-				Sea::Mouse::OnMoved([&]() 
-				{
-					camera.Yaw += Sea::Mouse::RelativePosX * sensitivity;
-					camera.Pitch += Sea::Mouse::RelativePosY * sensitivity;
-					camera.Pitch = Sea::Clamp(camera.Pitch, -89.0f, 89.0f);
-					camera.SetOrientation(camera.Yaw, camera.Pitch);
-				});
-			}
-
-			eventHandler.HandleEvent(window); 
-
-			// CRITICAL LINE, free the memory
-			window.Swap();
-
-			// Calculate the frame rate and dt
-			clock.End(frameRate); 
-		}
-
+		InitApplication();
 	}
 	catch (const std::exception& e)
 	{
@@ -173,7 +193,7 @@ int main(int argc, const char** argv)
 	return EXIT_SUCCESS;
 }
 
-void HandleInput(Sea::Window& window, Sea::Camera& camera, Sea::f32 dt)
+void HandleInput(Window& window, Camera& camera, f32 dt)
 {
 	glm::vec3 targetPos = camera.Position;
 
@@ -237,7 +257,7 @@ void HandleInput(Sea::Window& window, Sea::Camera& camera, Sea::f32 dt)
 
 }
 
-void DefaultCursor(Sea::Window& window)
+void DefaultCursor(Window& window)
 {
 	window.SetMouseOnMiddlePosistion();
 	window.UngrapMouse();
@@ -245,7 +265,7 @@ void DefaultCursor(Sea::Window& window)
 	Sea::Mouse::SetRelativeMouseMode(false);
 }
 
-void CameraCursor(Sea::Window& window)
+void CameraCursor(Window& window)
 {
 	window.SetMouseOnMiddlePosistion();
 	window.GrapMouse();
@@ -253,14 +273,14 @@ void CameraCursor(Sea::Window& window)
 	Sea::Mouse::SetRelativeMouseMode(true);
 }
 
-glm::vec3 DampedString(const glm::vec3 currentPos, const glm::vec3 targetPos, Sea::f32 frametime, Sea::f32 springStrength)
+glm::vec3 DampedString(const glm::vec3 currentPos, const glm::vec3 targetPos, f32 frametime, f32 springStrength)
 {
 	glm::vec3 displacement = targetPos - currentPos;
 	if (displacement.length() == 0.f) return currentPos;
-	Sea::f32 invDisplacementLength = 1.f / displacement.length();
-	const Sea::f32 dampConstant = 0.000065f;
-	Sea::f32 springMagitude = springStrength * displacement.length() + dampConstant * invDisplacementLength;
-	Sea::f32 scalar = std::min(invDisplacementLength * springMagitude * frametime, 1.f);
+	f32 invDisplacementLength = 1.f / displacement.length();
+	const f32 dampConstant = 0.000065f;
+	f32 springMagitude = springStrength * displacement.length() + dampConstant * invDisplacementLength;
+	f32 scalar = std::min(invDisplacementLength * springMagitude * frametime, 1.f);
 	displacement *= scalar;
 	return currentPos + displacement;
 }

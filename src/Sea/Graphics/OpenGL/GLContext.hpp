@@ -9,7 +9,7 @@
 #include "Sea/Core/Context.hpp"
 #include "Sea/Graphics/Rendering/Window.hpp"
 
-namespace Sea::Backend::OpenGL
+namespace Sea
 {	
 
 	struct GLContext final : Context

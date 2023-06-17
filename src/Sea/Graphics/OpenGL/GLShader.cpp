@@ -5,7 +5,7 @@
 #include "Sea/Graphics/OpenGL/GL.hpp"
 
 
-namespace Sea::Backend::OpenGL
+namespace Sea
 {
 
 	GLShader::GLShader(File vertexShader, File fragmentShader)
@@ -147,4 +147,5 @@ namespace Sea::Backend::OpenGL
 	{
 		return glGetUniformLocation(programId, uniform.c_str());
 	}
+
 }

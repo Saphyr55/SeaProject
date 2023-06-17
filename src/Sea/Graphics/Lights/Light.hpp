@@ -13,18 +13,17 @@ namespace Sea
 
 	class Light
 	{
-	SEA_PROPERTY_READONLY(Id, u32, id)
-	SEA_PROPERTY_READONLY(NameLight, std::string, light)
-
 	public:
 		Color Colour = Colors::White;
 		glm::vec3 Position = glm::vec3();
 		glm::vec3 Ambient  = glm::vec3(0.2f, 0.2f, 0.2f);
 		glm::vec3 Diffuse  = glm::vec3(0.5f, 0.5f, 0.5f);
 		glm::vec3 Specular = glm::vec3(1.0f, 1.0f, 1.0f);
-
+		
 		virtual void Draw(Shader& shader) = 0;
 		virtual void DrawMesh(Shader& shader, Camera& camera);
+		std::string NameLight() const { return light; }
+		u32 Id() const { return id; }
 
 		Light() = default;
 		virtual ~Light() = default;
@@ -32,6 +31,8 @@ namespace Sea
 	protected:
 		glm::mat4 m_meshModel = glm::mat4(1.0f);
 		Ref<Mesh> m_mesh;
+		std::string light;
+		u32 id;
 
 	private:
 		static std::vector<Vertex> lightVertices;

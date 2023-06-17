@@ -14,9 +14,6 @@ namespace Sea
 
 	class Mesh
 	{
-	SEA_PROPERTY_READONLY(Textures, std::vector<Ref<Texture>>, m_textures)
-	SEA_PROPERTY_READONLY(Indices, std::vector<u32>, m_indices)
-	SEA_PROPERTY_READONLY(Vertices, std::vector<Vertex>, m_vertices)
 
 	public:
 		virtual void Draw(Shader& shader) = 0;
@@ -26,6 +23,9 @@ namespace Sea
 			glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f),
 			glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f)
 		) = 0;
+		inline std::vector<Ref<Texture>> Textures() const { return m_textures; }
+		inline std::vector<u32> Indices() const { return m_indices; }
+		inline std::vector<Vertex> Vertices() const { return m_vertices; }
 
 	public:
 		Mesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<Ref<Texture>>& textures);
@@ -33,6 +33,12 @@ namespace Sea
 
 	protected:
 		void SetupTextures(Shader& shader);
+
+
+	protected:
+		std::vector<Vertex> m_vertices;
+		std::vector<u32> m_indices;
+		std::vector<Ref<Texture>> m_textures;
 	};
 
 	using RMesh = Ref<Mesh>;

@@ -1,13 +1,13 @@
-#include "Sea/Graphics/OpenGL/Renderer/GLRenderer.hpp"
+#include "Sea/Graphics/OpenGL/GLRenderer.hpp"
 #include "Sea/Graphics/OpenGL/GL.hpp"
 #include "Sea/Graphics/OpenGL/GLShader.hpp"
 #include "Sea/Graphics/OpenGL/GLMesh.hpp"
 #include "Sea/Graphics/OpenGL/GLTexture.hpp"
 #include "Sea/Core/File.hpp"
 #include "Sea/Core/Color.hpp"
-#include "Sea/Graphics/OpenGL/Renderer/GLWindow.hpp"
+#include "Sea/Graphics/OpenGL/GLWindow.hpp"
 
-namespace Sea::Backend::OpenGL
+namespace Sea
 {
 
 	void GLRenderer::Enable() const
@@ -57,16 +57,17 @@ namespace Sea::Backend::OpenGL
 
 	Ref<Mesh> GLRenderer::CreateMesh(std::vector<Vertex>& vertices, std::vector<u32>& indices, std::vector<TextureRef>& textures) const
 	{
-		return std::make_shared<Backend::OpenGL::GLMesh>(vertices, indices, textures);
+		return std::make_shared<GLMesh>(vertices, indices, textures);
 	}
 
 	Ref<Mesh> GLRenderer::CreateMesh(std::vector<Vertex>& vertices, std::vector<u32>& indices) const
 	{
-		return std::make_shared<Backend::OpenGL::GLMesh>(vertices, indices);
+		return std::make_shared<GLMesh>(vertices, indices);
 	}
 
 	GLRenderer::GLRenderer()
 	{
+		OpenGL::Init();
 		// default_shader = CreateShader("examples/shaders/default.frag", "examples/shaders/default.vert");
 	}
 

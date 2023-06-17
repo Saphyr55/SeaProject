@@ -2,7 +2,7 @@
 
 #include "Sea/Graphics/Rendering/Renderer.hpp"
 
-namespace Sea::Backend::OpenGL
+namespace Sea
 {   
     
     class GLRenderer : public Renderer

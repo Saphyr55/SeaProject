@@ -4,13 +4,12 @@
 
 #include "Sea/Graphics/OpenGL/GL.hpp"
 
-namespace Sea::Backend::OpenGL
+namespace Sea
 {
 	class GLVertexBuffer;
 
 	class GLVertexArray
 	{
-	SEA_PROPERTY_READONLY(Id, u32, id)
 
 	public:
 		void LinkVertexBuffer(GLVertexBuffer& vertexBuffer, u32 layout);
@@ -18,11 +17,15 @@ namespace Sea::Backend::OpenGL
 		void Bind();
 		void Unbind();
 		void Delete();
+		u32 Id() const { return m_id; }
 
 		GLVertexArray();
 		~GLVertexArray() = default;
+	
+	private:
+		u32 m_id;
 	};
 
-	using GLVertexArrayPtr = std::shared_ptr<GLVertexArray>;
+	using GLVertexArrayRef = Ref<GLVertexArray>;
 
 }

@@ -15,6 +15,7 @@ namespace Sea
 		void SetVec4f(std::string uniform, glm::vec4 value) override;
 		void SetVec4f(std::string uniform, f32 x, f32 y, f32 z, f32 w) override;
 		void SetVec3f(std::string uniform, glm::vec3 value) override;
+		void SetVec2f(std::string uniform, f32 x, f32 y) override;
 		void SetVec3f(std::string uniform, f32 x, f32 y, f32 z) override;
 		void SetMatrix4fv(std::string uniform, glm::mat4 value) override;
 		void SetInt(std::string uniform, s32 value) override;

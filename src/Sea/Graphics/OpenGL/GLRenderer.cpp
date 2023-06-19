@@ -9,6 +9,14 @@
 
 namespace Sea
 {
+	void GLRenderer::Init()
+	{
+		if (!m_shape_shader)
+			m_shape_shader = CreateShader(
+				"src/Sea/Resources/Shaders/Shape.vert",
+				"src/Sea/Resources/Shaders/Shape.frag"
+			);
+	}
 
 	void GLRenderer::Enable() const
 	{
@@ -40,6 +48,11 @@ namespace Sea
 		glEnable(GL_BLEND);
 	}
 
+	Ref<Shader> GLRenderer::ShapeShader() const
+	{
+		return m_shape_shader;
+	}
+
 	Ref<Shader> GLRenderer::CreateShader(std::string_view vertexShaderSource, std::string_view fragmentShaderSource) const
 	{
 		return std::make_shared<GLShader>(vertexShaderSource, fragmentShaderSource);
@@ -68,7 +81,6 @@ namespace Sea
 	GLRenderer::GLRenderer()
 	{
 		OpenGL::Init();
-		// default_shader = CreateShader("examples/shaders/default.frag", "examples/shaders/default.vert");
 	}
 
 }

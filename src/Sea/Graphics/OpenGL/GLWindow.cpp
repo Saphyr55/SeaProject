@@ -65,6 +65,7 @@ namespace Sea
 	{
 		m_renderer = MakeRef<GLRenderer>();
 		Init();
+		m_renderer->Init();
 		m_renderer->Enable();
 		RenderService::Set(m_renderer);
 	}

@@ -33,8 +33,14 @@ namespace Sea
 	
 	void Shape::Draw()
 	{		
-		auto mp = Mouse::GetMousePosition();
 		auto shader = renderer.ShapeShader();
+		Shadering(*shader);
+		m_mesh->Draw(*shader);
+	}
+
+	void Shape::Shadering(Shader& shader)
+	{
+		auto mp = Mouse::GetMousePosition();
 		auto relative_size = parent.GetSize();
 		auto pos = glm::vec3(m_x + (m_width / 2), m_y + (m_height / 2), 1);
 		auto scale = glm::vec3((m_width / 2), (m_height / 2), 1);
@@ -44,14 +50,17 @@ namespace Sea
 		model = glm::translate(model, pos);
 		model = glm::scale(model, scale);
 
-		shader->Use();
-		shader->SetVec2f("shape.size", m_width, m_height);
-		shader->SetVec2f("shape.origin", pos.x, pos.y);
-		shader->SetMatrix4fv("model", model);
-		shader->SetMatrix4fv("projectionView", orho);
-		m_mesh->Draw(*shader);
+		shader.Use();
+		shader.SetVec2f("shape.size", m_width, m_height);
+		shader.SetVec2f("shape.origin", pos.x, pos.y);
+		shader.SetFloat("shape.edge", m_properties.Edge);
+		shader.SetFloat("shape.border_radius_tl", m_properties.BorderRadiusTopLeft);
+		shader.SetFloat("shape.border_radius_tr", m_properties.BorderRadiusTopRight);
+		shader.SetFloat("shape.border_radius_bl", m_properties.BorderRadiusBottomLeft);
+		shader.SetFloat("shape.border_radius_br", m_properties.BorderRadiusBottomRight);
+		shader.SetMatrix4fv("model", model);
+		shader.SetMatrix4fv("projectionView", orho);
 	}
-
 
 }
 

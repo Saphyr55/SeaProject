@@ -41,7 +41,7 @@ namespace Sea
 		void SetResizable(bool resizable);
 		void SetTitle(std::string_view title);
 		void SetMousePostion(f32 x, f32 y);
-		std::pair<f32, f32> GetSize();
+		glm::vec2 GetSize();
 		void SetMouseOnMiddlePosistion();
 		void GrapMouse();
 		void UngrapMouse();

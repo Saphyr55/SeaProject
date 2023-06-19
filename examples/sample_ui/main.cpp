@@ -26,19 +26,17 @@
 #include <Sea/Graphics/Model.hpp>
 #include <Sea/Graphics/Lights/SpotLight.hpp>
 #include <Sea/Graphics/Lights/DirectionalLight.hpp>
-#include <Sea/Graphics/Drawing/Rectangle.hpp>
+#include <Sea/Graphics/Drawing/Shape.hpp>
 #include <Sea/Graphics/Rendering/WindowFactory.hpp>
 
 using namespace Sea;
 
-std::string title = "Sample";
-
 class Object : public Handler<Window&>
 {
-
 public:
 	void OnInit();
 	void Handle(Sea::Window& window);
+	void UpdateBox();
 
 public:
 	Object(Application& app, Window& window);
@@ -49,23 +47,30 @@ private:
 	Window& m_window;
 	Application& m_application;
 	std::shared_ptr<Shader> m_default_shader;
-	std::unique_ptr<Rectangle> m_rectangle;
+	std::unique_ptr<Shape> m_shape;
 };
 
-void Object::OnInit()
+void Object::UpdateBox()
 {
+	auto wsize = m_window.GetSize();
+	auto rsizex = 200;
+	auto rsizey = 200;
+	m_shape->SetSize(rsizex, rsizey);
+	m_shape->SetPosition((wsize.x - rsizex) / 2, (wsize.y- rsizey) / 2); 
+	m_shape->Draw();
+}
 
+void Object::OnInit()
+{	
 	m_default_shader = m_window.GetRenderer().CreateShader
 	(
 		"src/Sea/Resources/Shaders/default.vert",
 		"src/Sea/Resources/Shaders/default.frag"
 	);
-
-	m_rectangle = std::make_unique<Rectangle>(
-		m_window, *m_default_shader, Colors::Crimson
+	
+	m_shape = std::make_unique<Shape>(
+		m_window, Colors::Crimson
 	);
-	m_rectangle->SetSize(50, 50);
-	m_rectangle->SetPosition(0, 0);
 }
 
 void Object::Handle(Sea::Window& window)
@@ -73,9 +78,13 @@ void Object::Handle(Sea::Window& window)
 	auto& renderer = window.GetRenderer();
 
 	renderer.Clear();
-	renderer.ClearColor(Colors::SkyBlue);
+	renderer.ClearColor(Colors::EerieBlack);
 
-	m_rectangle->Draw();
+	auto mp = Mouse::GetMousePosition();
+	// fmt::print("Mouse Position x={} y={}\n", mp.x, mp.y);
+
+	UpdateBox();
+
 	window.Viewport();
 	m_event_handler.Handle(window);
 }
@@ -84,39 +93,44 @@ Object::Object(Application& app, Window& window) :
 	m_window(window), 
 	m_application(app),
 	m_camera(
-		window.GetSize().first, 
-		window.GetSize().second, 
+		window.GetSize().x, 
+		window.GetSize().y, 
 		glm::vec3(0.0f, 0.0f, 2.0f)
 	)
 {
 	OnInit();
 }
 
+void InitApp()
+{
+	// Init application
+	Application sea;
+
+	// Setup source directory
+	File::AssetsFolder = "../../";
+	WindowFactory windowFactory;
+
+	// Setup video mode
+	VideoMode videoMode;
+	{
+		videoMode.Resizable = true;
+		videoMode.Maximazed = false;
+	};
+
+	// Creating the window from the application with video mode
+	auto window = windowFactory.CreateOpenGLWindow("Sample", videoMode);
+	auto o = std::make_shared<Object>(sea, *window);
+	window->Attach(o);
+	sea.Attach(window);
+
+	sea.Launch();
+}
+
 int main(int argc, const char** argv)
 {
 	try
 	{
-		// Init application
-		Application sea;
-		
-		// Setup source directory
-		File::AssetsFolder = "../../";
-		WindowFactory windowFactory;
-
-		// Setup video mode
-		VideoMode videoMode;
-		{
-			videoMode.Resizable = true;
-			videoMode.Maximazed = false;
-		};
-
-		// Creating the window from the application with video mode
-		auto window = windowFactory.CreateOpenGLWindow(title, videoMode);
-		auto o = std::make_shared<Object>(sea, *window);
-		window->Attach(o);
-		sea.Attach(window);
-		
-		sea.Launch();
+		InitApp();
 	}
 	catch (const std::exception& e)
 	{

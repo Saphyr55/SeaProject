@@ -1,11 +1,8 @@
 #version 450 core
 
-out vec4 FragColor;
-
-in vec3 fragPos;
-in vec3 normal;
-in vec3 color;
-in vec2 texCoords;
+#define MAX_SPOT_LIGHTS 32
+#define MAX_POINT_LIGHTS 32
+#define MAX_DIREC_LIGHTS 2
 
 struct Material 
 {
@@ -48,12 +45,18 @@ struct SpotLight
     float outerCutOff;
 };
 
+out vec4 FragColor;
+
+in vec3 fragPos;
+in vec3 normal;
+in vec3 color;
+in vec2 texCoords;
+
 uniform Material material;
 uniform float ambientWorld;
 
-#define MAX_SPOT_LIGHTS 32
-#define MAX_POINT_LIGHTS 32
-#define MAX_DIREC_LIGHTS 2
+uniform vec2 origin;
+uniform vec2 uiPos;
 
 uniform int sizeSpotLight;
 uniform int sizePointLight;
@@ -101,7 +104,7 @@ vec3 create_point_light(PointLight light, vec3 _normal, vec3 fragPos, vec3 view_
     specular *= attenuation; 
 
     return (ambient + diffuse + specular);
-}
+}   
 
 vec3 create_direc_light(DirectionalLight light, vec3 _normal, vec3 fragPos, vec3 view_dir)
 {   
@@ -133,7 +136,7 @@ vec3 create_spot_light(SpotLight light, vec3 _normal, vec3 fragPos, vec3 view_di
     diffuse  *= attenuation;
     specular *= attenuation; 
 
-    return (ambient + diffuse + specular) ;
+    return (ambient + diffuse + specular);
 }
 
 float linearize_depth(float _depth, float far, float near)
@@ -147,31 +150,44 @@ float logistic_depth(float _depth, float far, float near, float steepness /* 0.5
     return (1 / (1 + exp(-steepness * (zVal - offset))));
 }
 
+float circle_shape(float radius, vec2 pos)
+{
+    float d = distance(pos, vec2(0.5));
+    return step(radius, d);
+}
+
 void main()
-{   
+{
     vec4 _result = vec4(0.0);
     vec3 _normal =  normalize(normal);
     vec3 view_dir = normalize(_normal - fragPos);
 
     vec3 _output_light = vec3(0.0);
 
-    for (int i = 0 ; i < sizePointLight ; i++)
+    for (int i = 0 ; i < sizePointLight ; i++) 
+    {
         _output_light += create_point_light(pointLights[i], _normal, fragPos, view_dir);
+    }
 
     for (int i = 0 ; i < sizeDirectionalLight ; i++)
+    {
         _output_light += create_direc_light(directionalLights[i], _normal, fragPos, view_dir);
+    }
 
-    for (int i = 0 ; i < sizeSpotLight ; i++)
+    for (int i = 0 ; i < sizeSpotLight ; i++) 
+    {
         _output_light += create_spot_light(spotLights[i], _normal, fragPos, view_dir);
-    
+    }
+
     _result += vec4(_output_light, 1.0);
 
     float near = 0.1;
     float far = 0.2;
-    float depth = logistic_depth(gl_FragCoord.z, near, far, 0.5f, 5.0f); 
-    
-    vec4 v_depth = (1.0f - depth) + vec4(depth * vec3(0.11f, 0.11f, 0.11f), 1.0);
-    // if(useFlog) _result *= v_depth
+    float depth = logistic_depth(gl_FragCoord.z, near, far, 0.5, 5.0); 
 
-    FragColor = _result; 
+    vec4 v_depth = (1.0 - depth) + vec4(depth * vec3(0.11, 0.11, 0.11), 1.0);
+    // if(useFlog) _result *= v_depth
+    
+    _result += vec4(color, 1.0);
+    FragColor = _result;
 }

@@ -51,6 +51,11 @@ namespace Sea
 		glUniform3fv(GetUniformLocation(uniform), 1, glm::value_ptr(value));
 	}
 
+	void GLShader::SetVec2f(std::string uniform, f32 x, f32 y)
+	{
+		glUniform2f(GetUniformLocation(uniform), x, y);
+	}
+
 	void GLShader::SetVec3f(std::string uniform, f32 x, f32 y, f32 z)
 	{
 		glUniform3f(GetUniformLocation(uniform), x, y, z);

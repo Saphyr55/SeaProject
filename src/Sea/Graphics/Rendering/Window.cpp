@@ -64,12 +64,12 @@ namespace Sea
 		SDL_WarpMouseInWindow(nullptr, x, y);
 	}
 
-	std::pair<f32, f32> Window::GetSize()
+	glm::vec2 Window::GetSize()
 	{
 		auto w = new int;
 		auto h = new int;
 		SDL_GetWindowSize(m_handle, w, h);
-		return std::make_pair(*w, *h);
+		return glm::vec2(*w, *h);
 	}
 
 	void Window::SetMouseOnMiddlePosistion()

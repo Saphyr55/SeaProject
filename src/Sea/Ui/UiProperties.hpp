@@ -7,10 +7,14 @@
 #include "Sea/Core/Color.hpp"
 #include "Sea/Ui/Component.hpp"
 
-#define SEA_PROPERTY(Type, Name) \
-	private: Type m_##Name; \
-	public: void Set##Name(Type Name) { m_##Name = Name; } \
-	Type Get##Name() { return m_##Name; }
+#define UPDATE_FUNCTION_SIZE_SIGNATURE(Name) \
+static void Update##Name(RatioConstraint constraint, Component& component); \
+static void Update##Name(PixelConstraint constraint, Component& component); 
+
+#define UPDATE_FUNCTION_POS_SIGNATURE(Name) \
+static void Update##Name(RatioConstraint constraint, Component& component); \
+static void Update##Name(PixelConstraint constraint, Component& component); \
+static void Update##Name(CenterConstraint constraint, Component& component);
 
 namespace Sea
 {
@@ -46,37 +50,31 @@ namespace Sea
     class UiProperties final
     {
 	public:
+		friend class Component;
+
 		using VNumberConstraint = std::variant<RatioConstraint, PixelConstraint>;
 		using VConstraint = std::variant<RatioConstraint, PixelConstraint, CenterConstraint>;
 
 		UiProperties() = default;
 		~UiProperties() = default;
 
-		Color Colour = Colors::Black;
-		VNumberConstraint Width = Constraint::Pixel(0);
-		VNumberConstraint Height = Constraint::Pixel(0);
-		VConstraint X = Constraint::Pixel(0);
-		VConstraint Y = Constraint::Pixel(0);
-		PixelConstraint Edge = Constraint::Pixel(1);
-		PixelConstraint Border = Constraint::Pixel(0);
+		Color Colour				= Colors::Black;
+		VNumberConstraint Width		= Constraint::Pixel(0);
+		VNumberConstraint Height	= Constraint::Pixel(0);
+		VConstraint PosX			= Constraint::Pixel(0);
+		VConstraint PosY			= Constraint::Pixel(0);
+		PixelConstraint Edge		= Constraint::Pixel(1);
+		PixelConstraint Border		= Constraint::Pixel(0);
 
 	private:
-		friend class Component;
-
-		static void UpdateWidth(RatioConstraint constraint, Component& component);
-		static void UpdateWidth(PixelConstraint constraint, Component& component);
-
-		static void UpdateHeight(RatioConstraint constraint, Component& component);
-		static void UpdateHeight(PixelConstraint constraint, Component& component);
-
-		static void UpdateX(PixelConstraint constraint , Component& component);
-		static void UpdateX(RatioConstraint constraint , Component& component);
-		static void UpdateX(CenterConstraint constraint, Component& component);
-
-		static void UpdateY(PixelConstraint constraint , Component& component);
-		static void UpdateY(RatioConstraint constraint , Component& component);
-		static void UpdateY(CenterConstraint constraint, Component& component);
+		UPDATE_FUNCTION_SIZE_SIGNATURE(Width)
+		UPDATE_FUNCTION_SIZE_SIGNATURE(Height)
+		UPDATE_FUNCTION_POS_SIGNATURE(PosX)
+		UPDATE_FUNCTION_POS_SIGNATURE(PosY)
 	};
 
 
 }
+
+#undef UPDATE_FUNCTION_SIZE_SIGNATURE
+#undef UPDATE_FUNCTION_POS_SIGNATURE

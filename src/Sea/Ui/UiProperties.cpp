@@ -1,11 +1,22 @@
 #include "Sea/Ui/UiProperties.hpp"
 
+#define UPDATE_FUNCTION(Constraint, Name) \
+	void UiProperties::Update##Name(Constraint constraint, Component& component)
+
+#define UPDATE_FUNCTION_PIXEL(Name) UPDATE_FUNCTION(PixelConstraint, Name) \
+	{ component.Set##Name(constraint.Value); } 
+
+#define UPDATE_FUNCTION_RATIO_DIFF(Func, Name) UPDATE_FUNCTION(RatioConstraint, Func) \
+	{ component.Set##Func(*component.GetRelative##Name() * constraint.Value); } 
+
+#define UPDATE_FUNCTION_RATIO(Name) UPDATE_FUNCTION_RATIO_DIFF(Name, Name)
+
+#define UPDATE_FUNCTION_CENTER(Func, Name) UPDATE_FUNCTION(CenterConstraint, Func) \
+	{ component.Set##Func((*component.GetRelative##Name() - component.Get##Name()) / 2); } 
+
 namespace Sea
 {
-	CenterConstraint Constraint::Center()
-	{
-		return { };
-	}
+	CenterConstraint Constraint::Center() { return { }; }
 
     RatioConstraint Constraint::Ratio(f32 value)
     {
@@ -21,54 +32,19 @@ namespace Sea
 		return c;
 	}
 
-	void UiProperties::UpdateWidth(RatioConstraint constraint, Component& component)
-	{
-		component.SetWidth(*component.GetRelativeWidth() * constraint.Value);
-	}
-
-	void UiProperties::UpdateWidth(PixelConstraint constraint, Component& component)
-	{
-		component.SetWidth(constraint.Value);
-	}
-
-	void UiProperties::UpdateHeight(RatioConstraint constraint, Component& component)
-	{
-		component.SetHeight(*component.GetRelativeHeight() * constraint.Value);
-	}
-
-	void UiProperties::UpdateHeight(PixelConstraint constraint, Component& component)
-	{
-		component.SetHeight(constraint.Value);
-	}
-
-	void UiProperties::UpdateX(PixelConstraint constraint, Component& component)
-	{
-		component.SetPosX(constraint.Value);
-	}
-
-	void UiProperties::UpdateX(RatioConstraint constraint, Component& component)
-	{
-		component.SetPosX(*component.GetRelativeWidth() * constraint.Value);
-	}
-
-	void UiProperties::UpdateX(CenterConstraint constraint, Component& component)
-	{
-		component.SetPosX((*component.GetRelativeWidth() - component.GetWidth()) / 2);
-	}
-
-	void UiProperties::UpdateY(PixelConstraint constraint, Component& component)
-	{
-		component.SetPosY(constraint.Value);
-	}
-
-	void UiProperties::UpdateY(RatioConstraint constraint, Component& component)
-	{
-		component.SetPosY(*component.GetRelativeHeight() * constraint.Value);
-	}
-
-	void UiProperties::UpdateY(CenterConstraint constraint, Component& component)
-	{
-		component.SetPosY((*component.GetRelativeHeight() - component.GetHeight()) / 2);
-	}
+	UPDATE_FUNCTION_RATIO(Width)
+	UPDATE_FUNCTION_RATIO(Height)
+	UPDATE_FUNCTION_PIXEL(Width)
+	UPDATE_FUNCTION_PIXEL(Height)
+	UPDATE_FUNCTION_PIXEL(PosX)
+	UPDATE_FUNCTION_PIXEL(PosY)
+	UPDATE_FUNCTION_CENTER(PosX, Width)
+	UPDATE_FUNCTION_CENTER(PosY, Height)
+	UPDATE_FUNCTION_RATIO_DIFF(PosX, Width)
+	UPDATE_FUNCTION_RATIO_DIFF(PosY, Height)
 
 }
+
+#undef UPDATE_FUNCTION_RATIO
+#undef UPDATE_FUNCTION_PIXEL
+

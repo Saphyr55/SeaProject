@@ -43,12 +43,12 @@ namespace Sea
 		m_properties.Edge = m_ui_properties->Edge.Value;
 
 		std::visit([&](auto constraint) { 
-			UiProperties::UpdateX(constraint, *this); 
-		}, m_ui_properties->X);
+			UiProperties::UpdatePosX(constraint, *this); 
+		}, m_ui_properties->PosX);
 
 		std::visit([&](auto constraint) {
-			UiProperties::UpdateY(constraint, *this);
-		}, m_ui_properties->Y);
+			UiProperties::UpdatePosY(constraint, *this);
+		}, m_ui_properties->PosY);
 
 		std::visit([&](auto constraint) {
 			UiProperties::UpdateWidth(constraint, *this);
@@ -57,6 +57,7 @@ namespace Sea
 		std::visit([&](auto constraint) {
 			UiProperties::UpdateHeight(constraint, *this);
 		}, m_ui_properties->Height);
+
 	}
 
 	Component::Component() :

@@ -65,8 +65,8 @@ void SampleUI::OnInit()
 {	
 	container = Container::From(window, [&](UiProperties& p)
 	{
-		p.X			= Constraint::Center();
-		p.Y			= Constraint::Center();
+		p.PosX		= Constraint::Center();
+		p.PosY		= Constraint::Center();
 		p.Width		= Constraint::Pixel(200.0f);
 		p.Height	= Constraint::Pixel(200.0f);
 		p.Colour	= Colors::Red;
@@ -78,8 +78,8 @@ void SampleUI::OnInit()
 		{
 			p.Height	= Constraint::Pixel(100.0f);
 			p.Width		= Constraint::Pixel(100.0f);
-			p.X			= Constraint::Center();
-			p.Y			= Constraint::Center();
+			p.PosX		= Constraint::Center();
+			p.PosY		= Constraint::Center();
 			p.Colour	= Colors::Blue;
 			p.Border	= Constraint::Pixel(30.0f);
 		}),
@@ -87,8 +87,8 @@ void SampleUI::OnInit()
 		{
 			p.Height	= Constraint::Pixel(50.0f);
 			p.Width		= Constraint::Pixel(50.0f);
-			p.X			= Constraint::Center();
-			p.Y			= Constraint::Center();
+			p.PosX		= Constraint::Center();
+			p.PosY		= Constraint::Center();
 			p.Colour	= Colors::Yellow;
 			p.Border	= Constraint::Pixel(25.0f);
 		}),

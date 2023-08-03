@@ -9,16 +9,15 @@
 namespace Sea
 {
 
-	
 	struct ShapeProperties
 	{
 		Color Colour = Colors::Black;
 		f32 Edge = 1.0f;
-		f32 BorderRadiusTopLeft		= 0;
-		f32	BorderRadiusTopRight	= 0;
-		f32	BorderRadiusBottomLeft	= 0;
-		f32	BorderRadiusBottomRight = 0;
-		f32 Border = -1;
+		f32 Border;
+		f32 BorderRadiusTopLeft;
+		f32	BorderRadiusTopRight;
+		f32	BorderRadiusBottomLeft;
+		f32	BorderRadiusBottomRight;
 	};
 
 	class Shape : public Drawable
@@ -28,11 +27,13 @@ namespace Sea
 		virtual void Draw() override;
 		ShapeProperties& GetShapeProperties() { return m_properties; }
 		Ref<Mesh> GetMesh() { return m_mesh; }
-		s32 GetDepth() const { return m_depth; }
+		f32 GetDepth() const { return m_depth; }
 		f32 GetPosX() const { return m_x; }
 		f32 GetPosY() const { return m_y; }
 		f32 GetWidth() const { return m_width; }
 		f32 GetHeight() const { return m_height; }
+		const f32* GetRelativeWidth() const { return m_relative_width; }
+		const f32* GetRelativeHeight() const { return m_relative_height; }
 		void SetWidth(f32 width) { m_width = width; }
 		void SetHeight(f32 height) { m_height = height; }
 		void SetPosX(f32 x) { m_x = x; }
@@ -40,7 +41,7 @@ namespace Sea
 		void SetPosition(f32 x, f32 y) { SetPosX(x); SetPosY(y); }
 		void SetSize(f32 width, f32 height) { SetWidth(width); SetHeight(height); }
 		void SetRelative(f32& width, f32& height);
-		void SetDepth(s32 depth) { m_depth = depth; }
+		void SetDepth(f32 depth) { m_depth = depth; }
 
 	private:
 		void Shadering(Shader& shader);
@@ -54,7 +55,7 @@ namespace Sea
 		ShapeProperties m_properties;
 		Ref<Mesh> m_mesh;
 		Color color;
-		s32 m_depth = 0;
+		f32 m_depth = 0;
 		f32 m_x = 0;
 		f32 m_y = 0;
 		f32 m_width = 0; 

@@ -3,8 +3,9 @@
 #include <vector>
 #include <memory>
 
-#include "Sea/Ui/Component.hpp"
 #include "Sea/Core/Common.hpp"
+#include "Sea/Ui/UiProperties.hpp"
+#include "Sea/Ui/Component.hpp"
 
 namespace Sea
 {
@@ -14,7 +15,7 @@ namespace Sea
 	class Container : public Component
 	{
 	public:
-		static Ref<Container> From(Window& window);
+		static Ref<Container> From(Window& window, PropertiesInit on_init);
 		static Ref<Container> New(f32& relative_width, f32& relative_height);
 		void Add(std::vector<Ref<Component>> components);
 		std::vector<Ref<Component>>& Childrens();

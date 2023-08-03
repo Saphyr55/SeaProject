@@ -62,40 +62,35 @@ void SampleUI::UpdateBox()
 }
 
 void SampleUI::OnInit()
-{
-	container = Container::From(window);
-	container->SetSize(200.f, 200.f);
-	container->SetAnchor(Anchor::Center);
-	container->GetShapeProperties()
-		.Colour = Colors::Red;
+{	
+	container = Container::From(window, [&](UiProperties& p)
+	{
+		p.X			= Constraint::Center();
+		p.Y			= Constraint::Center();
+		p.Width		= Constraint::Pixel(200.0f);
+		p.Height	= Constraint::Pixel(200.0f);
+		p.Colour	= Colors::Red;
+	});
 	
 	container->Add
 	({
-		Component::New([&](Component& component)
+		Component::New([&](UiProperties& p)
 		{
-			component.SetSize(100.f, 100.f);
-
-			component.SetAnchor(Anchor::Center);
-			component
-				.GetShapeProperties()
-				.Colour = Colors::Blue;
-
-			component
-				.GetShapeProperties()
-				.Border = 30;
+			p.Height	= Constraint::Pixel(100.0f);
+			p.Width		= Constraint::Pixel(100.0f);
+			p.X			= Constraint::Center();
+			p.Y			= Constraint::Center();
+			p.Colour	= Colors::Blue;
+			p.Border	= Constraint::Pixel(30.0f);
 		}),
-		Component::New([&](Component& component)
+		Component::New([&](UiProperties& p)
 		{
-			component.SetSize(100.f, 100.f);
-
-			component.SetAnchor(Anchor::Center);
-			component
-				.GetShapeProperties()
-				.Colour = Colors::Blue;
-
-			component
-				.GetShapeProperties()
-				.Border = 30;
+			p.Height	= Constraint::Pixel(50.0f);
+			p.Width		= Constraint::Pixel(50.0f);
+			p.X			= Constraint::Center();
+			p.Y			= Constraint::Center();
+			p.Colour	= Colors::Yellow;
+			p.Border	= Constraint::Pixel(25.0f);
 		}),
 	});
 

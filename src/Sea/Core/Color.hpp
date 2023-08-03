@@ -40,7 +40,7 @@ namespace Sea
 
     struct Color final
     {
-		
+		Color() = default;
         Color(f32 r, f32 g, f32 b, f32 a) : r(r), g(g), b(b), a(a) {}
         ~Color() = default;
 

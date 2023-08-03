@@ -1,13 +1,16 @@
+#include <variant>
+
 #include "Sea/Ui/Component.hpp"
+#include "Sea/Ui/UiProperties.hpp"
 #include "Sea/Graphics/Rendering/Window.hpp"
 
 namespace Sea
 {	
 
-	std::shared_ptr<Component> Component::New(std::function<void(Component&)> on_init)
+	std::shared_ptr<Component> Component::New(PropertiesInit on_init)
 	{
 		auto c = std::make_shared<Component>();
-		on_init(*c);
+		on_init(*c->m_ui_properties);
 		return c;
 	}
 
@@ -19,23 +22,8 @@ namespace Sea
 	void Component::Draw()
 	{
 		Shape::Draw();
-		m_positionnal();
+		Update();
 		m_on_draw();
-	}
-
-	void Component::SetAnchor(Anchor anchor)
-	{
-		switch (anchor)
-		{
-		case Sea::Anchor::Center:
-			m_positionnal = [&]()
-			{
-				auto w = (*m_relative_width - m_width) / 2;
-				auto h = (*m_relative_height - m_height) / 2;
-				Shape::SetPosition(w, h);
-			};
-			break;
-		}
 	}
 
 	void Component::OnDraw(std::function<void()> on_draw)
@@ -43,7 +31,37 @@ namespace Sea
 		m_on_draw = on_draw;
 	}
 
-	Component::Component() : m_positionnal([]() {}), m_on_draw([]() {})
+	UiProperties& Component::GetProperties()
+	{
+		return *m_ui_properties;
+	}
+
+	void Component::Update()
+	{
+		m_properties.Colour = m_ui_properties->Colour;
+		m_properties.Border = m_ui_properties->Border.Value;
+		m_properties.Edge = m_ui_properties->Edge.Value;
+
+		std::visit([&](auto constraint) { 
+			UiProperties::UpdateX(constraint, *this); 
+		}, m_ui_properties->X);
+
+		std::visit([&](auto constraint) {
+			UiProperties::UpdateY(constraint, *this);
+		}, m_ui_properties->Y);
+
+		std::visit([&](auto constraint) {
+			UiProperties::UpdateWidth(constraint, *this);
+		}, m_ui_properties->Width);
+
+		std::visit([&](auto constraint) {
+			UiProperties::UpdateHeight(constraint, *this);
+		}, m_ui_properties->Height);
+	}
+
+	Component::Component() :
+		m_on_draw([]() {}),
+		m_ui_properties(std::make_shared<UiProperties>())
  	{
 		
 	}

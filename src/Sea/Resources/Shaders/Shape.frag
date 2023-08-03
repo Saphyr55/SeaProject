@@ -12,6 +12,7 @@ struct ShapeProperties
 {
     vec2 origin;
     vec2 size;
+    vec4 color;
     float edge;
     float border_radius_tl;
     float border_radius_tr;
@@ -85,9 +86,9 @@ vec4 circle(vec2 origin, vec2 position, float radius, float edge)
 }
 
 void main()
-{   
+{
+    float alpha = shape.color.a;
     float edge = shape.edge;
-
     float r_top_left     = shape.border_radius_tl;
     float r_top_right    = shape.border_radius_tr;
     float r_bottom_left  = shape.border_radius_bl;
@@ -98,36 +99,29 @@ void main()
         vec2 corner = corner_top_left();
         vec2 mid = vec2(corner.x + r_top_left, corner.y + r_top_left);
         float ds = distance(mid, position.xy);
-        float alpha = 1.0 - smoothstep(r_top_left - edge, r_top_left + edge, ds);
-        FragColor = vec4(color, alpha);
+        alpha = 1.0 - smoothstep(r_top_left - edge, r_top_left + edge, ds);
     }
-    else if(is_corner_top_right(r_top_right))
+    else if (is_corner_top_right(r_top_right))
     {
         vec2 corner = corner_top_right();
         vec2 mid = vec2(corner.x - r_top_right, corner.y + r_top_right);
         float ds = distance(mid, position.xy);
-        float alpha = 1.0 - smoothstep(r_top_right - edge, r_top_right + edge, ds);
-        FragColor = vec4(color, alpha);
+        alpha = 1.0 - smoothstep(r_top_right - edge, r_top_right + edge, ds);
     }
     else if (is_corner_bottom_left(r_bottom_left))
     {
         vec2 corner = corner_bottom_left();
         vec2 mid = vec2(corner.x + r_bottom_left, corner.y - r_bottom_left);
         float ds = distance(mid, position.xy);
-        float alpha = 1.0 - smoothstep(r_bottom_left - edge, r_bottom_left + edge, ds);
-        FragColor = vec4(color, alpha);
+        alpha = 1.0 - smoothstep(r_bottom_left - edge, r_bottom_left + edge, ds);
     }
     else if (is_corner_bottom_right(r_bottom_right))
     {
         vec2 corner = corner_bottom_right();
         vec2 mid = vec2(corner.x - r_bottom_right, corner.y - r_bottom_right);
         float ds = distance(mid, position.xy);
-        float alpha = 1.0 - smoothstep(r_bottom_right - edge, r_bottom_right + edge, ds);
-        FragColor = vec4(color, alpha);
-    }
-    else
-    {
-        FragColor = vec4(color, 1.0);
+        alpha = 1.0 - smoothstep(r_bottom_right - edge, r_bottom_right + edge, ds);
     }
 
+    FragColor = vec4(shape.color.rgb, alpha);
 }

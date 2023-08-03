@@ -11,19 +11,23 @@ namespace Sea
 {
 	void GLRenderer::Init()
 	{
-		if (!m_shape_shader)
-			m_shape_shader = CreateShader(
-				"src/Sea/Resources/Shaders/Shape.vert",
-				"src/Sea/Resources/Shaders/Shape.frag"
-			);
+
+		m_shape_shader = CreateShader
+		(
+			"src/Sea/Resources/Shaders/Shape.vert",
+			"src/Sea/Resources/Shaders/Shape.frag"
+		);
+
+		m_default_shader = CreateShader
+		(
+			"src/Sea/Resources/Shaders/default.vert", 
+			"src/Sea/Resources/Shaders/default.frag"
+		);
 	}
 
 	void GLRenderer::Enable() const
 	{
 		glEnable(GL_DEPTH_TEST);
-		// glEnable(GL_CULL_FACE);
-		// glCullFace(GL_FRONT);
-		// glFrontFace(GL_CCW); 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
@@ -49,6 +53,11 @@ namespace Sea
 	}
 
 	Ref<Shader> GLRenderer::ShapeShader() const
+	{
+		return m_shape_shader;
+	}
+
+	Ref<Shader> GLRenderer::DefaultShader() const
 	{
 		return m_shape_shader;
 	}

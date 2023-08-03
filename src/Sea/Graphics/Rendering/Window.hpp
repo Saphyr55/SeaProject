@@ -41,11 +41,14 @@ namespace Sea
 		void SetResizable(bool resizable);
 		void SetTitle(std::string_view title);
 		void SetMousePostion(f32 x, f32 y);
-		glm::vec2 GetSize();
 		void SetMouseOnMiddlePosistion();
 		void GrapMouse();
 		void UngrapMouse();
+		glm::vec2 GetSize();
+
+	public:
 		bool IsOpen() { return m_is_open; }
+		VideoMode& GetVideoMode() { return m_video_mode; }
 		Renderer& GetRenderer() { return *m_renderer; }
 		Clock& GetClock() { return m_clock; }
 		FrameRate& GetFrameRate() { return m_frame_rate; }

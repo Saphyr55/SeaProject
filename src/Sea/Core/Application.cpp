@@ -55,4 +55,15 @@ namespace Sea
 		m_handlers.push_back(handler);
 	}
 
+	void Application::SetOnQuit(std::function<void()> onQuit)
+	{
+		m_on_quit = onQuit;
+	}
+
+	std::function<void()>& Application::GetOnQuit()
+	{
+		return m_on_quit;
+	}
+
+
 }

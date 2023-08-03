@@ -69,6 +69,8 @@ namespace Sea
 		auto w = new int;
 		auto h = new int;
 		SDL_GetWindowSize(m_handle, w, h);
+		m_video_mode.Width = *w;
+		m_video_mode.Height = *h;
 		return glm::vec2(*w, *h);
 	}
 
@@ -96,6 +98,7 @@ namespace Sea
 
 	void Window::Handle(Sea::Application& app)
 	{		
+		app.SetOnQuit(std::bind(&Window::Close, this));
 		assert(m_handle != nullptr);
 		m_is_open = true;
 		Show();
@@ -104,6 +107,7 @@ namespace Sea
 			Update();
 			for (auto handler : m_handlers)
 			{	
+				GetSize();
 				m_clock.Start(m_frame_rate);
 				handler->Handle(*this);
 				Swap();

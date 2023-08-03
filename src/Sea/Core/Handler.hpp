@@ -1,10 +1,11 @@
 #pragma once
 
+#include <functional>
 
 namespace Sea
 {
     template<typename T>
-    class Handler
+    class Handler 
     {
     public:
         virtual void Handle(T type) { }

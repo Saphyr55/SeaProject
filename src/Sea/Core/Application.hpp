@@ -19,6 +19,8 @@ namespace Sea
 		void Stop();
 		void Launch();
 		void Attach(Ref<Handler<Application&>> handler);
+		void SetOnQuit(std::function<void()> onQuit);
+		std::function<void()>& GetOnQuit();
 
 	public:
 		Application();
@@ -30,6 +32,7 @@ namespace Sea
 		void Init();
 
 	private:
+		std::function<void()> m_on_quit;
 		bool m_is_running;
 		std::vector<Ref<Handler<Application&>>> m_handlers;
 

@@ -15,6 +15,7 @@ namespace Sea
 	    void DisableBlending() const override;
 		void EnableBlending() const override;
         Ref<Shader> ShapeShader() const override;
+        Ref<Shader> DefaultShader() const override;
         Ref<Shader> CreateShader(std::string_view vertexShaderSource, std::string_view fragmentShaderSource) const override;
 		Ref<Texture> CreateTexture(std::string_view path, Texture::Type texType, u32 slot) const override;
 		Ref<Texture> CreateTexture(File file, Texture::Type texType, u32 slot) const override;
@@ -26,6 +27,7 @@ namespace Sea
         ~GLRenderer() = default;
 
     private:
+		Ref<Shader> m_default_shader;
         Ref<Shader> m_shape_shader;
     };
     

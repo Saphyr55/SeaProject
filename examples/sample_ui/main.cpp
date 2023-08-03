@@ -28,10 +28,11 @@
 #include <Sea/Graphics/Lights/DirectionalLight.hpp>
 #include <Sea/Graphics/Drawing/Shape.hpp>
 #include <Sea/Graphics/Rendering/WindowFactory.hpp>
+#include <Sea/Ui/Container.hpp>
 
 using namespace Sea;
 
-class Object : public Handler<Window&>
+class SampleUI : public Handler<Window&>
 {
 public:
 	void OnInit();
@@ -39,58 +40,85 @@ public:
 	void UpdateBox();
 
 public:
-	Object(Application& app, Window& window);
+	SampleUI(Application& app, Window& window);
 
 private:
 	Camera m_camera;
 	EventHandler m_event_handler;
-	Window& m_window;
+	Window& window;
 	Application& m_application;
+	std::shared_ptr<Container> container;
 	std::shared_ptr<Shader> m_default_shader;
 	std::unique_ptr<Shape> m_shape;
 };
 
-void Object::UpdateBox()
+void SampleUI::UpdateBox()
 {
-	auto wsize = m_window.GetSize();
-	auto rsizex = 200;
-	auto rsizey = 200;
-	m_shape->SetSize(rsizex, rsizey);
-	m_shape->SetPosition((wsize.x - rsizex) / 2, (wsize.y- rsizey) / 2); 
-	m_shape->Draw();
+	container->Draw();
+	// fmt::print("{}: \n", container->GetDepth());
+	// for (auto c : container->Childrens()) {
+	//	fmt::print("\t{}\n", c->GetDepth());
+	// }
 }
 
-void Object::OnInit()
-{	
-	m_default_shader = m_window.GetRenderer().CreateShader
-	(
-		"src/Sea/Resources/Shaders/default.vert",
-		"src/Sea/Resources/Shaders/default.frag"
-	);
+void SampleUI::OnInit()
+{
+	container = Container::From(window);
+	container->SetSize(200.f, 200.f);
+	container->SetAnchor(Anchor::Center);
+	container->GetShapeProperties()
+		.Colour = Colors::Red;
 	
-	m_shape = std::make_unique<Shape>(
-		m_window, Colors::Crimson
-	);
+	container->Add
+	({
+		Component::New([&](Component& component)
+		{
+			component.SetSize(100.f, 100.f);
+
+			component.SetAnchor(Anchor::Center);
+			component
+				.GetShapeProperties()
+				.Colour = Colors::Blue;
+
+			component
+				.GetShapeProperties()
+				.Border = 30;
+		}),
+		Component::New([&](Component& component)
+		{
+			component.SetSize(100.f, 100.f);
+
+			component.SetAnchor(Anchor::Center);
+			component
+				.GetShapeProperties()
+				.Colour = Colors::Blue;
+
+			component
+				.GetShapeProperties()
+				.Border = 30;
+		}),
+	});
+
 }
 
-void Object::Handle(Sea::Window& window)
+void SampleUI::Handle(Window& window)
 {
-	auto& renderer = window.GetRenderer();
+	Renderer& renderer = window.GetRenderer();
 
 	renderer.Clear();
-	renderer.ClearColor(Colors::EerieBlack);
+	renderer.ClearColor(Colors::White);
 
-	auto mp = Mouse::GetMousePosition();
+	// auto mp = Mouse::GetMousePosition();
 	// fmt::print("Mouse Position x={} y={}\n", mp.x, mp.y);
 
 	UpdateBox();
 
 	window.Viewport();
-	m_event_handler.Handle(window);
+	m_event_handler.Handle(m_application);
 }
 
-Object::Object(Application& app, Window& window) :
-	m_window(window), 
+SampleUI::SampleUI(Application& app, Window& window) :
+	window(window), 
 	m_application(app),
 	m_camera(
 		window.GetSize().x, 
@@ -119,7 +147,7 @@ void InitApp()
 
 	// Creating the window from the application with video mode
 	auto window = windowFactory.CreateOpenGLWindow("Sample", videoMode);
-	auto o = std::make_shared<Object>(sea, *window);
+	auto o = std::make_shared<SampleUI>(sea, *window);
 	window->Attach(o);
 	sea.Attach(window);
 

@@ -11,13 +11,13 @@
 namespace Sea
 {	
 
-	class EventHandler final : public Handler<Window&>
+	class EventHandler final : public Handler<Application&>
 	{
 	friend class Input;
 
 	public:
 		EventHandler();
-		void Handle(Window& widow);
+		void Handle(Application& app);
 		void ClearEvent();
 
 	private:

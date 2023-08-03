@@ -32,7 +32,6 @@ void DefaultCursor(Window& window);
 void CameraCursor(Window& window);
 glm::vec3 DampedString(const glm::vec3 currentPos, const glm::vec3 targetPos, f32 frametime, f32 springStrength);
 
-std::string title = "Sample";
 glm::vec3 generiPos = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::mat4 generiModel = glm::mat4(1.0f);
 glm::mat4 grindstoneModel = glm::mat4(1.0f);
@@ -52,11 +51,12 @@ public:
 		auto& renderer = window.GetRenderer();
 		auto& clock = window.GetClock();
 		auto frame_rate = window.GetFrameRate();
+		auto title = fmt::format("Sample - {} fps ", frame_rate.GetFPS());
 
 		renderer.ClearColor(Sea::Colors::EerieBlack);
 		renderer.Clear();
 		window.Viewport();
-		window.SetTitle(title + " - fps = " + std::to_string(frame_rate.GetFPS()));
+		window.SetTitle(title);
 
 		// Setup Perspective Camera
 		m_camera.SetViewProjection(45.0f, 0.1f, 500.0f);

@@ -8,7 +8,7 @@ namespace Sea
 
 	EventHandler::EventHandler() : m_handle() {	}
 	
-	void EventHandler::Handle(Window& window)
+	void EventHandler::Handle(Application& app)
 	{
 		while (SDL_PollEvent(&m_handle))
 		{
@@ -17,7 +17,7 @@ namespace Sea
 			switch (m_handle.type)
 			{
 			case SDL_QUIT:
-				window.Close();
+				app.GetOnQuit()();
 				break;
 			case SDL_KEYDOWN:
 				break;

@@ -17,6 +17,7 @@ namespace Sea
 		virtual void SetMatrix4fv(std::string uniform, glm::mat4 value) = 0;
 		virtual void SetVec4f(std::string uniform, glm::vec4 value) = 0;
 		virtual void SetVec3f(std::string uniform, glm::vec3 value) = 0;
+		virtual void SetVec2f(std::string uniform, f32 x, f32 y) = 0;
 		virtual void SetVec3f(std::string uniform, f32 x, f32 y, f32 z) = 0;
 		virtual void SetVec4f(std::string uniform, f32 x, f32 y, f32 z, f32 w) = 0;
 		virtual void SetInt(std::string uniform, s32 value) = 0;

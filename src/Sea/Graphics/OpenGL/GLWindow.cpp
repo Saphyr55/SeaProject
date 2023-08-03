@@ -63,8 +63,9 @@ namespace Sea
 
 	GLWindow::GLWindow(std::string_view title, VideoMode& videoMode) : Window(title, videoMode)
 	{
-		m_renderer = MakeRef<GLRenderer>();
 		Init();
+		m_renderer = std::make_shared<GLRenderer>();
+		m_renderer->Init();
 		m_renderer->Enable();
 		RenderService::Set(m_renderer);
 	}
